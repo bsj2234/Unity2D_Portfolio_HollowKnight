@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     public bool hasMoveInput = false;
     public bool isGrounded = true;
     public bool isJumping = false;
+    public bool isDead = false;
 
     //공격 관련
     public bool isAttacking = false;
@@ -40,7 +41,10 @@ public class PlayerController : MonoBehaviour
     public float RollInvincibleTime = 0.5f;
 
     /// <summary>이건 공격 애니메이션 이벤트에서 처리됨 </summary>
-    public bool isPendingAttack = false;  
+    public bool isPendingAttack = false;
+
+    //체력
+    private float hp = 100f;
 
 
     private void Awake()
@@ -115,11 +119,12 @@ public class PlayerController : MonoBehaviour
     }
     private void OnJump(InputValue inputValue)
     {
-        if (inputValue.isPressed == false)
+        if (inputValue.isPressed == true)
         {
             _rigidbody.AddForce(PawnJumpPower * Vector2.up);
             isJumping = true;
-            _pawnAnimator.SetBool("Anim_IsRunning", false);
+            isGrounded = false;
+            _pawnAnimator.SetBool("Anim_IsGrounded", false);
             _pawnAnimator.SetTrigger("Anim_Jump");
         }
     }
@@ -178,23 +183,41 @@ public class PlayerController : MonoBehaviour
     }
 
     //Collisions
-    protected void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        if(collision.gameObject.CompareTag("Enemy"))
+        {
+            Damaged(10f);
+        }    
         _collisionCounter++;
         isGrounded = true;
         _pawnAnimator.SetBool("Anim_IsGrounded", true);
         isJumping = false;
     }
-    protected void OnCollisionExit2D(Collision2D collision)
+    private void OnCollisionExit2D(Collision2D collision)
     {
         _collisionCounter--;
         if (_collisionCounter == 0)
         {
             isGrounded = false;
-        }
-        if (!isJumping && !isGrounded)
-        {
             _pawnAnimator.SetBool("Anim_IsGrounded", false);
+
         }
     }
+
+    public void Damaged(float damage)
+    {
+        hp -= damage;
+        if(hp < 0f)
+        {
+            _pawnAnimator.SetTrigger("Anim_Dead");
+            _pawnAnimator.SetBool("Anim_IsDead", true);
+            isDead = true;
+        }
+        else
+        {
+            _pawnAnimator.SetTrigger("Anim_Damaged");
+        }
+    }
+    
 }
