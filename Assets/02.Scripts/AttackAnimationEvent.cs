@@ -7,24 +7,24 @@ using UnityEngine.Assertions;
 public class AttackAnimationEvent : MonoBehaviour
 {
     private Dictionary<string, BoxCollider2D> _animationCollider = new();
-    private PlayerController _controller;
+    private Player _player;
     private Animator _animator;
 
     private void Awake()
     {
-        _controller = GetComponentInParent<PlayerController>();
+        _player = GetComponentInParent<Player>();
         _animator = GetComponent<Animator>();
-        Assert.IsNotNull(_controller);
+        Assert.IsNotNull(_player);
         Assert.IsNotNull( _animator );
     }
     public void AttackContinueCheck()
     {
-        if (!_controller.isPendingAttack)
+        if (!_player.isPendingAttack)
         {
-            _controller.isAttacking = false;
+            _player.isAttacking = false;
             _animator.SetBool("Anim_IsAttacking_Slash", false);
         }
-        _controller.isPendingAttack = false;
+        _player.isPendingAttack = false;
     }
     public void AttackCollisionCheck()
     {

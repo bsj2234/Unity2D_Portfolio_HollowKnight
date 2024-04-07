@@ -35,19 +35,19 @@ public class EventOnAttackInterrupted : StateMachineBehaviour
     //    // Implement code that sets up animation IK (inverse kinematics)
     //}
 
-    private PlayerController controller;
+    private Player _player;
 
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(controller == null)
+        if(_player == null)
         {
-            controller = animator.transform.GetComponentInParent<PlayerController>();
+            _player = animator.transform.GetComponentInParent<Player>();
         }
 
         base.OnStateExit(animator, stateInfo, layerIndex);
-        controller.isAttacking = false;
-        controller.isPendingAttack = false;
+        _player.isAttacking = false;
+        _player.isPendingAttack = false;
         animator.SetBool("Anim_IsAttacking_Slash", false);
     }
 }
