@@ -6,9 +6,21 @@ using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
 
+public enum Direction { Left, Right }
+public static class DirctionEval
+{
+    public static float Get1D(this Direction dir)
+    {
+        return (dir == Direction.Left) ? -1f : 1f;
+    }
+    public static Vector2 Get2D(this Direction dir)
+    {
+        return (dir == Direction.Left) ? new Vector2(-1f, 0f) : new Vector2(1f, 0f);
+    }
+}
+
 public class PlayerMoveComponent : MonoBehaviour
 {
-    public enum Direction {  Left, Right }
     public Direction dir = Direction.Right;
 
     private PlayerController _controller;

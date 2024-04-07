@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
-        if (_moveComponent.dir == PlayerMoveComponent.Direction.Left)
+        if (_moveComponent.dir == Direction.Left)
         {
             _pawnSprite.flipX = true;
         }
