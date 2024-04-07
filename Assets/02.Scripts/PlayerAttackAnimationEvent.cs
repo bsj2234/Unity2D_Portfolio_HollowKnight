@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class AttackAnimationEvent : MonoBehaviour
+public class PlayerAttackAnimationEvent : MonoBehaviour
 {
     private Dictionary<string, BoxCollider2D> _animationCollider = new();
     private Player _player;

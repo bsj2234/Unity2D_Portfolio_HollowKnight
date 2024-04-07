@@ -22,6 +22,8 @@ public class ReturningProjectile : MonoBehaviour
 
     private void Update()
     {
+
+        //Todo애니메이션으로 만드는게 좋을듯
         _time += Time.deltaTime;
         if(_time > 2f)
         {
