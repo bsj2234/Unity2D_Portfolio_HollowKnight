@@ -26,7 +26,15 @@ public class EnemyBossKnight : MonoBehaviour
     //체력
     private float hp = 100f;
 
-    // Start is called before the first frame update
+    //공격용 위치
+    public Transform[] WallSides = new Transform[2];
+    public Transform BattleZone;
+
+    //애니메이션
+    public List<Rigidbody2D> _animationColliders = new List<Rigidbody2D>();
+
+    //공격용
+    public Transform Target;
     void Awake()
     {
 
@@ -46,6 +54,14 @@ public class EnemyBossKnight : MonoBehaviour
         Assert.IsNotNull(_rigidbody);
         Assert.IsNotNull(_pawnSprite);
         Assert.IsNotNull(_pawnAnimator);
+        Assert.IsNotNull(BattleZone);
+        Assert.IsNotNull(WallSides[0]);
+        Assert.IsNotNull(WallSides[1]);
+        Assert.IsNotNull(Target);
+
+
+        Assert.IsTrue(_animationColliders.Count > 0, "SetAnimationColliders");
+
     }
 
 
@@ -64,15 +80,15 @@ public class EnemyBossKnight : MonoBehaviour
     //}
     private void Update()
     {
-        //입력 방향에따라 스프라이트 방향 설정
-        if (_moveComponent.dir == Direction.Left)
-        {
-            _pawnSprite.flipX = true;
-        }
-        else
-        {
-            _pawnSprite.flipX = false;
-        }
+        ////입력 방향에따라 스프라이트 방향 설정
+        //if (_moveComponent.dir == Direction.Left)
+        //{
+        //    _pawnSprite.flipX = true;
+        //}
+        //else
+        //{
+        //    _pawnSprite.flipX = false;
+        //}
 
         if(_controller.hasMoveInput)
         {
@@ -137,6 +153,11 @@ public class EnemyBossKnight : MonoBehaviour
         }
         //나머지 애니메이션 끝날떄 초기화는 AllSlash 애니메이션 EventOnAttackInterrupted 스크립트에 OnStateExit 참고
 
+        if(_moveComponent.isGrounded)
+        {
+            _rigidbody.velocity = Vector2.zero;
+        }
+
     }
 
     private IEnumerator InvinsibleOff()
@@ -196,4 +217,77 @@ public class EnemyBossKnight : MonoBehaviour
         _moveComponent.Move(input);
     }
 
+    private void JumpToTarget(Vector2 target, float time)
+    {
+        float distance = target.x - transform.position.x;
+        _rigidbody.AddForce(new Vector2(distance / time  ,9.81f * time * .5f), ForceMode2D.Impulse);
+    }
+
+    public void JumpToNearWallSide(float timeToTarget)
+    {
+        JumpToTarget(GetFarWall().position, timeToTarget);
+    }
+
+    private Transform GetNearWall()
+    {
+        if (transform.position.x < BattleZone.position.x)
+        {
+            return WallSides[0];
+        }
+        else
+        {
+            return WallSides[1];
+        }
+    }
+    private Transform GetFarWall()
+    {
+        if (transform.position.x > BattleZone.position.x)
+        {
+            return WallSides[0];
+        }
+        else
+        {
+            return WallSides[1];
+        }
+    }
+    //aniamtion collider on and off
+    public void ActiveCollider(string colliderName)
+    {
+        _animationColliders.Find(x => x.name == colliderName).simulated=true;
+    }
+    public void DeactiveCollider(string colliderName)
+    {
+        _animationColliders.Find(x => x.name == colliderName).simulated = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("PlayerAttackCollider"))
+        {
+            Debug.Log(collision.gameObject.name);
+            _pawnAnimator.SetTrigger("Anim_Damaged");
+            hp -= 40f;
+            if (hp < 0)
+            {
+                OnDead();
+            }
+        }
+    }
+
+    private void OnDead()
+    {
+        _pawnAnimator.SetTrigger("Anim_Dead");
+    }
+
+    public void FocusToPlayer()
+    {
+        if(Target.position.x - transform.position.x < 0f)
+        {
+            _pawnSprite.flipX = true;
+        }
+        else
+        {
+            _pawnSprite.flipX = false;
+        }
+    }
 }

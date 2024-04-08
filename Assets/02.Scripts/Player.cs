@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private PlayerController _controller;
     private PlayerMoveComponent _moveComponent;
     private Rigidbody2D _rigidbody;
-    private SpriteRenderer _pawnSprite;
+    private Transform _pawnSprite;
     private Animator _pawnAnimator;
 
     //폰상태
@@ -25,6 +25,8 @@ public class Player : MonoBehaviour
 
     //체력
     private float hp = 100f;
+    //뒤집기용
+    Vector2 curLocScale;
 
     // Start is called before the first frame update
     void Awake()
@@ -39,8 +41,9 @@ public class Player : MonoBehaviour
         _controller = GetComponent<PlayerController>();
         _moveComponent = GetComponent<PlayerMoveComponent>();
         _rigidbody = GetComponent<Rigidbody2D>();
-        _pawnSprite = transform.GetComponentInChildren<SpriteRenderer>();
+        _pawnSprite = transform.GetComponentInChildren<Transform>();
         _pawnAnimator = transform.GetComponentInChildren<Animator>();
+        curLocScale = _pawnSprite.transform.localScale;
         Assert.IsNotNull( _controller );
         Assert.IsNotNull( _moveComponent );
         Assert.IsNotNull(_rigidbody);
@@ -67,11 +70,11 @@ public class Player : MonoBehaviour
         //입력 방향에따라 스프라이트 방향 설정
         if (_moveComponent.dir == Direction.Left)
         {
-            _pawnSprite.flipX = true;
+            _pawnSprite.transform.localScale = new Vector2(-curLocScale.x,curLocScale.y);
         }
         else
         {
-            _pawnSprite.flipX = false;
+            _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
         }
 
         if(_controller.hasMoveInput)
@@ -152,6 +155,8 @@ public class Player : MonoBehaviour
         {
             Damaged(10f);
         }
+
+        
     }
     private void OnCollisionExit2D(Collision2D collision)
     {

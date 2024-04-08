@@ -46,21 +46,13 @@ public class EnemyBossKnightMoveComponent : MonoBehaviour
     {
         moveInput.y = 0f;
         Vector2 curVelocity = _rigidbody.velocity;
-        if (_controller.hasMoveInput)
-        {
-            _rigidbody.velocity = new Vector2(moveInput.x * MaxSpeed, _rigidbody.velocity.y);
-            dir = (moveInput.x < 0f) ? Direction.Left : Direction.Right;
-        }
-        else
-        {
-            _rigidbody.velocity = new Vector2(0f, _rigidbody.velocity.y);
-        }
     }
     //Collisions
     private void OnCollisionEnter2D(Collision2D collision)
     {
         _collisionCounter++;
         isGrounded = true;
+        _rigidbody.velocity = new Vector2(0f,_rigidbody.velocity.y);
     }
     private void OnCollisionExit2D(Collision2D collision)
     {
