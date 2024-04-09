@@ -33,7 +33,7 @@ public class InventoryDisplay : MonoBehaviour
         GameObject droppedItem = new GameObject();
         droppedItem.AddComponent<Rigidbody>();
         droppedItem.AddComponent<InstanceItemContainer>().item = inventory.items[itemIndex];
-        GameObject itemMode = Instantiate(inventory.items[itemIndex].itemType.model, droppedItem.transform);
+        GameObject itemModel = Instantiate(inventory.items[itemIndex].itemType.model, droppedItem.transform);
 
         //인벤토리에서 아이템 삭제
         inventory.items.RemoveAt(itemIndex);

@@ -1,0 +1,286 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.InputSystem;
+
+public class Player : MonoBehaviour
+{
+    private PlayerController _controller;
+    private PlayerMoveComponent _moveComponent;
+    private Rigidbody2D _rigidbody;
+    private Transform _pawnSprite;
+    private Animator _pawnAnimator;
+
+    //폰상태
+    public bool isJumping = false;
+    public bool isDead = false;
+    //공격 관련
+    /// <summary>이건 공격 애니메이션 이벤트에서 처리됨 </summary>
+    public bool isPendingAttack = false;
+    public bool isAttacking = false;
+    //회피,무적
+    private bool _invincible = false;
+    public float RollInvincibleTime = 0.5f;
+
+    //체력
+    private float hp = 100f;
+    //뒤집기용
+    Vector2 curLocScale;
+
+    //인벤토리
+    private DynamicInventory inventory;
+    private CharmInstance[] _equippedCharms = new CharmInstance[6];
+    public ItemCharmData debugCharm;
+
+    //사용
+    //bool _tryInteract = false; 쓰레기임
+
+    // Start is called before the first frame update
+    void Awake()
+    {
+
+        //Todo 자식에 히트박스를 따로 만들고 싶다 
+        //뭔가 전체에서 찾기 싫어서 차일드에서 컴포넌트를 바로 가져와봄
+
+        //나 자신의 콜리전은 물리 검사용임
+        //자식의 콜리전은 이름이있으니 패스
+        //Neverminer  transform.Find하면 이름으로 찾을 수 있당
+        _controller = GetComponent<PlayerController>();
+        _moveComponent = GetComponent<PlayerMoveComponent>();
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _pawnSprite = transform.GetComponentInChildren<Transform>();
+        _pawnAnimator = transform.GetComponentInChildren<Animator>();
+        curLocScale = _pawnSprite.transform.localScale;
+        Assert.IsNotNull( _controller );
+        Assert.IsNotNull( _moveComponent );
+        Assert.IsNotNull(_rigidbody);
+        Assert.IsNotNull(_pawnSprite);
+        Assert.IsNotNull(_pawnAnimator);
+
+        inventory = new DynamicInventory();
+
+        _equippedCharms[0] = new CharmInstance(debugCharm);
+    }
+
+
+    //너무 움직임이 무거워서 탈락  impulse 썻으면 됐을수도? 그래도 velocity가 최대값 관리하기 좋은듯
+    //private void FixedUpdate()
+    //{
+    //    if (grounded && playerRigidbody.velocity.magnitude < PlayerMaxSpeed)
+    //    {
+    //        //Todo 플레이어의 입력에 의해 addForce할 값이 크면 적게 줄여준다
+    //        playerRigidbody.AddForce(moveDirInput.normalized * 
+    //            Mathf.Min(PlayerAccelerate, Mathf.Max(PlayerMaxSpeed - playerRigidbody.velocity.magnitude, 0f)));
+    //    }
+    //    if(moveDirInput.magnitude < 0.1f)
+    //    {
+    //    }
+    //}
+    private void Update()
+    {
+        //입력 방향에따라 스프라이트 방향 설정
+        if (_moveComponent.dir == Direction.Left)
+        {
+            _pawnSprite.transform.localScale = new Vector2(-curLocScale.x,curLocScale.y);
+        }
+        else
+        {
+            _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
+        }
+
+        if(_controller.hasMoveInput)
+        {
+            _pawnAnimator.SetBool("Anim_IsRunning", true);
+        }
+        else
+        {
+            _pawnAnimator.SetBool("Anim_IsRunning", false);
+        }
+
+        if (_moveComponent.isGrounded)
+        {
+            _pawnAnimator.SetBool("Anim_IsGrounded", true);
+            isJumping = false;
+        }
+        else
+        {
+            _pawnAnimator.SetBool("Anim_IsGrounded", false);
+        }
+    }
+
+
+    public Vector2 GetPlayerVelocity()
+    {
+        return _rigidbody.velocity;
+    }
+
+    public void SetDrag(float drag)
+    {
+        _rigidbody.drag = drag;
+    }
+
+
+
+    public void Attack()
+    {
+        //첫공격은 트리거로
+        //두번쨰부터는 pending check로
+
+        //복잡ㅈ.. 말로풀자
+        //만약 공격하고 있으면 다음공격준비
+        //만약 공격중인데 다음공격준비도 되어있으면 아무것도안함
+        //만약 공격중이 아니면 공격 트리거
+        //만약 공격중이 아니고 다음공격이준비되어있으면 다음 공격 호출
+        //그럼 매 프레임마다 다음 공격이 있는지 확인해야겠네 흠흠
+        //아니 공격 애니메이션이 끝났을때 이어서 할지 정하면 되지
+
+        //공격중이 아니면 공격 상태로 변화
+        if (!isAttacking)
+        {
+            _pawnAnimator.SetTrigger("Anim_Attack_Slash");
+            _pawnAnimator.SetBool("Anim_IsAttacking_Slash", true);
+            isAttacking = true;
+        }
+        else
+        {
+            //공격중인데 공격을 한번 더 입력받으면 다음 공격 대기
+            if (!isPendingAttack)
+            {
+                _pawnAnimator.SetBool("Anim_IsAttacking_Slash", true);
+                isPendingAttack = true;
+            }
+        }
+        //나머지 애니메이션 끝날떄 초기화는 AllSlash 애니메이션 EventOnAttackInterrupted 스크립트에 OnStateExit 참고
+
+    }
+
+    private IEnumerator InvinsibleOff()
+    {
+        yield return new WaitForSeconds(RollInvincibleTime);
+        _invincible = false;
+    }
+
+    //Collisions
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Damaged(10f);
+        }
+
+        
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+    }
+
+    public void Damaged(float damage)
+    {
+        hp -= damage;
+        if (hp < 0f)
+        {
+            _pawnAnimator.SetTrigger("Anim_Dead");
+            _pawnAnimator.SetBool("Anim_IsDead", true);
+            isDead = true;
+        }
+        else
+        {
+            _pawnAnimator.SetTrigger("Anim_Damaged");
+        }
+    }
+    //이건 쓰레기임 뭐에 대한 충돌 검사를 해도 충돌검사를 한번하고 말기 때문
+    //private void OnTriggerStay2D(Collider2D collision)
+    //{
+    //    if(_tryInteract)
+    //    {
+    //        //사용가능하면 사용
+    //        IInteractable interactable;
+
+    //        if (collision.gameObject.TryGetComponent<IInteractable>(out interactable))
+    //        {
+    //            interactable.Interact(this);
+    //            _tryInteract = false;
+    //        }
+    //    }
+    //}
+    
+
+    public void StartJump()
+    {
+        _moveComponent.StartJump();
+        isJumping = true;
+        _pawnAnimator.SetBool("Anim_IsGrounded", false);
+        _pawnAnimator.SetTrigger("Anim_Jump");
+    }
+    public void EndJump()
+    {
+        _moveComponent.EndJump();
+    }
+
+    public void Dodge()
+    {
+        _pawnAnimator.SetTrigger("Anim_Dodge");
+        _invincible = true;
+        StartCoroutine(InvinsibleOff());
+    }
+
+    public void Move(Vector2 input)
+    {
+        _moveComponent.Move(input);
+    }
+
+    internal void SetVisibleSelfOnMiniMap(bool v)
+    {
+        //playerMiniMap.ExposePlayer(true);
+    }
+
+    public void AddItem(ItemInstance item)
+    {
+        inventory.AddItem(item);
+    }
+
+    public void TryInteract()
+    {
+        //콜리전 체크에서 검사하고 싶어서...
+        //_tryInteract = true;
+        Collider2D[] allOverlap = Physics2D.OverlapCircleAll(transform.position, 5f);
+
+        foreach (Collider2D collider in allOverlap)
+        {
+
+            //사용가능하면 사용
+            IInteractable interactable;
+
+            if (collider.gameObject.TryGetComponent<IInteractable>(out interactable))
+            {
+                interactable.Interact(this);
+                break;
+            }
+        }
+
+    }
+
+    //장착버튼누를떄발생
+    /// <summary>
+    /// 장착한 아이템이 있으면 해제후 아이템 반환
+    /// 없으면 null반환만함
+    /// </summary>
+    /// <param name="equipIndex"></param>
+    /// <returns></returns>
+    public CharmInstance? EquipUnequipCharm(int equipIndex)
+    {
+        //만약 장착템이 있으면 장착 해제 후 해제한 아이템 반환
+        CharmInstance selectedCharm = _equippedCharms[equipIndex];
+        if (selectedCharm != null)
+        {
+            _equippedCharms[equipIndex] = null;
+            return selectedCharm;
+        }
+        else
+        {
+            return null;
+        }
+    }
+}
