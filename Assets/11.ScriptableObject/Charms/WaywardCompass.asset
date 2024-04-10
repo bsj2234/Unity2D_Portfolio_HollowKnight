@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f71d797c03eee7408eba65c36448f0f, type: 3}
-  m_Name: GetheringSwarm
+  m_Name: WaywardCompass
   m_EditorClassIdentifier: 
   ItemName: "\uBCC0\uB355\uC2A4\uB7F0 \uB098\uCE68\uBC18"
   Icon: {fileID: 123635794, guid: c5a175f9a409c5e47a349349122f91e2, type: 3}

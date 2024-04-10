@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f71d797c03eee7408eba65c36448f0f, type: 3}
-  m_Name: WauwardCompass 1
+  m_Name: StalwartShell
   m_EditorClassIdentifier: 
   ItemName: "\uD2BC\uD2BC\uD55C \uAECD\uB370\uAE30"
   Icon: {fileID: 1228381579, guid: c5a175f9a409c5e47a349349122f91e2, type: 3}
