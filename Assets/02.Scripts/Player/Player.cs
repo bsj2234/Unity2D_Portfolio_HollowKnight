@@ -29,10 +29,20 @@ public class Player : MonoBehaviour
     //뒤집기용
     Vector2 curLocScale;
 
-    //인벤토리
+    //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
+
     private DynamicInventory inventory;
     private CharmInstance[] _equippedCharms = new CharmInstance[6];
-    public ItemCharmData debugCharm;
+    public CharmData debugCharm;
+    // Wow
+    //public으로 지정하면 null로 초기화되지않고 기본 생성자가 호출되는듯??
+    //근데 기본생성자가 없을텐데
+    //기본생성자 테스트
+    //ItemInstance test = new ItemInstance();//기본생성자 생성 안되는데 인수를 null로 주나?
+    //ItemInstance test2 = new ItemInstance(null);// 아마 이렇게 가지 않았을까
+    private CharmInstance[] _charmInventory = new CharmInstance[24];
+
+    private HashSet<string> _currentCharmEffects = new HashSet<string>();
 
     //사용
     //bool _tryInteract = false; 쓰레기임
@@ -40,13 +50,22 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
         //Todo 자식에 히트박스를 따로 만들고 싶다 
         //뭔가 전체에서 찾기 싫어서 차일드에서 컴포넌트를 바로 가져와봄
 
         //나 자신의 콜리전은 물리 검사용임
         //자식의 콜리전은 이름이있으니 패스
         //Neverminer  transform.Find하면 이름으로 찾을 수 있당
+        /*
+         * 사용예
+         * 찾기 쉽게 하기 위한 방법을 찾아볼까
+         * Enum쓸래?
+         * List[Enum] = true,false;
+         * if(LIst[CharmName])
+         * {
+         *      DoSomething
+         * }
+         */
         _controller = GetComponent<PlayerController>();
         _moveComponent = GetComponent<PlayerMoveComponent>();
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -276,11 +295,77 @@ public class Player : MonoBehaviour
         if (selectedCharm != null)
         {
             _equippedCharms[equipIndex] = null;
+            //그리고 아이템 인벤에 추가
+            for (int i = 0; i < _charmInventory.Length; i++)
+            {
+                //CharmInstance foundItem = Array.Find(_charmInventory, x => x == selectedCharm );
+                if (_charmInventory[i] == null)
+                {
+                    _charmInventory[i] = selectedCharm;
+                    break;
+                }
+            }
             return selectedCharm;
         }
         else
         {
             return null;
+        }
+    }
+
+    public CharmInstance TryEquipCharm(int charmIndex)
+    {
+        //장착시도 후 가능이면 까매지고 장착됨
+        CharmInstance selectedCharm = _charmInventory[charmIndex];
+        if (selectedCharm != null)
+        {
+            for (int i = 0; i < _equippedCharms.Length; i++)
+            {
+                if (_equippedCharms[i] == null)
+                {
+                    _equippedCharms[i] = selectedCharm;
+                    _charmInventory[i] = null;
+                    break;
+                }
+            }
+            return selectedCharm;
+        }
+        return null;    
+    }
+
+    public CharmInstance CharmAt(int charmIndex)
+    {
+        return _charmInventory[charmIndex];
+    }
+
+    public CharmInstance EquppedCharmAt(int equipIndex)
+    {
+        return _equippedCharms[equipIndex];
+    }
+
+    public bool IsItemEquipped(CharmInstance currentCharm)
+    {
+        CharmInstance foundItem = Array.Find(_equippedCharms, x =>  x == currentCharm );
+        return (foundItem != null) ? true : false;
+        
+    }
+
+
+    //가진 아이템들의 능력을 확성화
+    //이름을 가지고 있으면 효과 ON
+    //깨진 아이템은 추가 안함
+
+    public void RecalcCharmEffect()
+    {
+        _currentCharmEffects.Clear();
+
+        foreach (CharmInstance equippedCharm in _equippedCharms)
+        {
+            if (equippedCharm.Braked == true)
+            {
+                continue;
+            }
+            _currentCharmEffects.Add(equippedCharm.CharmType.name);
         }
     }
 }
