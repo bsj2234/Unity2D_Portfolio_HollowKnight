@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.InputSystem;
@@ -66,7 +68,7 @@ public class PlayerController : MonoBehaviour
         { return; }
         if (inputValue.isPressed == false)
         {
-            _player.Attack();
+            _player.Attack(GetAttackDir());
         }
     }
     private void OnDodge(InputValue inputValue)
@@ -106,5 +108,59 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public Vector2 GetAttackDir()
+    {
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        Vector2 playerToMouse = -(Vector2)_player.transform.position + mousePosition;
+        playerToMouse = playerToMouse.normalized;
 
+        //공격방향 설정
+        if (playerToMouse.x > .7f)
+        {
+            return Vector2.right;
+        }
+        if (playerToMouse.x < -.7f)
+        {
+            return Vector2.left;
+        }
+        if (playerToMouse.y > .7f)
+        {
+            return Vector2.up;
+        }
+        if(playerToMouse.y < -.7f)
+        {
+            return Vector2.down;
+        }
+        Assert.IsTrue(false, "can not find mouse dir vector");
+        return Vector2.zero;
+    }
+
+    public Vector2 GetLookDir()
+    {
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        Vector2 playerToMouse = -(Vector2)_player.transform.position + mousePosition;
+        playerToMouse = playerToMouse.normalized;
+
+        //공격방향 설정
+        if (playerToMouse.x > .7f)
+        {
+            return Vector2.right;
+        }
+        if (playerToMouse.x < -.7f)
+        {
+            return Vector2.left;
+        }
+        if (playerToMouse.y > .7f)
+        {
+            return Vector2.up;
+        }
+        if (playerToMouse.y < -.7f)
+        {
+            return Vector2.down;
+        }
+        Assert.IsTrue(false, "can not find mouse dir vector");
+        return Vector2.zero;
+    }
 }

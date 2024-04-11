@@ -28,7 +28,4 @@ public class PlayerAttackAnimationEvent : MonoBehaviour
         }
         _player.isPendingAttack = false;
     }
-    public void AttackCollisionCheck()
-    {
-    }
 }

@@ -11,6 +11,7 @@ public class CharmData : ScriptableObject
     public int Slot = 1;
     [TextArea]
     public string Description;
+
 }
 //그러니까 아이템 효과가 있을텐데
 //효과를 사용ㅎ

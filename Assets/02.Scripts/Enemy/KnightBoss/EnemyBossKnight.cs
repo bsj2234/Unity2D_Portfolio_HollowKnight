@@ -264,7 +264,6 @@ public class EnemyBossKnight : MonoBehaviour
     {
         if(collision.CompareTag("PlayerAttackCollider"))
         {
-            Debug.Log(collision.gameObject.name);
             _pawnAnimator.SetTrigger("Anim_Damaged");
             hp -= 40f;
             if (hp < 0)

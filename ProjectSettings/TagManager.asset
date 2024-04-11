@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - PlayerAttackCollider
+  - Spike
+  - Ground
   layers:
   - Default
   - TransparentFX

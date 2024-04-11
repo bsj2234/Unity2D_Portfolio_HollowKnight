@@ -20,9 +20,14 @@ public class Player : MonoBehaviour
     /// <summary>이건 공격 애니메이션 이벤트에서 처리됨 </summary>
     public bool isPendingAttack = false;
     public bool isAttacking = false;
+    private Vector2 _attackDir;
+    private float _attackingTime = 0f;
+    private int continuableAttackCount = 0;
+
     //회피,무적
-    private bool _invincible = false;
-    public float RollInvincibleTime = 0.5f;
+    private float _invincibleTime = 0f;
+    private float _stunTime = 0f;
+    public float DodgeInvincibleTime = 0.5f;
 
     //체력
     private float hp = 100f;
@@ -100,22 +105,30 @@ public class Player : MonoBehaviour
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
-        if (_moveComponent.dir == Direction.Left)
-        {
-            _pawnSprite.transform.localScale = new Vector2(-curLocScale.x,curLocScale.y);
-        }
-        else
-        {
-            _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
-        }
 
         if(_controller.hasMoveInput)
         {
             _pawnAnimator.SetBool("Anim_IsRunning", true);
+            if (_moveComponent.dir == Direction.Left)
+            {
+                _pawnSprite.transform.localScale = new Vector2(-curLocScale.x, curLocScale.y);
+            }
+            else
+            {
+                _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
+            }
         }
         else
         {
             _pawnAnimator.SetBool("Anim_IsRunning", false);
+            if (_controller.GetLookDir().x <= 0f)
+            {
+                _pawnSprite.transform.localScale = new Vector2(-curLocScale.x, curLocScale.y);
+            }
+            else
+            {
+                _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
+            }
         }
 
         if (_moveComponent.isGrounded)
@@ -127,6 +140,11 @@ public class Player : MonoBehaviour
         {
             _pawnAnimator.SetBool("Anim_IsGrounded", false);
         }
+        //상태 지속 시간을 코드에서 관리
+        if(_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
+        if(_stunTime > 0f) { _stunTime -= Time.deltaTime; }
+        if(_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
+        else { continuableAttackCount = 0; }
     }
 
 
@@ -142,43 +160,53 @@ public class Player : MonoBehaviour
 
 
 
-    public void Attack()
+    public void Attack(Vector2 attackDir)
     {
-        //첫공격은 트리거로
-        //두번쨰부터는 pending check로
-
-        //복잡ㅈ.. 말로풀자
-        //만약 공격하고 있으면 다음공격준비
-        //만약 공격중인데 다음공격준비도 되어있으면 아무것도안함
-        //만약 공격중이 아니면 공격 트리거
-        //만약 공격중이 아니고 다음공격이준비되어있으면 다음 공격 호출
-        //그럼 매 프레임마다 다음 공격이 있는지 확인해야겠네 흠흠
-        //아니 공격 애니메이션이 끝났을때 이어서 할지 정하면 되지
-
-        //공격중이 아니면 공격 상태로 변화
-        if (!isAttacking)
+        if (IsStuned() | IsAttacking())
         {
-            _pawnAnimator.SetTrigger("Anim_Attack_Slash");
-            _pawnAnimator.SetBool("Anim_IsAttacking_Slash", true);
-            isAttacking = true;
+            return;
+        }
+        _attackingTime = .5f;
+        if (attackDir.y > .7f)
+        {
+            continuableAttackCount = 0;
+            _pawnAnimator.SetTrigger("Anim_Attack_Slash_Up");
+            continuableAttackCount++;
+        }
+        else if (attackDir.y < -.7f)
+        {
+            continuableAttackCount = 0;
+            _pawnAnimator.SetTrigger("Anim_Attack_Slash_Down");
         }
         else
         {
-            //공격중인데 공격을 한번 더 입력받으면 다음 공격 대기
-            if (!isPendingAttack)
+            if (continuableAttackCount % 2 == 0)
             {
-                _pawnAnimator.SetBool("Anim_IsAttacking_Slash", true);
-                isPendingAttack = true;
+                _pawnAnimator.SetTrigger("Anim_Attack_Slash");
             }
+            continuableAttackCount++;
         }
+        //다음공격 대기를 애니메이션 이벤트로 공격이끝날떄 체크하고 attaking 값 설정해줌
         //나머지 애니메이션 끝날떄 초기화는 AllSlash 애니메이션 EventOnAttackInterrupted 스크립트에 OnStateExit 참고
 
     }
 
-    private IEnumerator InvinsibleOff()
+    private bool IsAttacking()
     {
-        yield return new WaitForSeconds(RollInvincibleTime);
-        _invincible = false;
+        return (_attackingTime > 0f);
+    }
+
+    public void OnAnimationAttackEnd()
+    {
+        if(isPendingAttack)
+        {
+            isPendingAttack = false;
+            Attack(_controller.GetAttackDir());
+        }
+        else
+        {
+            isAttacking = false;
+        }
     }
 
     //Collisions
@@ -198,6 +226,9 @@ public class Player : MonoBehaviour
     public void Damaged(float damage)
     {
         hp -= damage;
+
+        _stunTime = .3f;
+        _invincibleTime = .3f;
         if (hp < 0f)
         {
             _pawnAnimator.SetTrigger("Anim_Dead");
@@ -224,7 +255,15 @@ public class Player : MonoBehaviour
     //        }
     //    }
     //}
-    
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("PlayerAttackCollider"))
+        {
+            return;
+        }
+    }
 
     public void StartJump()
     {
@@ -241,13 +280,13 @@ public class Player : MonoBehaviour
     public void Dodge()
     {
         _pawnAnimator.SetTrigger("Anim_Dodge");
-        _invincible = true;
-        StartCoroutine(InvinsibleOff());
+        _invincibleTime = .25f;
+        _moveComponent.Dash();
     }
 
     public void Move(Vector2 input)
     {
-        _moveComponent.Move(input);
+        _moveComponent.MovementUpdate(input);
     }
 
     internal void SetVisibleSelfOnMiniMap(bool v)
@@ -367,5 +406,35 @@ public class Player : MonoBehaviour
             }
             _currentCharmEffects.Add(equippedCharm.CharmType.name);
         }
+    }
+
+    public void AttackKnockback(Collider2D other)
+    {
+
+        //enemy,ground,spike
+        if(other.CompareTag("Spike"))
+        {
+            _attackDir = _controller.GetAttackDir();
+            _moveComponent.KnockBack(-_attackDir, 30f);
+        }
+        else if(other.CompareTag("Ground"))
+        {
+            _attackDir = _controller.GetAttackDir();
+            _moveComponent.KnockBack(-_attackDir, 10f);
+        }
+        else if(other.CompareTag("Enemy"))
+        {
+            _attackDir = _controller.GetAttackDir();
+            _moveComponent.KnockBack(-_attackDir, 15f);
+        }
+    }
+
+    private bool IsInvincible()
+    {
+        return _invincibleTime > 0f;
+    }
+    private bool IsStuned()
+    {
+        return _stunTime > 0f;
     }
 }
