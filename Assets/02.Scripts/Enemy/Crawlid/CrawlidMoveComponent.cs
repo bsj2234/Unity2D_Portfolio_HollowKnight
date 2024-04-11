@@ -87,6 +87,7 @@ public class CrawlidMoveComponent : MonoBehaviour
     {
         _animator.SetTrigger("Anim_Hit");
         hp -= 25f;
+        
         if (hp <= 0f)
         {
             Dead();

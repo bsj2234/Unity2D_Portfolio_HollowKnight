@@ -120,6 +120,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            //입력없으면 보는곳으로 회전
             _pawnAnimator.SetBool("Anim_IsRunning", false);
             if (_controller.GetLookDir().x <= 0f)
             {
@@ -286,7 +287,14 @@ public class Player : MonoBehaviour
 
     public void Move(Vector2 input)
     {
-        _moveComponent.MovementUpdate(input);
+        if(IsStuned())
+        {
+            _moveComponent.MovementUpdate(Vector2.zero);
+        }
+        else
+        {
+            _moveComponent.MovementUpdate(input);
+        }
     }
 
     internal void SetVisibleSelfOnMiniMap(bool v)
