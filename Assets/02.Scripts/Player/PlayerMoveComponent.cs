@@ -155,7 +155,12 @@ public class PlayerMoveComponent : MonoBehaviour
     {
         _movableCoolDown = .25f;
         //StartCoroutine(BlockMoveForSeconds())
-        _rigidbody.velocity = knockBackDir * knockbackSpeed;
+        float knockbackRatio = 1f;
+        if (knockBackDir == Vector2.down)
+        {
+            knockbackRatio = 1.5f;
+        }
+        _rigidbody.velocity = knockBackDir * knockbackSpeed * knockbackRatio;
     }
     public void KnockBackUp(Direction knockBackDir, float knockbackSpeed)
     {

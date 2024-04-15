@@ -409,7 +409,7 @@ public class Player : Character, IFightable
         if (other.CompareTag("Spike"))
         {
             _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 30f);
+            moveComponent.KnockBack(-_attackDir, 15f);
         }
         else if (other.CompareTag("Ground"))
         {
@@ -419,7 +419,7 @@ public class Player : Character, IFightable
         else if (other.CompareTag("Enemy"))
         {
             _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 15f);
+            moveComponent.KnockBack(-_attackDir, 10f);
         }
     }
 

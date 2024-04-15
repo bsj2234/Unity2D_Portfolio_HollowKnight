@@ -6,10 +6,15 @@ public class ZoneSpawnEnemy : MonoBehaviour
 {
     public List<FixedEnemySpawn> spawnList = new List<FixedEnemySpawn>();
 
+    public int collisionCount = 0;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player"))
         {
+            collisionCount++;
+            if (collisionCount > 1)
+                return;
             foreach (FixedEnemySpawn spawn in spawnList)
             {
                 spawn.Spawn();
@@ -20,9 +25,13 @@ public class ZoneSpawnEnemy : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            foreach (FixedEnemySpawn spawn in spawnList)
+            collisionCount--;
+            if(collisionCount == 0)
             {
-                spawn.DeSpawn();
+                foreach (FixedEnemySpawn spawn in spawnList)
+                {
+                    spawn.DeSpawn();
+                }
             }
         }
     }
