@@ -7,20 +7,28 @@ using UnityEngine.InputSystem;
 using UnityEngine.Windows;
 
 
-public class CrawlidMoveComponent : MonoBehaviour
+public class CrawlidMoveComponent : MonoBehaviour, IFightable
 {
     public Direction dir = Direction.Left;
-    public float rayOffset;
-    public float rayDistance;
+    public float rayOffset = .5f;
+    public float rayDistance = .1f;
     public float hp = 100;
     public LayerMask ground = 1 << 7;
+
+    public float _damage = 10f;
 
     public bool isGrounded = true;
     public float MaxSpeed = 5f;
 
+    public CircleCollider2D circleCollider;
+
     private Transform _sprite;
 
     private Animator _animator;
+    private Collision2D _collision;
+    public Rigidbody2D rb;
+    private float _rotatedTime;
+
     private void Awake()
     {
         _sprite = transform.GetChild(0);
@@ -31,56 +39,57 @@ public class CrawlidMoveComponent : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move(Vector2.up);
+        MoveForward();
     }
     //다른방법 찾자
-    public void Move(Vector2 moveInput)
+    public void MoveForward()
     {
+        //gravity
+        rb.velocity = 3f * -transform.up;
         //check edge
-        RaycastHit2D ground_hit = Physics2D.Raycast(transform.position + (-transform.right) * rayOffset, -transform.up, rayDistance, ground);
-        RaycastHit2D front_hit = Physics2D.Raycast(transform.position , -transform.right, rayDistance, ground);
-        Debug.DrawRay(transform.position + (-transform.right) * rayOffset, -transform.up * rayDistance,Color.red,0.01f);
+        //내 위치 왼쪽 오프셋부터, 아래쪽 방향, 거리
+        RaycastHit2D ground_hit = Physics2D.Raycast(transform.position, -transform.up, rayDistance, ground);
+        RaycastHit2D behind_ground_hit = Physics2D.Raycast(transform.position + (-transform.right) * -rayOffset, -transform.up, rayDistance, ground);
+        //내 위치 , 왼쪽 방향, 거리
+        RaycastHit2D front_hit = Physics2D.Raycast(transform.position, -transform.right, rayDistance + circleCollider.radius, ground);
+        Debug.DrawRay(transform.position + (-transform.right) * rayOffset, -transform.up * rayDistance, Color.red, 0.01f);
 
         //rotaton edge
-        if(ground_hit.collider == null)
+        if (ground_hit.collider == null && behind_ground_hit.collider != null && Time.time - _rotatedTime > .1f)
         {
-            if(dir == Direction.Left)
-            {
-                transform.Rotate(0f, 0f, 90f);
-                _sprite.Rotate(0f, 0f, -90f);
-                transform.Translate(-.1f, 0f, 0f);
-            }
-            else
-            {
-                transform.Rotate(0f, 0f, -90f);
-            }
+            _rotatedTime = Time.time;
+            transform.Rotate(0f, 0f, 90f);
+            _sprite.Rotate(0f, 0f, -90f);
         }
         //rotate on wall
-        if(front_hit.collider != null)
+        if (front_hit.collider != null && Time.time - _rotatedTime > .1f)
         {
-            if (dir == Direction.Left)
-            {
-                transform.Rotate(0f, 0f, -90f);
-                _sprite.Rotate(0f, 0f, 90f);
-                transform.Translate(-.1f, 0f, 0f);
-            }
-            else
-            {
-                transform.Rotate(0f, 0f, 90f);
-            }
+            _rotatedTime = Time.time;
+            transform.Rotate(0f, 0f, -90f);
+            _sprite.Rotate(0f, 0f, 90f);
         }
-        //move
-        transform.Translate(-.5f * Time.fixedDeltaTime, 0f, 0f);
+        if(behind_ground_hit.collider != null || ground_hit.collider!= null)
+        {
+            //move
+            rb.AddForce(3f * -transform.right, ForceMode2D.Impulse);
+        }
         //slow rotate
         //0 ~ 5
-        float centered_z = Mathf.Abs(_sprite.localEulerAngles.z - 180f) - 175f;
+        //left 270  right 90
+        //     90         -90
+        //     0 == -180
+        float centered_z = _sprite.localEulerAngles.z - 180f;
         if (centered_z > 5f)
         {
-            if (dir == Direction.Left)
+            if (_sprite.localEulerAngles.z > 5f)
                 _sprite.Rotate(0f, 0f, 270f * Time.deltaTime);
-            else
+        }
+        else if (centered_z <= -5f)
+        {
+            if (_sprite.localEulerAngles.z > 5f) 
                 _sprite.Rotate(0f, 0f, -270f * Time.deltaTime);
         }
+
     }
 
     public void Damaged()
@@ -106,4 +115,34 @@ public class CrawlidMoveComponent : MonoBehaviour
         }
     }
 
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        _collision = collision;
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        _collision = null;
+    }
+
+    //interface
+    public float GetHp()
+    {
+        return hp;
+    }
+
+    public void TakeDamage(float damage, Vector2 Attackerpos)
+    {
+        hp -= damage;
+    }
+
+    public void DealFixedDamage(IFightable target, float damage)
+    {
+        target.TakeDamage(_damage, transform.position);
+    }
+
+    public void DealDamage(IFightable target, float damage)
+    {
+        target.TakeDamage(_damage, transform.position);
+    }
 }

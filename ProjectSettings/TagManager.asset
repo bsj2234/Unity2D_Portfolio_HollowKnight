@@ -17,8 +17,8 @@ TagManager:
   - UI
   - AttackCollider
   - Ground
-  - 
-  - 
+  - Coin
+  - Obstacle
   - 
   - 
   - 
@@ -54,21 +54,45 @@ TagManager:
   - name: Background1
     uniqueID: 956195699
     locked: 0
-  - name: MiddleGround3
+  - name: Wall3
     uniqueID: 971867935
     locked: 0
-  - name: MiddleGround2
+  - name: Wall2
     uniqueID: 3442765165
     locked: 0
-  - name: MiddleGround1
+  - name: Wall1
     uniqueID: 566537161
     locked: 0
-  - name: ForeGround3
+  - name: Box
     uniqueID: 1355160057
     locked: 0
-  - name: ForeGround2
+  - name: Chest
     uniqueID: 3997465265
     locked: 0
-  - name: ForeGround1
+  - name: Money
     uniqueID: 2080740565
+    locked: 0
+  - name: Enemy3
+    uniqueID: 3399563245
+    locked: 0
+  - name: Enemy2
+    uniqueID: 4175020927
+    locked: 0
+  - name: Enemy1
+    uniqueID: 4222773689
+    locked: 0
+  - name: Player
+    uniqueID: 3107912369
+    locked: 0
+  - name: Effect2
+    uniqueID: 3335132005
+    locked: 0
+  - name: Effect1
+    uniqueID: 1827250815
+    locked: 0
+  - name: Blindable
+    uniqueID: 2427831533
+    locked: 0
+  - name: New Layer 17
+    uniqueID: 1193016071
     locked: 0
