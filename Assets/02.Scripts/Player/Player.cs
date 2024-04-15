@@ -38,7 +38,7 @@ public class Player : Character, IFightable
     Vector2 curLocScale;
 
     //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
-    private CharmInstance[] _equippedCharms = new CharmInstance[6];
+    private CharmInstance[] _equippedCharms = new CharmInstance[5];
     public CharmData debugCharm;
     // Wow
     //public으로 지정하면 null로 초기화되지않고 기본 생성자가 호출되는듯??

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,5 +20,12 @@ public class UiManager : Singleton<UiManager>
     public void RefreshShop()
     {
         shopUi.RefreshAll();
+    }
+
+    public void AllOff()
+    {
+        inventoryUi.SetActive(false);
+        hudUi.SetActive(false);
+        shopUi.SetActive(false);
     }
 }

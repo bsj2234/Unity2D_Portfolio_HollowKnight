@@ -97,13 +97,17 @@ public class PlayerController : MonoBehaviour
             if(_playerControl)
             {
                 _playerControl = false;
-                _inventoryUi.InventoryOn();
+                UiManager.Instance.inventoryUi.InventoryOn();
             }
-            else
-            {
-                _playerControl = true;
-                _inventoryUi.InventoryOff();
-            }
+        }
+    }
+
+    private void OnEscape(InputValue inputValue)
+    {
+        if(inputValue.isPressed != false)
+        {
+            _playerControl = true;
+            UiManager.Instance.AllOff();
         }
     }
 

@@ -11,6 +11,7 @@ public class ShopUi : MonoBehaviour
     public Shop _shop;
     public GameObject _itemPrefab;
     public Transform buttonParent;
+    public GameObject ShopUiGameObject;
     public void Init(Shop shop)
     {
         shopCharms = shop.ShopInventory;
@@ -18,7 +19,7 @@ public class ShopUi : MonoBehaviour
 
     public void SetActive(bool v)
     {
-        gameObject.SetActive(v);
+        ShopUiGameObject.SetActive(v);
     }
 
     public void RefreshAll()
