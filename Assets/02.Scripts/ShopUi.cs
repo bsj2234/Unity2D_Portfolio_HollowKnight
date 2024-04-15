@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShopHud : MonoBehaviour
+public class ShopUi : MonoBehaviour
 {
     public List<Shop.ShopCharm> shopCharms;
     public List<ShopItemUi> buttonList;
@@ -21,7 +21,7 @@ public class ShopHud : MonoBehaviour
         gameObject.SetActive(v);
     }
 
-    public void UpdateUi()
+    public void RefreshAll()
     {
         for (int i = 0; i < shopCharms.Count; i++)
         {
@@ -40,6 +40,6 @@ public class ShopHud : MonoBehaviour
 
     private void OnEnable()
     {
-        UpdateUi();
+        RefreshAll();
     }
 }

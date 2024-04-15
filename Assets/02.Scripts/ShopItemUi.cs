@@ -21,6 +21,7 @@ public class ShopItemUi : MonoBehaviour
 
     public void UpdateUi(Shop shop ,Shop.ShopCharm shopCharm, int index)
     {
+        _index = index;
         _shop = shop;
         _image.sprite = shopCharm.CharmInstance.CharmType.Icon;
         _text.text = shopCharm.ItemCost.ToString();
@@ -34,5 +35,8 @@ public class ShopItemUi : MonoBehaviour
     public void OnClick()
     {
         _shop.TrySell(GameManager.Instance.Player, _index);
+        UiManager.Instance.shopUi.RefreshAll();
+        UiManager.Instance.inventoryUi.RefreshAll();
+        UiManager.Instance.hudUi.RefreshAll();
     }
 }

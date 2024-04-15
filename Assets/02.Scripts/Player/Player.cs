@@ -52,7 +52,7 @@ public class Player : Character, IFightable
     public float damagePerSlot = 30f;
     public int coinCount = 0;
 
-    public ShopHud shopHud;
+    public ShopUi shopUi;
 
 
     // Start is called before the first frame update
@@ -91,7 +91,7 @@ public class Player : Character, IFightable
 
     private void Start()
     {
-        hud.UpdateUi();
+        hud.RefreshAll();
     }
 
     //너무 움직임이 무거워서 탈락  impulse 썻으면 됐을수도? 그래도 velocity가 최대값 관리하기 좋은듯
@@ -445,7 +445,7 @@ public class Player : Character, IFightable
         //invincible(damaged or dashing)
         if (_invincibleTime > 0f) { return; }
         combatComponent.TakeDamage(Mathf.Ceil((damage / damagePerSlot)));
-        hud.UpdateUi();
+        hud.RefreshAll();
         if (combatComponent.IsDead())
         {
             _pawnAnimator.SetTrigger("Anim_Dead");
@@ -475,7 +475,7 @@ public class Player : Character, IFightable
     public void AddCoin(int count)
     {
         coinCount += count;
-        hud.UpdateUi();
+        hud.RefreshAll();
     }
 
     public int GetMoney()
@@ -486,7 +486,7 @@ public class Player : Character, IFightable
     public void AddMp(float value)
     {
         mp += value;
-        hud.UpdateUi();
+        hud.RefreshAll();
     }
     public float GetMp()
     {
@@ -504,7 +504,7 @@ public class Player : Character, IFightable
 
     public void OpenShopHud(Shop shop)
     {
-        shopHud.Init(shop);
-        shopHud.SetActive(true);
+        shopUi.Init(shop);
+        shopUi.SetActive(true);
     }
 }

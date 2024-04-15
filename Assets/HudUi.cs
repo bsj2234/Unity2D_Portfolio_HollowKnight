@@ -7,7 +7,7 @@ public class HudUi : MonoBehaviour
     [SerializeField] private UiHp hp;
     [SerializeField] private UiMp mp;
     [SerializeField] private UiCoin coin;
-    public void UpdateUi()
+    public void RefreshAll()
     {
         hp.UpdateUi();
         mp.UpdateUi();
