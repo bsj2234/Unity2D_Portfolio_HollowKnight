@@ -52,6 +52,8 @@ public class Player : Character, IFightable
     public float damagePerSlot = 30f;
     public int coinCount = 0;
 
+    public ShopHud shopHud;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -262,7 +264,7 @@ public class Player : Character, IFightable
 
     public void Dodge()
     {
-        if(DashAbility)
+        if (_currentCharmEffects.Contains("DashMaster"))
         {
             _pawnAnimator.SetTrigger("Anim_Dodge");
             _invincibleTime = .25f;
@@ -360,6 +362,7 @@ public class Player : Character, IFightable
                     break;
                 }
             }
+            RecalcCharmEffect();
             return selectedCharm;
         }
         return null;
@@ -393,7 +396,7 @@ public class Player : Character, IFightable
 
         foreach (CharmInstance equippedCharm in _equippedCharms)
         {
-            if (equippedCharm.Braked == true)
+            if (  equippedCharm == null|| equippedCharm.Braked == true)
             {
                 continue;
             }
@@ -497,5 +500,11 @@ public class Player : Character, IFightable
         {
             AddMp(15.0f);
         }
+    }
+
+    public void OpenShopHud(Shop shop)
+    {
+        shopHud.Init(shop);
+        shopHud.SetActive(true);
     }
 }
