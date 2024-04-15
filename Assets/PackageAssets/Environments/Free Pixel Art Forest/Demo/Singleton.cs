@@ -14,8 +14,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType(typeof(T)) as T;
-                if (instance == null)
-                    Assert.IsNotNull(instance, "Wrong singleton type");
+                Assert.IsNotNull(instance, "Wrong singleton type");
 
             }
             return instance;

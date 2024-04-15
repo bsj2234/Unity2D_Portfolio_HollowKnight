@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
 
     //관련 컴포넌트들
     private Player _player;
-    private UiManager _uiManager;
+    public InventoryManager _inventoryManager;
     //입력관련 상태
     //프로퍼티다니까 인스펙터에 안보임
     //나중에 get이나 set에 조건이 필요할떄 프로퍼티랑 SerializeField를 사용해서 프로퍼티화 하는게 좋지 않나?
@@ -28,8 +28,7 @@ public class PlayerController : MonoBehaviour
 
         Assert.IsNotNull(_player);
 
-        _uiManager = UiManager.Instance;
-        Assert.IsNotNull(_uiManager);
+        Assert.IsNotNull(_inventoryManager);
     }
 
 
@@ -75,7 +74,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_playerControl == false)
         { return; }
-        if (inputValue.isPressed == false)
+        if (inputValue.isPressed == true)
         {
             _player.Dodge();
         }
@@ -98,12 +97,12 @@ public class PlayerController : MonoBehaviour
             if(_playerControl)
             {
                 _playerControl = false;
-                _uiManager.InventoryOn();
+                _inventoryManager.InventoryOn();
             }
             else
             {
                 _playerControl = true;
-                _uiManager.InventoryOff();
+                _inventoryManager.InventoryOff();
             }
         }
     }

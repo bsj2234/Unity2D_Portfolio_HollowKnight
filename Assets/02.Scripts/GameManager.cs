@@ -7,6 +7,8 @@ public class GameManager : Singleton<GameManager>
 {
     public Player Player;
 
+    public bool StatueDebug = true;
+
     private void Awake()
     {
         //this.Player = Player.FindAnyObjectByType(typeof(Player)) as Player;

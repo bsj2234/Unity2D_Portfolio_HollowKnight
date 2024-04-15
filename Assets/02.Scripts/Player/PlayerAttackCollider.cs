@@ -14,6 +14,6 @@ public class PlayerAttackCollider : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        _player.AttackKnockback(collision);
+        _player.OnAttackSuccess(collision);
     }
 }

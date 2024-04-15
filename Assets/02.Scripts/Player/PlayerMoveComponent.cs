@@ -144,8 +144,8 @@ public class PlayerMoveComponent : MonoBehaviour
 
     public void Dash()
     {
-        _movableCoolDown = .5f;
-        _zeroGravityTime = .5f;
+        _movableCoolDown = .25f;
+        _zeroGravityTime = .25f;
         _rigidbody.velocity = (dir == Direction.Left) ?
             Vector2.left * _dashSpeed : Vector2.right * _dashSpeed;
         
@@ -166,6 +166,22 @@ public class PlayerMoveComponent : MonoBehaviour
     private void BlockMoveForSeconds(float time)
     {
         _movableCoolDown = time;
+    }
+
+    public virtual void Flip()
+    {
+        Quaternion right = Quaternion.Euler(0f, 180f, 0f);
+        Quaternion left = Quaternion.Euler(0f, 0f, 0f);
+        float curAngle = transform.rotation.eulerAngles.y;
+
+        if (curAngle == 180f)
+        {
+            transform.rotation = left;
+        }
+        else
+        {
+            transform.rotation = right;
+        }
     }
 }
 public static class VectorExtender

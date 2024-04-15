@@ -6,7 +6,7 @@ using UnityEngine;
 public class DynamicInventory : ScriptableObject
 {
     public int maxItems = 10;
-    public List<ItemInstance> items = new();
+    public List<ItemInstance> items = new List<ItemInstance>();
 
     public bool AddItem(ItemInstance itemToAdd)
     {

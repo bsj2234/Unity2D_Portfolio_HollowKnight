@@ -1,18 +1,20 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : Character, IFightable
 {
     private PlayerController _controller;
-    private PlayerMoveComponent _moveComponent;
     private Rigidbody2D _rigidbody;
     private Transform _pawnSprite;
     private Animator _pawnAnimator;
 
+    public HudUi hud;
+
+    public PlayerMoveComponent moveComponent;
+
+    public CombatComponent combatComponent;
     //폰상태
     public bool isJumping = false;
     public bool isDead = false;
@@ -30,7 +32,8 @@ public class Player : MonoBehaviour
     public float DodgeInvincibleTime = 0.5f;
 
     //체력
-    private float hp = 100f;
+    private float hp = 4f;
+    private float mp = 0f;
     //뒤집기용
     Vector2 curLocScale;
 
@@ -48,9 +51,9 @@ public class Player : MonoBehaviour
     private CharmInstance[] _charmInventory = new CharmInstance[24];
 
     private HashSet<string> _currentCharmEffects = new HashSet<string>();
+    public float damagePerSlot = 30f;
+    public int coinCount = 0;
 
-    //사용
-    //bool _tryInteract = false; 쓰레기임
 
     // Start is called before the first frame update
     void Awake()
@@ -72,13 +75,13 @@ public class Player : MonoBehaviour
          * }
          */
         _controller = GetComponent<PlayerController>();
-        _moveComponent = GetComponent<PlayerMoveComponent>();
+        moveComponent = GetComponent<PlayerMoveComponent>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _pawnSprite = transform.GetComponentInChildren<Transform>();
         _pawnAnimator = transform.GetComponentInChildren<Animator>();
         curLocScale = _pawnSprite.transform.localScale;
-        Assert.IsNotNull( _controller );
-        Assert.IsNotNull( _moveComponent );
+        Assert.IsNotNull(_controller);
+        Assert.IsNotNull(moveComponent);
         Assert.IsNotNull(_rigidbody);
         Assert.IsNotNull(_pawnSprite);
         Assert.IsNotNull(_pawnAnimator);
@@ -88,6 +91,10 @@ public class Player : MonoBehaviour
         _equippedCharms[0] = new CharmInstance(debugCharm);
     }
 
+    private void Start()
+    {
+        hud.UpdateUi();
+    }
 
     //너무 움직임이 무거워서 탈락  impulse 썻으면 됐을수도? 그래도 velocity가 최대값 관리하기 좋은듯
     //private void FixedUpdate()
@@ -106,10 +113,10 @@ public class Player : MonoBehaviour
     {
         //입력 방향에따라 스프라이트 방향 설정
 
-        if(_controller.hasMoveInput)
+        if (_controller.hasMoveInput)
         {
             _pawnAnimator.SetBool("Anim_IsRunning", true);
-            if (_moveComponent.dir == Direction.Left)
+            if (moveComponent.dir == Direction.Left)
             {
                 _pawnSprite.transform.localScale = new Vector2(-curLocScale.x, curLocScale.y);
             }
@@ -132,7 +139,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (_moveComponent.isGrounded)
+        if (moveComponent.isGrounded)
         {
             _pawnAnimator.SetBool("Anim_IsGrounded", true);
             isJumping = false;
@@ -142,9 +149,17 @@ public class Player : MonoBehaviour
             _pawnAnimator.SetBool("Anim_IsGrounded", false);
         }
         //상태 지속 시간을 코드에서 관리
-        if(_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
-        if(_stunTime > 0f) { _stunTime -= Time.deltaTime; }
-        if(_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
+        if (_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
+        if (_stunTime > 0f)
+        {
+            _stunTime -= Time.deltaTime;
+            _pawnAnimator.SetBool("Anim_IsStun", true);
+        }
+        else
+        {
+            _pawnAnimator.SetBool("Anim_IsStun", false);
+        }
+        if (_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
         else { continuableAttackCount = 0; }
     }
 
@@ -167,7 +182,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        _attackingTime = .5f;
+        _attackingTime = .4f;
         if (attackDir.y > .7f)
         {
             continuableAttackCount = 0;
@@ -199,7 +214,7 @@ public class Player : MonoBehaviour
 
     public void OnAnimationAttackEnd()
     {
-        if(isPendingAttack)
+        if (isPendingAttack)
         {
             isPendingAttack = false;
             Attack(_controller.GetAttackDir());
@@ -211,36 +226,7 @@ public class Player : MonoBehaviour
     }
 
     //Collisions
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            Damaged(10f);
-        }
 
-        
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-    }
-
-    public void Damaged(float damage)
-    {
-        hp -= damage;
-
-        _stunTime = .3f;
-        _invincibleTime = .3f;
-        if (hp < 0f)
-        {
-            _pawnAnimator.SetTrigger("Anim_Dead");
-            _pawnAnimator.SetBool("Anim_IsDead", true);
-            isDead = true;
-        }
-        else
-        {
-            _pawnAnimator.SetTrigger("Anim_Damaged");
-        }
-    }
     //이건 쓰레기임 뭐에 대한 충돌 검사를 해도 충돌검사를 한번하고 말기 때문
     //private void OnTriggerStay2D(Collider2D collision)
     //{
@@ -268,32 +254,32 @@ public class Player : MonoBehaviour
 
     public void StartJump()
     {
-        _moveComponent.StartJump();
+        moveComponent.StartJump();
         isJumping = true;
         _pawnAnimator.SetBool("Anim_IsGrounded", false);
         _pawnAnimator.SetTrigger("Anim_Jump");
     }
     public void EndJump()
     {
-        _moveComponent.EndJump();
+        moveComponent.EndJump();
     }
 
     public void Dodge()
     {
         _pawnAnimator.SetTrigger("Anim_Dodge");
         _invincibleTime = .25f;
-        _moveComponent.Dash();
+        moveComponent.Dash();
     }
 
     public void Move(Vector2 input)
     {
-        if(IsStuned())
+        if (IsStuned())
         {
-            _moveComponent.MovementUpdate(Vector2.zero);
+            moveComponent.MovementUpdate(Vector2.zero);
         }
         else
         {
-            _moveComponent.MovementUpdate(input);
+            moveComponent.MovementUpdate(input);
         }
     }
 
@@ -335,7 +321,7 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="equipIndex"></param>
     /// <returns></returns>
-    public CharmInstance? EquipUnequipCharm(int equipIndex)
+    public CharmInstance EquipUnequipCharm(int equipIndex)
     {
         //만약 장착템이 있으면 장착 해제 후 해제한 아이템 반환
         CharmInstance selectedCharm = _equippedCharms[equipIndex];
@@ -377,7 +363,7 @@ public class Player : MonoBehaviour
             }
             return selectedCharm;
         }
-        return null;    
+        return null;
     }
 
     public CharmInstance CharmAt(int charmIndex)
@@ -392,9 +378,9 @@ public class Player : MonoBehaviour
 
     public bool IsItemEquipped(CharmInstance currentCharm)
     {
-        CharmInstance foundItem = Array.Find(_equippedCharms, x =>  x == currentCharm );
+        CharmInstance foundItem = Array.Find(_equippedCharms, x => x == currentCharm);
         return (foundItem != null) ? true : false;
-        
+
     }
 
 
@@ -416,24 +402,24 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AttackKnockback(Collider2D other)
+    private void AttackKnockback(Collider2D other)
     {
 
         //enemy,ground,spike
-        if(other.CompareTag("Spike"))
+        if (other.CompareTag("Spike"))
         {
             _attackDir = _controller.GetAttackDir();
-            _moveComponent.KnockBack(-_attackDir, 30f);
+            moveComponent.KnockBack(-_attackDir, 30f);
         }
-        else if(other.CompareTag("Ground"))
+        else if (other.CompareTag("Ground"))
         {
             _attackDir = _controller.GetAttackDir();
-            _moveComponent.KnockBack(-_attackDir, 10f);
+            moveComponent.KnockBack(-_attackDir, 10f);
         }
-        else if(other.CompareTag("Enemy"))
+        else if (other.CompareTag("Enemy"))
         {
             _attackDir = _controller.GetAttackDir();
-            _moveComponent.KnockBack(-_attackDir, 15f);
+            moveComponent.KnockBack(-_attackDir, 15f);
         }
     }
 
@@ -444,5 +430,72 @@ public class Player : MonoBehaviour
     private bool IsStuned()
     {
         return _stunTime > 0f;
+    }
+
+    float IFightable.GetHp()
+    {
+        return combatComponent.GetHp();
+    }
+
+    void IFightable.TakeDamage(float damage, Vector2 Attackerpos)
+    {
+
+        //invincible(damaged or dashing)
+        if (_invincibleTime > 0f) { return; }
+        combatComponent.TakeDamage(Mathf.Ceil((damage / damagePerSlot)));
+        hud.UpdateUi();
+        if (combatComponent.IsDead())
+        {
+            _pawnAnimator.SetTrigger("Anim_Dead");
+            _pawnAnimator.SetBool("Anim_IsDead", true);
+            isDead = true;
+        }
+        else
+        {
+            _pawnAnimator.SetTrigger("Anim_Damaged");
+            _stunTime = .6f;
+            _invincibleTime = 1f;
+        }
+
+    }
+
+    void IFightable.DealFixedDamage(IFightable target, float damage)
+    {
+        target.TakeDamage((int)(damage), transform.position);
+    }
+
+    void IFightable.DealDamage(IFightable target, float damage)
+    {
+        target.TakeDamage(damage, transform.position);
+    }
+
+    public void AddCoin(int count)
+    {
+        coinCount += count;
+        hud.UpdateUi();
+    }
+
+    public int GetMoney()
+    {
+        return coinCount;
+    }
+
+    public void AddMp(float value)
+    {
+        mp += value;
+        hud.UpdateUi();
+    }
+    public float GetMp()
+    {
+        return mp;
+    }
+
+    public void OnAttackSuccess(Collider2D collision)
+    {
+        AttackKnockback(collision);
+        if (collision.CompareTag("Enemy"))
+        {
+            AddMp(15.0f);
+        }
     }
 }

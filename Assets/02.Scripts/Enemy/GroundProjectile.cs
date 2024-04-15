@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -29,7 +30,9 @@ public class GroundProjectile : MonoBehaviour
     {
         _time += Time.fixedDeltaTime;
         float calcTime = _time * 2f;
-        _rb.velocity = new Vector2(Mathf.Min( Mathf.Pow(calcTime, 3f) * 5f , 30f ), 0f);
+        float powTime = Mathf.Pow(calcTime, 3f);
+        _rb.velocity = Mathf.Min(powTime * 5f , 30f ) * transform.right;
+        transform.localScale = new Vector3(Mathf.Min(powTime * 3f, 1f),1f,1f);
         Collider2D hit = Physics2D.OverlapCircle(_groundCheckPos.position, .5f, LayerMask.GetMask("Ground"));
         if(hit == null)
         {
@@ -40,13 +43,5 @@ public class GroundProjectile : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawSphere(_groundCheckPos.position, .5f);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.gameObject.CompareTag("Player"))
-        {
-            collision.gameObject.GetComponent<Player>().Damaged(20f);
-        }
     }
 }

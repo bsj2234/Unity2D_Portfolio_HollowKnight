@@ -33,12 +33,6 @@ public class FalseKnightIdle : StateMachineBehaviour
                 case FalseKnightState.Rampage:
                     animator.SetTrigger("Rampage");
                     break;
-                case FalseKnightState.Stun:
-                    animator.SetTrigger("Stun");
-                    break;
-                case FalseKnightState.Dead:
-                    animator.SetTrigger("Dead");
-                    break;
                 default:
                     break;
             }
