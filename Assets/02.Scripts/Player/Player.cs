@@ -38,8 +38,6 @@ public class Player : Character, IFightable
     Vector2 curLocScale;
 
     //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
-
-    private DynamicInventory inventory;
     private CharmInstance[] _equippedCharms = new CharmInstance[6];
     public CharmData debugCharm;
     // Wow
@@ -85,8 +83,6 @@ public class Player : Character, IFightable
         Assert.IsNotNull(_rigidbody);
         Assert.IsNotNull(_pawnSprite);
         Assert.IsNotNull(_pawnAnimator);
-
-        inventory = new DynamicInventory();
 
         _equippedCharms[0] = new CharmInstance(debugCharm);
     }
@@ -182,7 +178,7 @@ public class Player : Character, IFightable
         {
             return;
         }
-        _attackingTime = .4f;
+        _attackingTime = .3f;
         if (attackDir.y > .7f)
         {
             continuableAttackCount = 0;
@@ -288,9 +284,16 @@ public class Player : Character, IFightable
         //playerMiniMap.ExposePlayer(true);
     }
 
-    public void AddItem(ItemInstance item)
+    public void AddItem(CharmInstance item)
     {
-        inventory.AddItem(item);
+        for(int i = 0; i < _charmInventory.Length; i++)
+        {
+            if(_charmInventory[i] == null)
+            {
+                _charmInventory[i] = item;
+                break;
+            }
+        }
     }
 
     public void TryInteract()
@@ -409,7 +412,7 @@ public class Player : Character, IFightable
         if (other.CompareTag("Spike"))
         {
             _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 15f);
+            moveComponent.KnockBack(-_attackDir, 20f);
         }
         else if (other.CompareTag("Ground"))
         {

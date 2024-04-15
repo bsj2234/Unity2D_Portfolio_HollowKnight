@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class InstanceItemContainer : MonoBehaviour
 {
-    public ItemInstance item;
+    public CharmInstance item;
 
-    public ItemInstance TakeItem()
+    public CharmInstance TakeItem()
     {
         Destroy(gameObject);
         return item;

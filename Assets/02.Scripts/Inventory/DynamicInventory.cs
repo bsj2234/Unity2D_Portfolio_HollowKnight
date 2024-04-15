@@ -6,9 +6,9 @@ using UnityEngine;
 public class DynamicInventory : ScriptableObject
 {
     public int maxItems = 10;
-    public List<ItemInstance> items = new List<ItemInstance>();
+    public List<CharmInstance> items = new List<CharmInstance>();
 
-    public bool AddItem(ItemInstance itemToAdd)
+    public bool AddItem(CharmInstance itemToAdd)
     {
         //같은 아이템이 있으면 그 수만 추가
         //Todo 나중에 칸별로 최대 아이템 제한
@@ -17,11 +17,11 @@ public class DynamicInventory : ScriptableObject
             if (items[i] == itemToAdd)
             {
                 items[i] = itemToAdd;
-                Debug.Log($"ItemAdded {itemToAdd.itemType.itemName}");
+                Debug.Log($"ItemAdded {itemToAdd.CharmType.ItemName}");
                 foreach (var item in items)
                 {
 
-                    Debug.Log($"Has: {itemToAdd.itemType.itemName}");
+                    Debug.Log($"Has: {itemToAdd.CharmType.ItemName}");
                 }
                 return true;
             }
@@ -31,11 +31,11 @@ public class DynamicInventory : ScriptableObject
         if (items.Count < maxItems)
         {
             items.Add(itemToAdd);
-            Debug.Log($"ItemAdded {itemToAdd.itemType.itemName}");
+            Debug.Log($"ItemAdded {itemToAdd.CharmType.ItemName}");
             foreach (var item in items)
             {
 
-                Debug.Log($"Has: {itemToAdd.itemType.itemName}");
+                Debug.Log($"Has: {itemToAdd.CharmType.ItemName}");
             }
             return true;
         }

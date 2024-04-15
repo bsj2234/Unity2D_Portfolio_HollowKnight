@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 public class Chest : MonoBehaviour, IInteractable
 {
     //사용하면 
-    public ItemData Item;
+    public CharmData Item;
     private Animator _animator;
     private bool _collected = false;
 
@@ -15,10 +15,10 @@ public class Chest : MonoBehaviour, IInteractable
         _animator = transform.GetComponentInChildren<Animator>();
         Assert.IsNotNull( _animator );
     }
-    void IInteractable.Interact(Player player)
+    public void Interact(Player player)
     {
         if(_collected) return;
-        player.AddItem(new ItemInstance(Item));
+        player.AddItem(new CharmInstance(Item));
         _animator.SetTrigger("Open");
         _collected = true;
     }

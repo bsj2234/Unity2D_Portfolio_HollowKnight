@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class DestructOnTrigger : MonoBehaviour
 {
+    public GameObject OffGameObject;
     private bool destructed = false;
 
-    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         StartCoroutine(DestructTimer());
@@ -19,6 +19,6 @@ public class DestructOnTrigger : MonoBehaviour
     private void Destruct()
     {
         destructed = true;
-        gameObject.SetActive(false);
+        OffGameObject.SetActive(false);
     }
 }
