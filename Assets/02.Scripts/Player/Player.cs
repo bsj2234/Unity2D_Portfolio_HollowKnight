@@ -432,12 +432,12 @@ public class Player : Character, IFightable
         return _stunTime > 0f;
     }
 
-    float IFightable.GetHp()
+    public float GetHp()
     {
         return combatComponent.GetHp();
     }
 
-    void IFightable.TakeDamage(float damage, Vector2 Attackerpos)
+    public void TakeDamage(float damage, Vector2 Attackerpos)
     {
 
         //invincible(damaged or dashing)
@@ -459,12 +459,13 @@ public class Player : Character, IFightable
 
     }
 
-    void IFightable.DealFixedDamage(IFightable target, float damage)
+    //IFightable
+    public void DealFixedDamage(IFightable target, float damage)
     {
         target.TakeDamage((int)(damage), transform.position);
     }
 
-    void IFightable.DealDamage(IFightable target, float damage)
+    public void DealDamage(IFightable target, float damage)
     {
         target.TakeDamage(damage, transform.position);
     }
