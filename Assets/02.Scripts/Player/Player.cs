@@ -262,9 +262,12 @@ public class Player : Character, IFightable
 
     public void Dodge()
     {
-        _pawnAnimator.SetTrigger("Anim_Dodge");
-        _invincibleTime = .25f;
-        moveComponent.Dash();
+        if(DashAbility)
+        {
+            _pawnAnimator.SetTrigger("Anim_Dodge");
+            _invincibleTime = .25f;
+            moveComponent.Dash();
+        }
     }
 
     public void Move(Vector2 input)
@@ -332,15 +335,8 @@ public class Player : Character, IFightable
         {
             _equippedCharms[equipIndex] = null;
             //그리고 아이템 인벤에 추가
-            for (int i = 0; i < _charmInventory.Length; i++)
-            {
-                //CharmInstance foundItem = Array.Find(_charmInventory, x => x == selectedCharm );
-                if (_charmInventory[i] == null)
-                {
-                    _charmInventory[i] = selectedCharm;
-                    break;
-                }
-            }
+            //CharmInstance foundItem = Array.Find(_charmInventory, x => x == selectedCharm );
+            AddItem(selectedCharm);
             return selectedCharm;
         }
         else
@@ -360,7 +356,7 @@ public class Player : Character, IFightable
                 if (_equippedCharms[i] == null)
                 {
                     _equippedCharms[i] = selectedCharm;
-                    _charmInventory[i] = null;
+                    _charmInventory[charmIndex] = null;
                     break;
                 }
             }
