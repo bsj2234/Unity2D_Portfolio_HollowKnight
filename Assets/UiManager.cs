@@ -24,8 +24,8 @@ public class UiManager : Singleton<UiManager>
 
     public void AllOff()
     {
-        inventoryUi.SetActive(false);
-        hudUi.SetActive(false);
+        inventoryUi.InventoryOff();
+        //hudUi.SetActive(false);
         shopUi.SetActive(false);
     }
 }

@@ -33,9 +33,17 @@ public class Player : Character, IFightable
 
     //체력
     private float hp = 4f;
+    private int initialMaxHp = 4;
+    private float maxHp = 4f;
     private float mp = 0f;
+    private float maxMp = 100f;
     //뒤집기용
     Vector2 curLocScale;
+
+    //아이템
+    private float item_Damage = 0f;
+    private float item_attackSpeed = 0f;
+    private float item_hitInvincible = 0f;
 
     //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
     private CharmInstance[] _equippedCharms = new CharmInstance[5];
@@ -160,27 +168,13 @@ public class Player : Character, IFightable
         if (_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
         else { continuableAttackCount = 0; }
     }
-
-
-    public Vector2 GetPlayerVelocity()
-    {
-        return _rigidbody.velocity;
-    }
-
-    public void SetDrag(float drag)
-    {
-        _rigidbody.drag = drag;
-    }
-
-
-
     public void Attack(Vector2 attackDir)
     {
         if (IsStuned() | IsAttacking())
         {
             return;
         }
-        _attackingTime = .3f;
+        _attackingTime = .3f - item_attackSpeed;
         if (attackDir.y > .7f)
         {
             continuableAttackCount = 0;
@@ -210,46 +204,6 @@ public class Player : Character, IFightable
         return (_attackingTime > 0f);
     }
 
-    public void OnAnimationAttackEnd()
-    {
-        if (isPendingAttack)
-        {
-            isPendingAttack = false;
-            Attack(_controller.GetAttackDir());
-        }
-        else
-        {
-            isAttacking = false;
-        }
-    }
-
-    //Collisions
-
-    //이건 쓰레기임 뭐에 대한 충돌 검사를 해도 충돌검사를 한번하고 말기 때문
-    //private void OnTriggerStay2D(Collider2D collision)
-    //{
-    //    if(_tryInteract)
-    //    {
-    //        //사용가능하면 사용
-    //        IInteractable interactable;
-
-    //        if (collision.gameObject.TryGetComponent<IInteractable>(out interactable))
-    //        {
-    //            interactable.Interact(this);
-    //            _tryInteract = false;
-    //        }
-    //    }
-    //}
-
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("PlayerAttackCollider"))
-        {
-            return;
-        }
-    }
-
     public void StartJump()
     {
         moveComponent.StartJump();
@@ -264,7 +218,7 @@ public class Player : Character, IFightable
 
     public void Dodge()
     {
-        if (_currentCharmEffects.Contains("DashMaster"))
+        if (_currentCharmEffects.Contains("대시마스터"))
         {
             _pawnAnimator.SetTrigger("Anim_Dodge");
             _invincibleTime = .25f;
@@ -282,11 +236,6 @@ public class Player : Character, IFightable
         {
             moveComponent.MovementUpdate(input);
         }
-    }
-
-    internal void SetVisibleSelfOnMiniMap(bool v)
-    {
-        //playerMiniMap.ExposePlayer(true);
     }
 
     public void AddItem(CharmInstance item)
@@ -400,8 +349,13 @@ public class Player : Character, IFightable
             {
                 continue;
             }
-            _currentCharmEffects.Add(equippedCharm.CharmType.name);
+            _currentCharmEffects.Add(equippedCharm.CharmType.ItemName);
         }
+
+        maxHp = initialMaxHp + (_currentCharmEffects.Contains("허술한 심장") ? 2 : 0);
+        item_Damage = _currentCharmEffects.Contains("허술한 힘") ? 3f : 0f;
+        item_attackSpeed = _currentCharmEffects.Contains("빠른 참격") ? .5f : 0f;
+        item_hitInvincible = _currentCharmEffects.Contains("튼튼한 껍데기") ? .3f : 0f;
     }
 
     private void AttackKnockback(Collider2D other)
@@ -456,7 +410,7 @@ public class Player : Character, IFightable
         {
             _pawnAnimator.SetTrigger("Anim_Damaged");
             _stunTime = .6f;
-            _invincibleTime = 1f;
+            _invincibleTime = 1f + item_hitInvincible;
         }
 
     }
@@ -464,12 +418,12 @@ public class Player : Character, IFightable
     //IFightable
     public void DealFixedDamage(IFightable target, float damage)
     {
-        target.TakeDamage((int)(damage), transform.position);
+        target.TakeDamage((int)(damage + item_Damage) , transform.position);
     }
 
     public void DealDamage(IFightable target, float damage)
     {
-        target.TakeDamage(damage, transform.position);
+        target.TakeDamage(damage , transform.position);
     }
 
     public void AddCoin(int count)
