@@ -81,6 +81,10 @@ public class FalseKnight : Character, IFightable
     //무적 시간과 grounded 애니메이터 플래그 셋
     private void Update()
     {
+        if(state == FalseKnightState.Dead)
+        {
+            return;
+        }
         if (groundIgnoreTime > 0f)
         {
             groundIgnoreTime -= Time.deltaTime;
@@ -136,16 +140,22 @@ public class FalseKnight : Character, IFightable
         switch (Phase)
         {
             case 1:
-                _animator.SetTrigger("Dead");
+                _animator.SetTrigger("Groggy");
                 state = FalseKnightState.MainBody;
                 break;
             case 2:
-                _animator.SetTrigger("Dead");
+                _animator.SetTrigger("Groggy");
                 state = FalseKnightState.MainBody;
                 break;
             case 3:
-                _animator.SetTrigger("Dead");
+                _animator.SetTrigger("Groggy");
                 state = FalseKnightState.MainBody;
+                break;
+            case 4:
+                _animator.SetTrigger("Dead");
+                state = FalseKnightState.Dead;
+                ObjectSpawnManager.Instance.SpawnMoney(transform.position, 100);
+                Destroy(gameObject, 5f);
                 break;
         }
         Phase++;

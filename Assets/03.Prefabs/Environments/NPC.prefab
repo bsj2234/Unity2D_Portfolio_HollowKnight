@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4370040180873077118}
   - component: {fileID: 1544396809}
   - component: {fileID: 1544396808}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8676283572117181394}
   - component: {fileID: 6687962870086730964}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}

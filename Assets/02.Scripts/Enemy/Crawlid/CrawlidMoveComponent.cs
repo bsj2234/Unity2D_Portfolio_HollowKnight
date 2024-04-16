@@ -28,6 +28,7 @@ public class CrawlidMoveComponent : MonoBehaviour, IFightable
     private Collision2D _collision;
     public Rigidbody2D rb;
     private float _rotatedTime;
+    private bool _dead = false;
 
     private void Awake()
     {
@@ -44,6 +45,12 @@ public class CrawlidMoveComponent : MonoBehaviour, IFightable
     //다른방법 찾자
     public void MoveForward()
     {
+        if(_dead)
+        {
+            rb.velocity = Vector3.zero;
+            rb.gravityScale = 1f;
+            return;
+        }
         //gravity
         rb.velocity = 3f * -transform.up;
         //check edge
@@ -105,8 +112,9 @@ public class CrawlidMoveComponent : MonoBehaviour, IFightable
     private void Dead()
     {
         _animator.SetTrigger("Anim_Dead");
+        Destroy(gameObject, 5f);
+        _dead = true;
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("PlayerAttackCollider"))
