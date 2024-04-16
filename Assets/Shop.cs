@@ -31,9 +31,9 @@ public class Shop : MonoBehaviour, IInteractable
         if (ShopInventory[index].Sold)
             return null;
         CharmInstance currentItem = ShopInventory[index].CharmInstance;
-
         ShopInventory[index].Sold = true;
         player.AddItem(currentItem);
+        player.AddCoin(-ShopInventory[index].ItemCost);
         return currentItem;
     }
 }
