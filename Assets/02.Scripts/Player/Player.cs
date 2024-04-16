@@ -64,6 +64,9 @@ public class Player : Character, IFightable
     public ShopUi shopUi;
     private float _knockBackTime = 0f;
 
+    //Respawn
+    public RespawnPoint _respawnPoint;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -318,6 +321,11 @@ public class Player : Character, IFightable
             return selectedCharm;
         }
         return null;
+    }
+
+    public void UpdateRespawnPoint(RespawnPoint respawn)
+    {
+        _respawnPoint = respawn;
     }
 
     public CharmInstance CharmAt(int charmIndex)
