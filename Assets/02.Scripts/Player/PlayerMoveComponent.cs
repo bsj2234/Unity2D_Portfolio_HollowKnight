@@ -81,7 +81,8 @@ public class PlayerMoveComponent : MonoBehaviour
         //대쉬시 무중력
         if (_DashTime > 0f)
         {
-            _rigidbody.velocity = new Vector2(MaxSpeed*1.5f, 0f);
+            float dashDir = (dir == Direction.Left ? -1f : 1f);
+            _rigidbody.velocity = new Vector2(MaxSpeed * 2f * dashDir, 0f);
         }
         if(!IsMovable())
         {
@@ -93,11 +94,14 @@ public class PlayerMoveComponent : MonoBehaviour
         if (_controller.hasMoveInput)
         {
             float inputDir = Mathf.Sign(moveInput.x);
-            Debug.Log(inputDir);
             float velocityDir = Mathf.Sign(curVelocity.x);
             float velocityMag = Mathf.Abs(curVelocity.x);
             float desierdMag = MaxSpeed;
             float resultMag = desierdMag - velocityMag;
+
+            //입력있으면 그쪽을 봄
+            if (inputDir == -1) dir = Direction.Left;
+            else if (inputDir == 1) dir = Direction.Right;
 
             //입력과 진행 방향이 같으면
             //최대속도를 넘었을 경우에는 아무것도안함
@@ -126,8 +130,6 @@ public class PlayerMoveComponent : MonoBehaviour
             {
                 _rigidbody.AddForce(new Vector2(-velocityDir * MaxSpeed, 0f), ForceMode2D.Impulse);
             }
-            Debug.Log((resultMag * inputDir).ToString("F3"));
-            dir = (moveInput.x < 0f) ? Direction.Left : Direction.Right;
         }
         //입력이 없으면
         //최대속보다빠르면 가능한속도씩빼다가
@@ -209,8 +211,7 @@ public class PlayerMoveComponent : MonoBehaviour
     {
         _movableCoolDown = .25f;
         _DashTime = .25f;
-        _rigidbody.velocity = (dir == Direction.Left) ?
-            Vector2.left * _dashSpeed : Vector2.right * _dashSpeed;
+        //_rigidbody.velocity = (dir == Direction.Left) ? Vector2.left * _dashSpeed : Vector2.right * _dashSpeed;
         
     }
 

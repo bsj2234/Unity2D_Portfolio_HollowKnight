@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -61,6 +62,7 @@ public class Player : Character, IFightable
     public int coinCount = 0;
 
     public ShopUi shopUi;
+    private float _knockBackTime = 0f;
 
 
     // Start is called before the first frame update
@@ -167,6 +169,7 @@ public class Player : Character, IFightable
         }
         if (_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
         else { continuableAttackCount = 0; }
+        if (_knockBackTime > 0f) { _knockBackTime -= Time.deltaTime; }
     }
     public void Attack(Vector2 attackDir)
     {
@@ -358,29 +361,43 @@ public class Player : Character, IFightable
         item_hitInvincible = _currentCharmEffects.Contains("튼튼한 껍데기") ? .3f : 0f;
     }
 
-    private void AttackKnockback(Collider2D other)
+    private void AttackKnockback(Collider2D attackCol, Collider2D otherCol)
     {
-
+        if(_knockBackTime > 0f)
+            return;
+        List<Collider2D> result = new List<Collider2D>();
+        result.Clear();
+        attackCol.OverlapCollider(new ContactFilter2D().NoFilter(), result);
+        //Todo 제대로 만들기
+        string[] tags = new string[result.Count];
+        for (int i =0; i < result.Count; i++)
+        {
+            tags[i] = result[i].tag;
+        }
         //enemy,ground,spike
-        if (other.CompareTag("Spike"))
+        if (tags.Contains("Spike"))
         {
             _attackDir = _controller.GetAttackDir();
             moveComponent.KnockBack(-_attackDir, 20f);
+            _knockBackTime = .1f;
         }
-        else if (other.CompareTag("Ground"))
+        else if (tags.Contains("Enemy"))
+        {
+            _attackDir = _controller.GetAttackDir();
+            moveComponent.KnockBack(-_attackDir, 20f);
+            _knockBackTime = .1f;
+        }
+        else if (tags.Contains("Obstacle"))
         {
             _attackDir = _controller.GetAttackDir();
             moveComponent.KnockBack(-_attackDir, 15f);
+            _knockBackTime = .1f;
         }
-        else if (other.CompareTag("Enemy"))
-        {
-            _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 15f);
-        }
-        else if (other.CompareTag("Ground"))
+        else if (tags.Contains("Ground"))
         {
             _attackDir = _controller.GetAttackDir();
             moveComponent.KnockBack(-_attackDir, 10f);
+            _knockBackTime = .1f;
         }
     }
 
@@ -452,9 +469,9 @@ public class Player : Character, IFightable
         return mp;
     }
 
-    public void OnAttackSuccess(Collider2D collision)
+    public void OnAttackSuccess(Collider2D attackCol, Collider2D collision)
     {
-        AttackKnockback(collision);
+        AttackKnockback(attackCol ,collision);
         if (collision.CompareTag("Enemy"))
         {
             AddMp(15.0f);
