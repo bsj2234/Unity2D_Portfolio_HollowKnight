@@ -23437,7 +23437,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shopCharms: []
   buttonList: []
-  _shop: {fileID: 1544396808}
+  _shop: {fileID: 0}
   _itemPrefab: {fileID: 3455441230006188309, guid: 40d9cae7f0e53e843a85999b38fed6b4, type: 3}
   buttonParent: {fileID: 1896997813}
   ShopUiGameObject: {fileID: 1089257045}
@@ -26525,17 +26525,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5891377135173130263, guid: 4773b22a550d57247b237a4c4867bfaf, type: 3}
   m_PrefabInstance: {fileID: 1972858316}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1544396808 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1544396808, guid: c8c759790d0afee45afc1cbcc3ad0184, type: 3}
-  m_PrefabInstance: {fileID: 6458397693510197111}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 789c69b7c3f7765419ca3b24c8502368, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1553173089
 PrefabInstance:
   m_ObjectHideFlags: 0

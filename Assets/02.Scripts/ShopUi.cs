@@ -13,7 +13,8 @@ public class ShopUi : MonoBehaviour
     public Transform buttonParent;
     public GameObject ShopUiGameObject;
     public void Init(Shop shop)
-    {
+    { 
+        _shop = shop;
         shopCharms = shop.ShopInventory;
     }
 
