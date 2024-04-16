@@ -8,6 +8,7 @@ TagManager:
   - PlayerAttackCollider
   - Spike
   - Ground
+  - Obstacle
   layers:
   - Default
   - TransparentFX

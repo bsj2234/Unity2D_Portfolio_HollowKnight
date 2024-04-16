@@ -44,6 +44,9 @@ public class PlayerMoveComponent : MonoBehaviour
     private float _movableCoolDown = 0f;
     private float _DashTime = 0f;
 
+
+    private bool dead = false;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -57,6 +60,8 @@ public class PlayerMoveComponent : MonoBehaviour
 
     private void Update()
     {
+        if(dead)
+            return;
         //set cooldown
         if(_movableCoolDown >= 0f)
         {
@@ -76,6 +81,7 @@ public class PlayerMoveComponent : MonoBehaviour
     //최대속이 더 빠르면 마이너스로돌려주긴 해야하는데
     public void MovementUpdate(Vector2 moveInput)
     {
+        if(GameManager.Instance.Player.isDead) return;
         Vector2 curVelocity = _rigidbody.velocity;
 
         //대쉬시 무중력
@@ -138,7 +144,6 @@ public class PlayerMoveComponent : MonoBehaviour
         //충분히 적으면 정지
         else
         {
-            Debug.Log(("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"));
             float velocityX = _rigidbody.velocity.x;
             float velocityMag = Mathf.Abs(_rigidbody.velocity.x);
             float DirX = Mathf.Sign(velocityX);
@@ -193,7 +198,8 @@ public class PlayerMoveComponent : MonoBehaviour
 
     public void StartJump()
     {
-        if(isGrounded == true)
+        if (dead) return;
+        if (isGrounded == true)
         {
             _rigidbody.AddForce(JumpPower * Vector2.up, ForceMode2D.Impulse);
             isGrounded = false;
@@ -209,6 +215,7 @@ public class PlayerMoveComponent : MonoBehaviour
 
     public void Dash()
     {
+        if(dead) return;
         _movableCoolDown = .25f;
         _DashTime = .25f;
         //_rigidbody.velocity = (dir == Direction.Left) ? Vector2.left * _dashSpeed : Vector2.right * _dashSpeed;
@@ -245,11 +252,10 @@ public class PlayerMoveComponent : MonoBehaviour
             transform.rotation = right;
         }
     }
-}
-public static class VectorExtender
-{
-    public static bool IsOpposite(this Vector2 v1, Vector2 v2)
+
+    public void Dead()
     {
-        return (Vector2.Dot(v1, v2) < 0f) ? true : false;
+        _rigidbody.velocity = Vector2.zero;
+        dead = true;
     }
 }

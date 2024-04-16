@@ -123,7 +123,7 @@ public class Player : Character, IFightable
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
-
+        if(isDead) return;
         if (_controller.hasMoveInput)
         {
             _pawnAnimator.SetBool("Anim_IsRunning", true);
@@ -176,6 +176,7 @@ public class Player : Character, IFightable
     }
     public void Attack(Vector2 attackDir)
     {
+        if (dead) return;
         if (IsStuned() | IsAttacking())
         {
             return;
@@ -435,6 +436,7 @@ public class Player : Character, IFightable
             _pawnAnimator.SetTrigger("Anim_Dead");
             _pawnAnimator.SetBool("Anim_IsDead", true);
             isDead = true;
+            moveComponent.Dead();
         }
         else
         {
@@ -448,7 +450,14 @@ public class Player : Character, IFightable
     //IFightable
     public void DealFixedDamage(IFightable target, float damage)
     {
+        //Todo AttackCollider 끼리 닿으면 null
+        if(target == null)
+        {
+            Debug.Log("Null");
+            return;
+        }
         target.TakeDamage((int)(damage + item_Damage) , transform.position);
+        
     }
 
     public void DealDamage(IFightable target, float damage)

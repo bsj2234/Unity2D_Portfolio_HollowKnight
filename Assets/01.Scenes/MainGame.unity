@@ -1789,6 +1789,7 @@ MonoBehaviour:
   damagePerSlot: 30
   coinCount: 15
   shopUi: {fileID: 1089257051}
+  _respawnPoint: {fileID: 0}
 --- !u!96 &164682485
 TrailRenderer:
   serializedVersion: 2
@@ -26638,7 +26639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 636405985461026085, guid: aac75b0175aac3040b9007a3b8168998, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aac75b0175aac3040b9007a3b8168998, type: 3}
