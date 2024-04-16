@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -41,7 +42,7 @@ public class PlayerMoveComponent : MonoBehaviour
     public float _dashSpeed = 10f;
     private bool _dashing = false;
     private float _movableCoolDown = 0f;
-    private float _zeroGravityTime = 0f;
+    private float _DashTime = 0f;
 
     private void Awake()
     {
@@ -60,41 +61,103 @@ public class PlayerMoveComponent : MonoBehaviour
         if(_movableCoolDown >= 0f)
         {
             _movableCoolDown -= Time.deltaTime;
-            _zeroGravityTime -= Time.deltaTime;
+            _DashTime -= Time.deltaTime;
         }
     }
 
     //넉백 어쩔건데
     //맞으면 뒤로 날라가야지
     //근데지금 매프레임마다 입력값에 움직임을 종속시킴
-    //맞을때문 풀어?
+    //맞을때 풀어? 움직일 수가 없어
+    //경직을 아주 약간만 넣어볼까
+    //add 임펄스로 넣자
+    //같은 방향일때 최대속도보다 크면 넣지 않기
+    //최대속도에서 현재속도를 뺸 값만 넣기
+    //최대속이 더 빠르면 마이너스로돌려주긴 해야하는데
     public void MovementUpdate(Vector2 moveInput)
     {
         Vector2 curVelocity = _rigidbody.velocity;
 
         //대쉬시 무중력
-        if (_zeroGravityTime > 0f)
+        if (_DashTime > 0f)
         {
-            _rigidbody.gravityScale = 0f;
-            _rigidbody.velocity = new Vector2(curVelocity.x, 0f);
-        }
-        else
-        {
-            _rigidbody.gravityScale = initailGravity;
+            _rigidbody.velocity = new Vector2(MaxSpeed*1.5f, 0f);
         }
         if(!IsMovable())
         {
             return;
         }
         moveInput.y = 0f;
+        //입력이있으면
+
         if (_controller.hasMoveInput)
         {
-            _rigidbody.velocity = new Vector2(moveInput.x * MaxSpeed, _rigidbody.velocity.y);
+            float inputDir = Mathf.Sign(moveInput.x);
+            Debug.Log(inputDir);
+            float velocityDir = Mathf.Sign(curVelocity.x);
+            float velocityMag = Mathf.Abs(curVelocity.x);
+            float desierdMag = MaxSpeed;
+            float resultMag = desierdMag - velocityMag;
+
+            //입력과 진행 방향이 같으면
+            //최대속도를 넘었을 경우에는 아무것도안함
+            //방향이 다르면 그냥 뒤돔
+            //입력이 없으면
+
+
+            //impulse 처럼 가속도가 빠르면 문제가 있다
+            // 범위를 빠르게 제어하려면 정확한 값을 계산할 수 있게 더하거나 뺴 주고
+            //velocity로 값을 정확히 지정해줘야 한다.
+            //velocity를 직접 지정하면 전에 있던 
+            if (inputDir == velocityDir)
+            {
+                if(velocityMag > MaxSpeed + .1f)
+                {
+                    _rigidbody.AddForce(new Vector2(-velocityDir * (velocityMag - MaxSpeed), 0f), ForceMode2D.Impulse);
+
+
+                }
+                else
+                {
+                    _rigidbody.AddForce(new Vector2(velocityDir * (MaxSpeed - velocityMag), 0f), ForceMode2D.Impulse);
+                }
+            }
+            else
+            {
+                _rigidbody.AddForce(new Vector2(-velocityDir * MaxSpeed, 0f), ForceMode2D.Impulse);
+            }
+            Debug.Log((resultMag * inputDir).ToString("F3"));
             dir = (moveInput.x < 0f) ? Direction.Left : Direction.Right;
         }
+        //입력이 없으면
+        //최대속보다빠르면 가능한속도씩빼다가
+        //최대속보다 작아지면
+        //아니면 현재속도만큼뺌
+        //충분히 적으면 정지
         else
         {
-            _rigidbody.velocity = new Vector2(0f, _rigidbody.velocity.y);
+            Debug.Log(("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"));
+            float velocityX = _rigidbody.velocity.x;
+            float velocityMag = Mathf.Abs(_rigidbody.velocity.x);
+            float DirX = Mathf.Sign(velocityX);
+            //최대속보다 크면 감속시키고
+            if (velocityMag > MaxSpeed + .1f)
+            {
+                _rigidbody.AddForce(new Vector2(MaxSpeed * -DirX, 0f), ForceMode2D.Impulse);
+            }
+            //작으면 
+            else
+            {
+                //멈춰
+                if(velocityX >= .1f)
+                {
+                    _rigidbody.AddForce(new Vector2(-velocityX, 0f), ForceMode2D.Impulse);
+                }
+                else
+                {
+                    _rigidbody.velocity = new Vector2(0f , curVelocity.y);
+                }
+            }
         }
     }
 
@@ -145,7 +208,7 @@ public class PlayerMoveComponent : MonoBehaviour
     public void Dash()
     {
         _movableCoolDown = .25f;
-        _zeroGravityTime = .25f;
+        _DashTime = .25f;
         _rigidbody.velocity = (dir == Direction.Left) ?
             Vector2.left * _dashSpeed : Vector2.right * _dashSpeed;
         
@@ -153,19 +216,12 @@ public class PlayerMoveComponent : MonoBehaviour
 
     public void KnockBack(Vector2 knockBackDir, float knockbackSpeed)
     {
-        _movableCoolDown = .25f;
-        //StartCoroutine(BlockMoveForSeconds())
-        float knockbackRatio = 1f;
-        if (knockBackDir == Vector2.down)
+        float knockbackRatio = 2f;
+        if (knockBackDir == Vector2.up)
         {
-            knockbackRatio = 1.5f;
+            knockbackRatio = 1f;
         }
-        _rigidbody.velocity = knockBackDir * knockbackSpeed * knockbackRatio;
-    }
-    public void KnockBackUp(Direction knockBackDir, float knockbackSpeed)
-    {
-        //StartCoroutine(BlockMoveForSeconds())
-        _rigidbody.AddForce(Vector2.up * knockbackSpeed);
+        _rigidbody.AddForce(knockBackDir * knockbackSpeed * knockbackRatio,ForceMode2D.Impulse);
     }
 
     private void BlockMoveForSeconds(float time)

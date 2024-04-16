@@ -370,9 +370,14 @@ public class Player : Character, IFightable
         else if (other.CompareTag("Ground"))
         {
             _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 10f);
+            moveComponent.KnockBack(-_attackDir, 15f);
         }
         else if (other.CompareTag("Enemy"))
+        {
+            _attackDir = _controller.GetAttackDir();
+            moveComponent.KnockBack(-_attackDir, 15f);
+        }
+        else if (other.CompareTag("Ground"))
         {
             _attackDir = _controller.GetAttackDir();
             moveComponent.KnockBack(-_attackDir, 10f);

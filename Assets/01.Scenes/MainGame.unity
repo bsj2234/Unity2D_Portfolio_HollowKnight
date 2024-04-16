@@ -26638,7 +26638,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 636405985461026085, guid: aac75b0175aac3040b9007a3b8168998, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aac75b0175aac3040b9007a3b8168998, type: 3}
@@ -29793,6 +29793,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4266672416367815051, guid: 8abd28fae5df58241b6248fa18222cd5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.09
+      objectReference: {fileID: 0}
     - target: {fileID: 5114688500873830828, guid: 8abd28fae5df58241b6248fa18222cd5, type: 3}
       propertyPath: m_Name
       value: GeoDeposits (3)
@@ -31001,7 +31005,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3161350205909634339, guid: 8abd28fae5df58241b6248fa18222cd5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.3
+      value: -5.17
       objectReference: {fileID: 0}
     - target: {fileID: 3161350205909634339, guid: 8abd28fae5df58241b6248fa18222cd5, type: 3}
       propertyPath: m_LocalPosition.z
