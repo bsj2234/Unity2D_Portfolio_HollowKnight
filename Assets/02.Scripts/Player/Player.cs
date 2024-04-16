@@ -176,7 +176,7 @@ public class Player : Character, IFightable
     }
     public void Attack(Vector2 attackDir)
     {
-        if (dead) return;
+        if (isDead) return;
         if (IsStuned() | IsAttacking())
         {
             return;
@@ -213,6 +213,7 @@ public class Player : Character, IFightable
 
     public void StartJump()
     {
+        if (isDead) return;
         moveComponent.StartJump();
         isJumping = true;
         _pawnAnimator.SetBool("Anim_IsGrounded", false);
@@ -259,6 +260,7 @@ public class Player : Character, IFightable
 
     public void TryInteract()
     {
+        if (isDead) return;
         //콜리전 체크에서 검사하고 싶어서...
         //_tryInteract = true;
         Collider2D[] allOverlap = Physics2D.OverlapCircleAll(transform.position, 5f);
