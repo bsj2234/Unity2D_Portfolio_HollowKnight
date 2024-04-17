@@ -15,7 +15,6 @@ public class Player : Character, IFightable
 
     public PlayerMoveComponent moveComponent;
 
-    public CombatComponent combatComponent;
     //폰상태
     public bool isJumping = false;
     public bool isDead = false;
@@ -33,11 +32,11 @@ public class Player : Character, IFightable
     public float DodgeInvincibleTime = 0.5f;
 
     //체력
-    private float hp = 4f;
-    private int initialMaxHp = 4;
-    private float maxHp = 4f;
-    private float mp = 0f;
-    private float maxMp = 100f;
+    public float hp = 4f;
+    public int initialMaxHp = 4;
+    public float maxHp = 4f;
+    public float mp = 0f;
+    public float maxMp = 100f;
     //뒤집기용
     Vector2 curLocScale;
 
@@ -67,6 +66,8 @@ public class Player : Character, IFightable
     //Respawn
     public RespawnPoint _respawnPoint;
 
+    public GameObject HitEffect;
+    public GameObject DeadEffect;
 
     // Start is called before the first frame update
     void Awake()
@@ -423,28 +424,40 @@ public class Player : Character, IFightable
 
     public float GetHp()
     {
-        return combatComponent.GetHp();
+        return hp;
     }
 
     public void TakeDamage(float damage, Vector2 Attackerpos)
     {
-
+        if(isDead) return;
         //invincible(damaged or dashing)
         if (_invincibleTime > 0f) { return; }
-        combatComponent.TakeDamage(Mathf.Ceil((damage / damagePerSlot)));
+        hp-=Mathf.Ceil((damage / damagePerSlot));
         hud.RefreshAll();
-        if (combatComponent.IsDead())
+        if(hp <= 0f)
+        {
+            isDead = true;
+        }
+        if (isDead)
         {
             _pawnAnimator.SetTrigger("Anim_Dead");
             _pawnAnimator.SetBool("Anim_IsDead", true);
-            isDead = true;
             moveComponent.Dead();
+
+            DeadEffect.SetActive(false);
+            HitEffect.SetActive(false);
+            DeadEffect.SetActive(true);
+            HitEffect.SetActive(true);
         }
         else
         {
             _pawnAnimator.SetTrigger("Anim_Damaged");
+
             _stunTime = .6f;
             _invincibleTime = 1f + item_hitInvincible;
+
+            HitEffect.SetActive(false);
+            HitEffect.SetActive(true);
         }
 
     }
@@ -501,5 +514,32 @@ public class Player : Character, IFightable
     {
         shopUi.Init(shop);
         shopUi.SetActive(true);
+    }
+
+    public void SetSpawnPoint(RespawnPoint respawnPoint)
+    {
+        _respawnPoint = respawnPoint;
+    }
+
+    public void OnDeadAnimEvent()
+    {
+        Invoke("Respawn", 5f);
+        UiManager.Instance.DeadUiOn();
+    }
+
+    public void Respawn()
+    {
+        UiManager.Instance.DeadUiOff();
+        //reset
+        coinCount = 0;
+        hp = maxHp;
+        mp = 0f;
+        isDead = false;
+        _pawnAnimator.SetTrigger("Anim_Reset");
+        if(_respawnPoint != null)
+        {
+            transform.position = _respawnPoint.position;
+        }
+        hud.RefreshAll();
     }
 }

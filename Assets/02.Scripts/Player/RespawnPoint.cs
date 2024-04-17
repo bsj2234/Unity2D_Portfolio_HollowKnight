@@ -1,18 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class RespawnPoint : MonoBehaviour
+public class RespawnPoint : MonoBehaviour, IInteractable
 {
-    // Start is called before the first frame update
-    void Start()
+    public Vector2 position;
+    public GameObject InteractUi;
+    private void Awake()
     {
-        
+        position = (Vector2)transform.position + Vector2.up * .5f;
+    }
+    public void Interact(Player player)
+    {
+        player.SetSpawnPoint(this);
+        Debug.Log("RespawnSet");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.CompareTag("Player"))
+        {
+            InteractUi.SetActive(true);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            InteractUi.SetActive(false);
+        }
     }
 }

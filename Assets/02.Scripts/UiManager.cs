@@ -8,6 +8,7 @@ public class UiManager : Singleton<UiManager>
     public InventoryUi inventoryUi;
     public HudUi hudUi;
     public ShopUi shopUi;
+    public DeadUi deadUi;
 
     public void RefreshInventory()
     {
@@ -27,5 +28,14 @@ public class UiManager : Singleton<UiManager>
         inventoryUi.InventoryOff();
         //hudUi.SetActive(false);
         shopUi.SetActive(false);
+    }
+
+    public void DeadUiOn()
+    {
+        deadUi.DeadUiOn();
+    }
+    public void DeadUiOff()
+    {
+        deadUi.DeadUiOff();
     }
 }
