@@ -1,12 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.PlasticSCM.Editor.WebApi;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 public enum Direction { Left, Right ,Up, Down}
 public static class DirctionEval
@@ -27,11 +21,8 @@ public class PlayerMoveComponent : MonoBehaviour
 
     private PlayerController _controller;
     private Rigidbody2D _rigidbody;
-    private Vector2 inputVector = Vector2.zero;
     public float nonInputDrag = 10f;
     public float inAirDrag = 1f;
-
-    private float initailGravity = 0f;
 
     public float JumpPower = 20f;
 
@@ -40,11 +31,8 @@ public class PlayerMoveComponent : MonoBehaviour
     //LaterDo:나중에 가능하면 부드럽게 속도를 제한하는법도 생각해보자 공중에서는 컨트롤이 먹먹히지게
     public float MaxSpeed = 5f;
     public float _dashSpeed = 10f;
-    private bool _dashing = false;
     private float _movableCoolDown = 0f;
     private float _DashTime = 0f;
-
-
     private bool dead = false;
 
     private void Awake()
@@ -54,8 +42,6 @@ public class PlayerMoveComponent : MonoBehaviour
 
         Assert.IsNotNull(_rigidbody);
         Assert.IsNotNull(_controller);
-
-        initailGravity = _rigidbody.gravityScale;
     }
 
     private void Update()
@@ -258,4 +244,12 @@ public class PlayerMoveComponent : MonoBehaviour
         _rigidbody.velocity = Vector2.zero;
         dead = true;
     }
+
+    public void ResetMove()
+    {
+        dead = false;
+        isGrounded = true;
+        _movableCoolDown = 0f;
+        _DashTime = 0f;
+}
 }

@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     //나중에 get이나 set에 조건이 필요할떄 프로퍼티랑 SerializeField를 사용해서 프로퍼티화 하는게 좋지 않나?
     public bool hasMoveInput = false;
 
-    private bool _playerControl = true;
+    private bool _playerControlable = true;
 
 
 
@@ -34,25 +34,29 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_playerControl == false)
+        if (_playerControlable == false)
         { return; }
         _player.Move(moveDirInput);
     }
 
+    public void ResetControl()
+    {
+        hasMoveInput = false;
+    }
 
     //OnInput
     private void OnMove(InputValue inputValue)
     {
         if(GameManager.Instance.Player.isDead) { return; }
-        if (_playerControl == false)
+        if (_playerControlable == false)
         { return; }
         moveDirInput = inputValue.Get<Vector2>();
         hasMoveInput = Mathf.Abs(moveDirInput.x) > .1f;
     }
     private void OnJump(InputValue inputValue)
     {
-        if (GameManager.Instance.Player.isDead) { return; }
-        if (_playerControl == false)
+         if (GameManager.Instance.Player.isDead) { return; }
+        if (_playerControlable == false)
         { return; }
         if (inputValue.isPressed == true)
         {
@@ -66,7 +70,7 @@ public class PlayerController : MonoBehaviour
     private void OnAttack(InputValue inputValue)
     {
         if (GameManager.Instance.Player.isDead) { return; }
-        if (_playerControl == false)
+        if (_playerControlable == false)
         { return; }
         if (inputValue.isPressed == false)
         {
@@ -76,7 +80,7 @@ public class PlayerController : MonoBehaviour
     private void OnDodge(InputValue inputValue)
     {
         if (GameManager.Instance.Player.isDead) { return; }
-        if (_playerControl == false)
+        if (_playerControlable == false)
         { return; }
         if (inputValue.isPressed == true)
         {
@@ -87,7 +91,7 @@ public class PlayerController : MonoBehaviour
     private void OnInteract(InputValue inputValue)
     {
         if (GameManager.Instance.Player.isDead) { return; }
-        if (_playerControl == false)
+        if (_playerControlable == false)
         { return; }
         if(inputValue.isPressed != false)
         {
@@ -100,9 +104,9 @@ public class PlayerController : MonoBehaviour
         if (GameManager.Instance.Player.isDead) { return; }
         if (inputValue.isPressed != false)
         {
-            if(_playerControl)
+            if(_playerControlable)
             {
-                _playerControl = false;
+                _playerControlable = false;
                 UiManager.Instance.inventoryUi.InventoryOn();
             }
         }
@@ -112,7 +116,7 @@ public class PlayerController : MonoBehaviour
     {
         if(inputValue.isPressed != false)
         {
-            _playerControl = true;
+            _playerControlable = true;
             UiManager.Instance.AllOff();
         }
     }

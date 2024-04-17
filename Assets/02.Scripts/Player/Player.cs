@@ -544,6 +544,8 @@ public class Player : Character, IFightable
             transform.position = _respawnPoint.position;
         }
         hud.RefreshAll();
+        _controller.ResetControl();
+        moveComponent.ResetMove();
     }
 
     public void SetSpikeRespawnPoint(SpikeRespawn spikeRespawn)
