@@ -46,6 +46,7 @@ public class FalseKnight : Character, IFightable
         _target = GameManager.Instance.GetPlayer().transform;
         _mainBodyCombat = _mainBody.GetComponent<FalseKnightMainBody>();
         _mainBodyCombat.OnDead += OnMainbodyCurrentDead;
+        OnRealDead += RealDead;
     }
 
     public void ChangeState(FalseKnightState newState)
@@ -149,7 +150,10 @@ public class FalseKnight : Character, IFightable
                 state = FalseKnightState.MainBody;
                 break;
             case 3:
-                OnRealDead += RealDead;
+                _animator.SetTrigger("Groggy");
+                state = FalseKnightState.MainBody;
+                _mainBodyCombat.OnDead -= OnMainbodyCurrentDead;
+                _mainBodyCombat.OnDead += OnRealDead;
                 break;
         }
     }

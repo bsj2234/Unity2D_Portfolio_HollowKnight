@@ -16,16 +16,23 @@ public class UiHp : MonoBehaviour
 
     public void UpdateUi()
     {
-        int hp = (int)((IFightable)_character).GetHp();
-        for(int i = 0; i < _images.Length; i++)
+        int hp = (int)(_character).GetHp();
+        int maxHp = (int)(_character).maxHp;
+        for (int i = 0; i < _images.Length; i++)
         {
             if (i < hp)
             {
+                _images[i].enabled = true;
                 _images[i].color = Color.white;
+            }
+            else if(i < maxHp )
+            {
+                _images[i].enabled = true;
+                _images[i].color = Color.black;
             }
             else
             {
-                _images[i].color = Color.black;
+                _images[i].enabled = false;
             }
         }
     }
