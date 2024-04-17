@@ -117,9 +117,13 @@ public class CrawlidMoveComponent : MonoBehaviour, IFightable
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("PlayerAttackCollider"))
+        if (collision.CompareTag("PlayerAttackCollider"))
         {
             Damaged();
+        }
+        if (collision.CompareTag("Player"))
+        {
+            GameManager.Instance.Player.TakeDamage(10f, transform.position);
         }
     }
 

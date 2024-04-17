@@ -69,6 +69,8 @@ public class Player : Character, IFightable
     public GameObject HitEffect;
     public GameObject DeadEffect;
 
+    public SpikeRespawn _spikeRespawn;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -530,6 +532,7 @@ public class Player : Character, IFightable
     public void Respawn()
     {
         UiManager.Instance.DeadUiOff();
+        _rigidbody.velocity = Vector3.zero;
         //reset
         coinCount = 0;
         hp = maxHp;
@@ -541,5 +544,17 @@ public class Player : Character, IFightable
             transform.position = _respawnPoint.position;
         }
         hud.RefreshAll();
+    }
+
+    public void SetSpikeRespawnPoint(SpikeRespawn spikeRespawn)
+    {
+        _spikeRespawn = spikeRespawn;
+    }
+    public void RespawnWhenSpike()
+    {
+        if(isDead) { return; }
+        _rigidbody.velocity = Vector3.zero;
+        _pawnAnimator.SetTrigger("Anim_Reset");
+        transform.position = _spikeRespawn.position;
     }
 }

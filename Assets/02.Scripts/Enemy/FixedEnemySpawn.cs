@@ -24,4 +24,8 @@ public class FixedEnemySpawn : MonoBehaviour
             Destroy(_enemy);
         }
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireCube(transform.position, Vector3.one);
+    }
 }
