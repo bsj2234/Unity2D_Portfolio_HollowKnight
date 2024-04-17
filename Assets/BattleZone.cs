@@ -16,6 +16,11 @@ public class BattleZone : MonoBehaviour
     public bool Locked = false;
 
 
+    private void Start()
+    {
+        GameManager.Instance.Player.OnPlayerReset += ResetZone;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player") && !Locked)
@@ -45,5 +50,14 @@ public class BattleZone : MonoBehaviour
             OpenDoors();
         }
     }
+
+    private void ResetZone()
+    {
+        OpenDoors();
+        TargetSpawner.DeSpawn();
+        DeathCount = 0;
+    }
+
+
 
 }

@@ -71,6 +71,8 @@ public class Player : Character, IFightable
 
     public SpikeRespawn _spikeRespawn;
 
+    public System.Action OnPlayerReset;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -546,6 +548,10 @@ public class Player : Character, IFightable
         hud.RefreshAll();
         _controller.ResetControl();
         moveComponent.ResetMove();
+        if(OnPlayerReset != null)
+        {
+            OnPlayerReset.Invoke();
+        }
     }
 
     public void SetSpikeRespawnPoint(SpikeRespawn spikeRespawn)
