@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -252,4 +253,9 @@ public class PlayerMoveComponent : MonoBehaviour
         _movableCoolDown = 0f;
         _DashTime = 0f;
 }
+
+    public void OnDamaged()
+    {
+        _rigidbody.velocity = Vector2.zero;
+    }
 }

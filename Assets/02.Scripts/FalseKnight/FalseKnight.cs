@@ -1,5 +1,6 @@
 
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering.Universal;
@@ -37,6 +38,8 @@ public class FalseKnight : Character, IFightable
     public System.Action<FalseKnight> OnStatusChange;
     public System.Action OnFlip;
     public System.Action OnRealDead;
+
+    public bool Fighting = false;
 
     private void Awake()
     {
@@ -294,5 +297,23 @@ public class FalseKnight : Character, IFightable
         state = FalseKnightState.Dead;
         ObjectSpawnManager.Instance.SpawnMoney(transform.position, 100);
         Destroy(gameObject, 5f);
+    }
+
+    public void StartFight()
+    {
+        _rigidbody.simulated = true;
+        _animator.SetTrigger("Start");
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (Fighting == true)
+            return;
+        if(collision.CompareTag("Player"))
+        {
+            Fighting = true;
+            _animator.SetBool("Fighting", true);
+            _rigidbody.gravityScale = 1f;
+        }
     }
 }

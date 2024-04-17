@@ -244,6 +244,7 @@ public class Player : Character, IFightable
         if (IsStuned())
         {
             moveComponent.MovementUpdate(Vector2.zero);
+            moveComponent.OnDamaged();
         }
         else
         {
@@ -457,8 +458,8 @@ public class Player : Character, IFightable
         {
             _pawnAnimator.SetTrigger("Anim_Damaged");
 
-            _stunTime = .6f;
-            _invincibleTime = 1f + item_hitInvincible;
+            _stunTime = .15f;
+            _invincibleTime = .5f + item_hitInvincible;
 
             HitEffect.SetActive(false);
             HitEffect.SetActive(true);

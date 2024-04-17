@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class BattleZone : MonoBehaviour
@@ -9,18 +7,18 @@ public class BattleZone : MonoBehaviour
 
     public FixedEnemySpawn TargetSpawner;
 
+    public ZoneSpawnEnemy battleSpawnZone;
+
     public int enemyCount = 1;
 
     public int DeathCount = 0;
 
     public bool Locked = false;
 
-
     private void Start()
     {
         GameManager.Instance.Player.OnPlayerReset += ResetZone;
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player") && !Locked)
@@ -40,8 +38,8 @@ public class BattleZone : MonoBehaviour
         {
             door.Open();
         }
+        Locked = false;
     }
-
     private void AddDeath()
     {
         DeathCount++;
@@ -50,14 +48,10 @@ public class BattleZone : MonoBehaviour
             OpenDoors();
         }
     }
-
     private void ResetZone()
     {
         OpenDoors();
         TargetSpawner.DeSpawn();
         DeathCount = 0;
     }
-
-
-
 }
