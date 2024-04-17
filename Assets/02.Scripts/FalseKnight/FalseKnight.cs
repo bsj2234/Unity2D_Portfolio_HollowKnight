@@ -34,8 +34,9 @@ public class FalseKnight : Character, IFightable
     private int _mainBodyDeathCount = 0;
     public GameObject[] damagedEffects;
 
-    public System.Action<FalseKnight> OnStatusChange { get; internal set; }
-    public System.Action OnFlip { get; internal set; }
+    public System.Action<FalseKnight> OnStatusChange;
+    public System.Action OnFlip;
+    public System.Action OnRealDead;
 
     private void Awake()
     {
@@ -44,7 +45,7 @@ public class FalseKnight : Character, IFightable
         _rigidbody = GetComponent<Rigidbody2D>();
         _target = GameManager.Instance.GetPlayer().transform;
         _mainBodyCombat = _mainBody.GetComponent<FalseKnightMainBody>();
-        _mainBodyCombat.OnDead += OnMainbodyDead;
+        _mainBodyCombat.OnDead += OnMainbodyCurrentDead;
     }
 
     public void ChangeState(FalseKnightState newState)
@@ -135,7 +136,7 @@ public class FalseKnight : Character, IFightable
         FocusToPlayer();
     }
 
-    private void OnDead()
+    private void OnCurrentDead()
     {
         switch (Phase)
         {
@@ -148,26 +149,19 @@ public class FalseKnight : Character, IFightable
                 state = FalseKnightState.MainBody;
                 break;
             case 3:
-                _animator.SetTrigger("Groggy");
-                state = FalseKnightState.MainBody;
-                break;
-            case 4:
-                _animator.SetTrigger("Dead");
-                state = FalseKnightState.Dead;
-                ObjectSpawnManager.Instance.SpawnMoney(transform.position, 100);
-                Destroy(gameObject, 5f);
+                OnRealDead += RealDead;
                 break;
         }
-        Phase++;
     }
 
     private void SpawnMainBody()
     {
         _mainBody.Spawn();
     }
-    private void OnMainbodyDead()
+    private void OnMainbodyCurrentDead()
     {
         _mainBodyDeathCount++;
+        Phase++;
         _invincibleTime = 0f;
         combatComponent.ResetHp();
         _animator.SetTrigger("GroggyDead");
@@ -220,11 +214,6 @@ public class FalseKnight : Character, IFightable
         _light.enabled = false;
     }
 
-    public string GetHp()
-    {
-        return combatComponent.GetHp().ToString();
-    }
-
     public string GetPhase()
     {
         return Phase.ToString();
@@ -254,22 +243,22 @@ public class FalseKnight : Character, IFightable
         SpawnMainBody();
     }
 
-    float IFightable.GetHp()
+    public float GetHp()
     {
         return combatComponent.GetHp();
     }
 
-    void IFightable.DealFixedDamage(IFightable target, float damage)
+    public void DealFixedDamage(IFightable target, float damage)
     {
         target.TakeDamage(damage, transform.position);
     }
 
-    void IFightable.DealDamage(IFightable target, float damage)
+    public void DealDamage(IFightable target, float damage)
     {
         target.TakeDamage(damage, transform.position);
     }
 
-    void IFightable.TakeDamage(float damage, Vector2 attackerPos)
+    public void TakeDamage(float damage, Vector2 attackerPos)
     {
         combatComponent.TakeDamage(damage);
         if (state == FalseKnightState.MainBody)
@@ -280,7 +269,7 @@ public class FalseKnight : Character, IFightable
         combatComponent.TakeDamage(damage);
         if (combatComponent.IsDead())
         {
-            OnDead();
+            OnCurrentDead();
         }
         else
         {
@@ -293,5 +282,13 @@ public class FalseKnight : Character, IFightable
             OnStatusChange.Invoke(this);
         }
         //invincible(damaged or dashing)
+    }
+
+    public void RealDead()
+    {
+        _animator.SetTrigger("Dead");
+        state = FalseKnightState.Dead;
+        ObjectSpawnManager.Instance.SpawnMoney(transform.position, 100);
+        Destroy(gameObject, 5f);
     }
 }

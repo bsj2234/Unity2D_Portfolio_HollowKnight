@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ZoneSpawnEnemy : MonoBehaviour
 {
+    //player has two collider so i gotta count player collider
     public List<FixedEnemySpawn> spawnList = new List<FixedEnemySpawn>();
 
     public int collisionCount = 0;

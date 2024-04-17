@@ -9,19 +9,19 @@ public class FixedEnemySpawn : MonoBehaviour
 
     //zone 에서 스폰들을 가지고있다고 
     public GameObject Enemy;
-    private GameObject _enemy;
+    public GameObject _intancedEnemy;
 
 
 
     public void Spawn()
     {
-        _enemy = Instantiate(Enemy, transform.position, transform.rotation);
+        _intancedEnemy = Instantiate(Enemy, transform.position, transform.rotation);
     }
     public void DeSpawn()
     {
-        if(_enemy != null)
+        if(_intancedEnemy != null)
         {
-            Destroy(_enemy);
+            Destroy(_intancedEnemy);
         }
     }
     private void OnDrawGizmos()

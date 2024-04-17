@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class LockableDoor : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    //Trigger will reference this gameobject
+    //when triggerd door will shut
+    // and if all target has acomplished door will open
+    //zone will manage all of them
+
+    // how the zone kmows target is dead? 
+    //need event On Dead;
+
+    private Animator _animator;
+    private void Awake()
     {
-        
+        _animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Close()
     {
-        
+        _animator.SetTrigger("Close");
+    }
+    public void Open()
+    {
+        _animator.SetTrigger("Open");
     }
 }

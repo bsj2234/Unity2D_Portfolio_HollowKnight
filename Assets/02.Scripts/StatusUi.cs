@@ -31,7 +31,7 @@ public class StatusUi : MonoBehaviour
     {
         StringBuilder result = new StringBuilder();
         result.Append("HP: ");
-        result.AppendLine(character.GetHp());
+        result.AppendLine(character.GetHp().ToString());
         result.Append("Phase: ");
         result.AppendLine(character.GetPhase());
 
