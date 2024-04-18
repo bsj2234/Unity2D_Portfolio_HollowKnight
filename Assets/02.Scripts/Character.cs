@@ -5,23 +5,28 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour, IFightable
 {
-    void IFightable.DealDamage(IFightable target, float damage)
+    public virtual void DealDamage(IFightable target, float damage)
     {
         throw new NotImplementedException();
     }
 
-    void IFightable.DealFixedDamage(IFightable target, float damage)
+    public virtual void DealFixedDamage(IFightable target, float damage)
     {
         throw new NotImplementedException();
     }
 
-    float IFightable.GetHp()
+    public virtual float GetHp()
     {
         throw new NotImplementedException();
     }
 
-    void IFightable.TakeDamage(float damage, Vector2 Attackerpos)
+    public virtual void TakeDamage(float damage, Vector2 Attackerpos)
     {
         throw new NotImplementedException();
+    }
+
+    public virtual bool IsDead()
+    {
+        throw new NotImplementedException ();
     }
 }

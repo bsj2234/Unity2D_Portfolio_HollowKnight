@@ -20,6 +20,8 @@ public interface IFightable
     void DealFixedDamage(IFightable target, float damage);
     void DealDamage(IFightable target, float damage);
 
+    bool IsDead();
+
 }
 //Todo SetValues By Owner
 public class DamageTrigger : MonoBehaviour
@@ -58,11 +60,11 @@ public class DamageTrigger : MonoBehaviour
                 switch (_damageType)
                 {
                     case DamageType.FixedDamage:
-                        ((IFightable)_owner).DealFixedDamage(target, _damage);
+                        _owner.DealFixedDamage(target, _damage);
                         break;
                     //스탯 계산 후 공격
                     case DamageType.StatPostDamage:
-                        ((IFightable)_owner).DealDamage(target, _damage);
+                        _owner.DealDamage(target, _damage);
                         break;
                     default:
                         break;

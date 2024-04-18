@@ -42,7 +42,7 @@ public class Player : Character, IFightable
 
     //아이템
     private float item_Damage = 0f;
-    private float item_attackSpeed = 0f;
+    private float itemAttackSpeedBounus = 0f;
     private float item_hitInvincible = 0f;
 
     //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
@@ -72,6 +72,8 @@ public class Player : Character, IFightable
     public SpikeRespawn _spikeRespawn;
 
     public System.Action OnPlayerReset;
+
+    public float defaultAttackSpeed = .4f;
 
     // Start is called before the first frame update
     void Awake()
@@ -129,41 +131,8 @@ public class Player : Character, IFightable
     {
         //입력 방향에따라 스프라이트 방향 설정
         if(isDead) return;
-        if (_controller.hasMoveInput)
-        {
-            _pawnAnimator.SetBool("Anim_IsRunning", true);
-            if (moveComponent.dir == Direction.Left)
-            {
-                _pawnSprite.transform.localScale = new Vector2(-curLocScale.x, curLocScale.y);
-            }
-            else
-            {
-                _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
-            }
-        }
-        else
-        {
-            //입력없으면 보는곳으로 회전
-            _pawnAnimator.SetBool("Anim_IsRunning", false);
-            if (_controller.GetLookDir().x <= 0f)
-            {
-                _pawnSprite.transform.localScale = new Vector2(-curLocScale.x, curLocScale.y);
-            }
-            else
-            {
-                _pawnSprite.transform.localScale = new Vector2(curLocScale.x, curLocScale.y);
-            }
-        }
 
-        if (moveComponent.isGrounded)
-        {
-            _pawnAnimator.SetBool("Anim_IsGrounded", true);
-            isJumping = false;
-        }
-        else
-        {
-            _pawnAnimator.SetBool("Anim_IsGrounded", false);
-        }
+
         //상태 지속 시간을 코드에서 관리
         if (_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
         if (_stunTime > 0f)
@@ -178,6 +147,37 @@ public class Player : Character, IFightable
         if (_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
         else { continuableAttackCount = 0; }
         if (_knockBackTime > 0f) { _knockBackTime -= Time.deltaTime; }
+
+
+
+        if (_attackingTime + _knockBackTime + _stunTime <= 0)
+        {
+            moveComponent.isMovable = true;
+            if (_controller.hasMoveInput)
+            {
+                _pawnAnimator.SetBool("Anim_IsRunning", true);
+            }
+            else
+            {
+                _pawnAnimator.SetBool("Anim_IsRunning", false);
+            }
+
+            if (moveComponent.isGrounded)
+            {
+                _pawnAnimator.SetBool("Anim_IsGrounded", true);
+                isJumping = false;
+            }
+            else
+            {
+                _pawnAnimator.SetBool("Anim_IsGrounded", false);
+            }
+        }
+        else
+        {
+            moveComponent.isMovable = false;
+        }
+
+
     }
     public void Attack(Vector2 attackDir)
     {
@@ -186,7 +186,7 @@ public class Player : Character, IFightable
         {
             return;
         }
-        _attackingTime = .3f - item_attackSpeed;
+        _attackingTime = defaultAttackSpeed - itemAttackSpeedBounus;
         if (attackDir.y > .7f)
         {
             continuableAttackCount = 0;
@@ -374,48 +374,57 @@ public class Player : Character, IFightable
 
         maxHp = initialMaxHp + (_currentCharmEffects.Contains("허술한 심장") ? 2 : 0);
         item_Damage = _currentCharmEffects.Contains("허술한 힘") ? 3f : 0f;
-        item_attackSpeed = _currentCharmEffects.Contains("빠른 참격") ? .5f : 0f;
+        itemAttackSpeedBounus = _currentCharmEffects.Contains("빠른 참격") ? .5f : 0f;
         item_hitInvincible = _currentCharmEffects.Contains("튼튼한 껍데기") ? .3f : 0f;
     }
 
-    private void AttackKnockback(Collider2D attackCol, Collider2D otherCol)
+    public void AttackKnockback(Collider2D attackCol, List<Collider2D> otherCol)
     {
         if(_knockBackTime > 0f)
             return;
-        List<Collider2D> result = new List<Collider2D>();
-        result.Clear();
-        attackCol.OverlapCollider(new ContactFilter2D().NoFilter(), result);
-        //Todo 제대로 만들기
-        string[] tags = new string[result.Count];
-        for (int i =0; i < result.Count; i++)
+        //전부 가져오기
+        string[] tags = new string[otherCol.Count];
+        for (int i =0; i < otherCol.Count; i++)
         {
-            tags[i] = result[i].tag;
+            tags[i] = otherCol[i].tag;
         }
+        //강한것 우선 처리
         //enemy,ground,spike
-        if (tags.Contains("Spike"))
+
+
+        //살아있는지 확인해야함 이게 까다롭다 태그로 하다 보니 그럼 contain 쓰지 말고
+        //하나씩 돌아가며 최대값을 저장하자
+        float maxKnockBack = 0f;
+
+        foreach (Collider2D item in otherCol)
         {
-            _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 20f);
-            _knockBackTime = .1f;
+            if (item.CompareTag("Spike"))
+            {
+                //얘는 특별히 찾자 마자 나가자
+                maxKnockBack = 1f;
+                break;
+            }
+            else if (item.CompareTag("Enemy"))
+            {
+                IFightable fightable;
+                item.TryGetComponent(out fightable);
+
+                if (fightable?.IsDead() ?? true)
+                    continue;
+                maxKnockBack = .8f;
+            }
+            else if (item.CompareTag("Obstacle"))
+            {
+                maxKnockBack = .5f;
+            }
+            else if (item.CompareTag("Ground"))
+            {
+                maxKnockBack = .3f;
+            }
         }
-        else if (tags.Contains("Enemy"))
-        {
-            _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 20f);
-            _knockBackTime = .1f;
-        }
-        else if (tags.Contains("Obstacle"))
-        {
-            _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 15f);
-            _knockBackTime = .1f;
-        }
-        else if (tags.Contains("Ground"))
-        {
-            _attackDir = _controller.GetAttackDir();
-            moveComponent.KnockBack(-_attackDir, 10f);
-            _knockBackTime = .1f;
-        }
+        _attackDir = _controller.GetAttackDir();
+        moveComponent.KnockBack(-_attackDir, maxKnockBack, defaultAttackSpeed - itemAttackSpeedBounus);
+        _knockBackTime = .1f;
     }
 
     private bool IsInvincible()
@@ -427,12 +436,12 @@ public class Player : Character, IFightable
         return _stunTime > 0f;
     }
 
-    public float GetHp()
+    public override float GetHp()
     {
         return hp;
     }
 
-    public void TakeDamage(float damage, Vector2 Attackerpos)
+    public override void TakeDamage(float damage, Vector2 Attackerpos)
     {
         if(isDead) return;
         //invincible(damaged or dashing)
@@ -468,7 +477,7 @@ public class Player : Character, IFightable
     }
 
     //IFightable
-    public void DealFixedDamage(IFightable target, float damage)
+    public override void DealFixedDamage(IFightable target, float damage)
     {
         //Todo AttackCollider 끼리 닿으면 null
         if(target == null)
@@ -480,7 +489,7 @@ public class Player : Character, IFightable
         
     }
 
-    public void DealDamage(IFightable target, float damage)
+    public override void DealDamage(IFightable target, float damage)
     {
         target.TakeDamage(damage , transform.position);
     }
@@ -504,15 +513,6 @@ public class Player : Character, IFightable
     public float GetMp()
     {
         return mp;
-    }
-
-    public void OnAttackSuccess(Collider2D attackCol, Collider2D collision)
-    {
-        AttackKnockback(attackCol ,collision);
-        if (collision.CompareTag("Enemy"))
-        {
-            AddMp(15.0f);
-        }
     }
 
     public void OpenShopHud(Shop shop)
@@ -565,5 +565,15 @@ public class Player : Character, IFightable
         _rigidbody.velocity = Vector3.zero;
         _pawnAnimator.SetTrigger("Anim_Reset");
         transform.position = _spikeRespawn.position;
+    }
+
+    public override bool IsDead()
+    {
+        return isDead;
+    }
+
+    public void OnDamageSuccess()
+    {
+        mp += 15f;
     }
 }

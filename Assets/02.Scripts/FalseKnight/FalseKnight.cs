@@ -250,24 +250,23 @@ public class FalseKnight : Character, IFightable
         SpawnMainBody();
     }
 
-    public float GetHp()
+    public override float GetHp()
     {
         return combatComponent.GetHp();
     }
 
-    public void DealFixedDamage(IFightable target, float damage)
+    public override void DealFixedDamage(IFightable target, float damage)
     {
         target.TakeDamage(damage, transform.position);
     }
 
-    public void DealDamage(IFightable target, float damage)
+    public override void DealDamage(IFightable target, float damage)
     {
         target.TakeDamage(damage, transform.position);
     }
 
-    public void TakeDamage(float damage, Vector2 attackerPos)
+    public override void TakeDamage(float damage, Vector2 attackerPos)
     {
-        combatComponent.TakeDamage(damage);
         if (state == FalseKnightState.MainBody)
         {
             return;
@@ -315,5 +314,9 @@ public class FalseKnight : Character, IFightable
             _animator.SetBool("Fighting", true);
             _rigidbody.gravityScale = 1f;
         }
+    }
+    public bool IsDead()
+    {
+        return combatComponent.IsDead();
     }
 }

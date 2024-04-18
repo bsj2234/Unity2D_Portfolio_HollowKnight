@@ -156,24 +156,24 @@ public class PlayerController : MonoBehaviour
         Vector2 playerToMouse = -(Vector2)_player.transform.position + mousePosition;
         playerToMouse = playerToMouse.normalized;
 
-        //공격방향 설정
-        if (playerToMouse.x > .7f)
-        {
-            return Vector2.right;
-        }
-        if (playerToMouse.x < -.7f)
-        {
-            return Vector2.left;
-        }
-        if (playerToMouse.y > .7f)
-        {
-            return Vector2.up;
-        }
-        if (playerToMouse.y < -.7f)
-        {
-            return Vector2.down;
-        }
-        Assert.IsTrue(false, "can not find mouse dir vector");
-        return Vector2.zero;
+        ////공격방향 설정
+        //if (playerToMouse.x > .7f)
+        //{
+        //    return Vector2.right;
+        //}
+        //if (playerToMouse.x < -.7f)
+        //{
+        //    return Vector2.left;
+        //}
+        //if (playerToMouse.y > .7f)
+        //{
+        //    return Vector2.up;
+        //}
+        //if (playerToMouse.y < -.7f)
+        //{
+        //    return Vector2.down;
+        //}
+        //Assert.IsTrue(false, "can not find mouse dir vector");
+        return playerToMouse;
     }
 }

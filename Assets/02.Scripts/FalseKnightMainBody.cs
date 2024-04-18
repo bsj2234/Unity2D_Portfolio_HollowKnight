@@ -13,11 +13,19 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
     private Animator _animator;
     public GameObject[] damagedEffects;
 
+    public float _invincibleTime = 0f;
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         Assert.IsNotNull(_animator);
         Assert.IsNotNull(combatComponent);
+    }
+
+    private void Update()
+    {
+        if(_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
+        else { _invincibleTime = 0f;}
     }
 
     public void ResetMainBody()
@@ -29,16 +37,19 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
         ResetMainBody();
         gameObject.SetActive(true);
     }
-
-    float IFightable.GetHp()
+    //interface
+    public float GetHp()
     {
         return combatComponent.GetHp();
     }
 
-    void IFightable.TakeDamage(float damage, Vector2 attackerPos)
+    public void TakeDamage(float damage, Vector2 attackerPos)
     {
+        if(_invincibleTime > 0f)
+            return;
         combatComponent.TakeDamage(damage);
         _animator.SetTrigger("Hit");
+        _invincibleTime = .1f;
         ObjectSpawnManager.Instance.SpawnBetween(damagedEffects, attackerPos, transform.position, 4f);
         if (combatComponent.IsDead())
         {
@@ -50,11 +61,16 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
         }
     }
 
-    void IFightable.DealFixedDamage(IFightable target, float damage)
+    public void DealFixedDamage(IFightable target, float damage)
     {
     }
 
-    void IFightable.DealDamage(IFightable target, float damage)
+    public void DealDamage(IFightable target, float damage)
     {
+    }
+
+    public bool IsDead()
+    {
+        return combatComponent.IsDead();
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Windows;
 
 
-public class CrawlidMoveComponent : MonoBehaviour, IFightable
+public class CrawlidMoveComponent : Character, IFightable
 {
     public Direction dir = Direction.Left;
     public float rayOffset = .5f;
@@ -140,23 +140,28 @@ public class CrawlidMoveComponent : MonoBehaviour, IFightable
     }
 
     //interface
-    public float GetHp()
+    public override float GetHp()
     {
         return hp;
     }
 
-    public void TakeDamage(float damage, Vector2 Attackerpos)
+    public override void TakeDamage(float damage, Vector2 Attackerpos)
     {
         hp -= damage;
     }
 
-    public void DealFixedDamage(IFightable target, float damage)
+    public override void DealFixedDamage(IFightable target, float damage)
     {
         target.TakeDamage(_damage, transform.position);
     }
 
-    public void DealDamage(IFightable target, float damage)
+    public override void DealDamage(IFightable target, float damage)
     {
         target.TakeDamage(_damage, transform.position);
+    }
+
+    public override bool IsDead()
+    {
+        return _dead;
     }
 }
