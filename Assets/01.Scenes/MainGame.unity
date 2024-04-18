@@ -29913,6 +29913,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DestroyableWall
       objectReference: {fileID: 0}
+    - target: {fileID: 7938080247830904442, guid: abbe181559f016a4db4154f5b546467c, type: 3}
+      propertyPath: destructHit
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abbe181559f016a4db4154f5b546467c, type: 3}
 --- !u!1001 &1152637313
@@ -31591,7 +31595,6 @@ MonoBehaviour:
   Money: {fileID: 9161230142845418680, guid: 55c385764cb5b7b44afc9460c9023cf9, type: 3}
   defaultHitEffect:
   - {fileID: 8386825428003906271, guid: 8bd450e2663220d47b761c31bfb3e611, type: 3}
-  - {fileID: 4089148180544792491, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
   - {fileID: 8386825428003906271, guid: 1e9536b7743b1914a92691ca6a380e5c, type: 3}
   - {fileID: 8386825428003906271, guid: 7de886cf43d2e304589fceb5aaf71145, type: 3}
 --- !u!4 &1287180675 stripped
