@@ -173,13 +173,17 @@ MonoBehaviour:
   dir: 0
   rayOffset: 0.1
   rayDistance: 0.2
-  hp: 100
   ground:
     serializedVersion: 2
     m_Bits: 128
-  _damage: 10
-  isGrounded: 1
   MaxSpeed: 5
+  isGrounded: 1
+  combat:
+    _maxHp: 60
+    _hp: 100
+    _dead: 0
+    _invincibleTime: 0.1
+    _prevHitTime: 0
   circleCollider: {fileID: 1406639654}
   rb: {fileID: 591248242}
 --- !u!50 &591248242

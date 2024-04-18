@@ -12,23 +12,21 @@ public class CrawlidMoveComponent : Character, IFightable
     public Direction dir = Direction.Left;
     public float rayOffset = .5f;
     public float rayDistance = .1f;
-    public float hp = 100;
     public LayerMask ground = 1 << 7;
-
-    public float _damage = 10f;
-
-    public bool isGrounded = true;
     public float MaxSpeed = 5f;
+    public bool isGrounded = true;
+
+    public CombatComponent combat;
 
     public CircleCollider2D circleCollider;
 
     private Transform _sprite;
-
     private Animator _animator;
-    private Collision2D _collision;
     public Rigidbody2D rb;
     private float _rotatedTime;
-    private bool _dead = false;
+    private Collision2D _collision;
+
+    //combat
 
     private void Awake()
     {
@@ -36,6 +34,9 @@ public class CrawlidMoveComponent : Character, IFightable
         Assert.IsNotNull(_sprite);
         _animator = _sprite.GetComponent<Animator>();
         Assert.IsNotNull(_animator);
+
+        combat.Init(transform);
+        combat.OnDead += OnDead;
     }
 
     private void FixedUpdate()
@@ -45,7 +46,7 @@ public class CrawlidMoveComponent : Character, IFightable
     //다른방법 찾자
     public void MoveForward()
     {
-        if(_dead)
+        if(combat.IsDead())
         {
             rb.velocity = Vector3.zero;
             rb.gravityScale = 1f;
@@ -98,30 +99,22 @@ public class CrawlidMoveComponent : Character, IFightable
         }
 
     }
-
-    public void Damaged()
+    public void OnDamaged()
     {
         _animator.SetTrigger("Anim_Hit");
-        hp -= 25f;
-        
-        if (hp <= 0f)
-        {
-            Dead();
-        }
     }
-    private void Dead()
+    private void OnDead()
     {
         _animator.SetTrigger("Anim_Dead");
         Destroy(gameObject, 5f);
-        _dead = true;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(_dead)
+        if(combat.IsDead())
             return;
         if (collision.CompareTag("PlayerAttackCollider"))
         {
-            Damaged();
+            combat.TakeDamage(collision.transform.position, 10f);
         }
         if (collision.CompareTag("Player"))
         {
@@ -142,26 +135,26 @@ public class CrawlidMoveComponent : Character, IFightable
     //interface
     public override float GetHp()
     {
-        return hp;
+        return combat.GetHp();
     }
 
     public override void TakeDamage(float damage, Vector2 Attackerpos)
     {
-        hp -= damage;
+        combat.TakeDamage(Attackerpos, damage);
     }
 
     public override void DealFixedDamage(IFightable target, float damage)
     {
-        target.TakeDamage(_damage, transform.position);
+        target.TakeDamage(damage, transform.position);
     }
 
     public override void DealDamage(IFightable target, float damage)
     {
-        target.TakeDamage(_damage, transform.position);
+        target.TakeDamage(damage, transform.position);
     }
 
     public override bool IsDead()
     {
-        return _dead;
+        return combat.IsDead();
     }
 }

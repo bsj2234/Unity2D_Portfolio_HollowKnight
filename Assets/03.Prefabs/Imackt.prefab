@@ -7,9 +7,29 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 947639125999108309, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
+      propertyPath: m_Size.x
+      value: 3.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 947639125999108309, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
+      propertyPath: m_Size.y
+      value: 1.56
+      objectReference: {fileID: 0}
     - target: {fileID: 4089148180544792490, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
       propertyPath: m_RootOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089148180544792490, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089148180544792490, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4089148180544792490, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4089148180544792490, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -51,9 +71,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4089148180544792490, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4089148180544792491, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
       propertyPath: m_Name
-      value: HitEffect1 Variant 2
+      value: Imackt
       objectReference: {fileID: 0}
     - target: {fileID: 8130498428523930430, guid: fc366afd069772d429b45f9b495c6d0c, type: 3}
       propertyPath: m_Controller

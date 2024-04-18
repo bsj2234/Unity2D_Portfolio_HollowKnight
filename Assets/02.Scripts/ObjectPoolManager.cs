@@ -37,11 +37,15 @@ public class ObjectPoolManager:MonoBehaviour
         temp.transform.position = position;
         return temp;
     }
-    public GameObject GetPoolingObject(Vector3 position, Vector3 rotation)
+    public GameObject GetPoolingObject(Vector3 position, Vector3 rotation, float scale = -1f)
     {
         GameObject temp = GetPoolingObject();
         temp.transform.position = position;
         temp.transform.rotation = Quaternion.Euler(rotation);
+        if (scale > 0f)
+        {
+            temp.transform.localScale = new Vector3(scale, scale);
+        }
         return temp;
     }
     //만들고 생명을 시간으로 정해줌
@@ -57,9 +61,9 @@ public class ObjectPoolManager:MonoBehaviour
         StartCoroutine(ReturnTime(temp, time));
         return temp;
     }
-    public GameObject GetPoolingObjectWithTimer(Vector3 position, Vector3 rotation, float time)
+    public GameObject GetPoolingObjectWithTimer(Vector3 position, Vector3 rotation, float scale, float time)
     {
-        GameObject temp = GetPoolingObject(position, rotation);
+        GameObject temp = GetPoolingObject(position, rotation, scale);
         StartCoroutine(ReturnTime(temp, time));
         return temp;
     }

@@ -9,7 +9,7 @@ public class DropObstacle : MonoBehaviour
         if (GameManager.Instance.Player.transform.position.x - transform.position.x < 15f)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMask.GetMask("Character", "Ground"));
-            if (hit.collider.CompareTag("Player"))
+            if ((hit.transform?.CompareTag("Player")) ?? false)
             {
                 rb.simulated = true;
             }

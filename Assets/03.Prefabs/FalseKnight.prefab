@@ -257,8 +257,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   combatComponent:
-    _initialHp: 100
-    _hp: 100
+    _initialHp: 300
+    _hp: 300
     _dead: 0
   isGrounded: 0
   _light: {fileID: 636405985372419472}
@@ -590,6 +590,7 @@ MonoBehaviour:
   - {fileID: 8386825428003906271, guid: 1e9536b7743b1914a92691ca6a380e5c, type: 3}
   - {fileID: 8386825428003906271, guid: 7de886cf43d2e304589fceb5aaf71145, type: 3}
   - {fileID: 8386825428003906271, guid: 8bd450e2663220d47b761c31bfb3e611, type: 3}
+  _invincibleTime: 0
 --- !u!58 &636405986019728007
 CircleCollider2D:
   m_ObjectHideFlags: 0

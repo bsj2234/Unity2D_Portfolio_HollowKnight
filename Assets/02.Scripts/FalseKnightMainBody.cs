@@ -20,6 +20,7 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
         _animator = GetComponent<Animator>();
         Assert.IsNotNull(_animator);
         Assert.IsNotNull(combatComponent);
+        combatComponent.SetMaxHp(70);
     }
 
     private void Update()
@@ -47,10 +48,10 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
     {
         if(_invincibleTime > 0f)
             return;
-        combatComponent.TakeDamage(damage);
+        combatComponent.TakeDamage(attackerPos, damage);
         _animator.SetTrigger("Hit");
         _invincibleTime = .1f;
-        ObjectSpawnManager.Instance.SpawnBetween(damagedEffects, attackerPos, transform.position, 4f);
+        ObjectSpawnManager.Instance.SpawnBetween(damagedEffects, attackerPos, transform.position,1f , 4f);
         if (combatComponent.IsDead())
         {
             if (OnDead != null)

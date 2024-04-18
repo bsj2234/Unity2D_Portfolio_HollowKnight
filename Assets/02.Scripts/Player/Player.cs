@@ -75,6 +75,8 @@ public class Player : Character, IFightable
 
     public float defaultAttackSpeed = .4f;
 
+    public PlayerDamageTrigger _playerDamageTrigger;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -269,7 +271,7 @@ public class Player : Character, IFightable
         if (isDead) return;
         //콜리전 체크에서 검사하고 싶어서...
         //_tryInteract = true;
-        Collider2D[] allOverlap = Physics2D.OverlapCircleAll(transform.position, 5f);
+        Collider2D[] allOverlap = Physics2D.OverlapCircleAll(transform.position, 1f);
 
         foreach (Collider2D collider in allOverlap)
         {
@@ -303,10 +305,12 @@ public class Player : Character, IFightable
             //그리고 아이템 인벤에 추가
             //CharmInstance foundItem = Array.Find(_charmInventory, x => x == selectedCharm );
             AddItem(selectedCharm);
+            RecalcCharmEffect();
             return selectedCharm;
         }
         else
         {
+            RecalcCharmEffect();
             return null;
         }
     }
@@ -468,7 +472,7 @@ public class Player : Character, IFightable
             _pawnAnimator.SetTrigger("Anim_Damaged");
 
             _stunTime = .15f;
-            _invincibleTime = .5f + item_hitInvincible;
+            _invincibleTime = .9f + item_hitInvincible;
 
             HitEffect.SetActive(false);
             HitEffect.SetActive(true);

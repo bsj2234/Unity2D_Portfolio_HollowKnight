@@ -111,16 +111,6 @@ public class PlayerMoveComponent : MonoBehaviour
             //최대속도를 넘었을 경우에는 아무것도안함
             //방향이 다르면 그냥 뒤돔
 
-            //입력있으면 
-            if (inputDir == -1)
-            {
-                dir = Direction.Left;
-            }
-            else if (inputDir == 1)
-            {
-                dir = Direction.Right;
-            }
-
             //impulse 처럼 가속도가 빠르면 문제가 있다
             // 범위를 빠르게 제어하려면 정확한 값을 계산할 수 있게 더하거나 뺴 주고
             //velocity로 값을 정확히 지정해줘야 한다.
@@ -291,34 +281,46 @@ public class PlayerMoveComponent : MonoBehaviour
             dir = Direction.Left;
         }
     }
-    public void Flip(Direction desiredDir)
+    public void SetPlayerDirection(Direction desiredDir)
     {
-        if (desiredDir != dir)
+        Quaternion right = Quaternion.Euler(0f, 0f, 0f);
+        Quaternion left = Quaternion.Euler(0f, 180f, 0f);
+        float curAngle = transform.rotation.eulerAngles.y;
+
+        if (dir == desiredDir)
+            return;
+
+        if (desiredDir == Direction.Right)
         {
-            Flip();
-            dir = desiredDir;
+            transform.rotation = right;
+            dir = Direction.Right;
+        }
+        else
+        {
+            transform.rotation = left;
+            dir = Direction.Left;
         }
     }
     public void Look()
     {
         if (_controller.GetLookDir().x <= 0f)
         {
-            Flip(Direction.Left);
+            SetPlayerDirection(Direction.Left);
         }
         else
         {
-            Flip(Direction.Right);
+            SetPlayerDirection(Direction.Right);
         }
     }
     public void FlipToMoveInput()
     {
         if (_controller.moveDirInput.x < 0f)
         {
-            Flip(Direction.Left);
+            SetPlayerDirection(Direction.Left);
         }
         else if (_controller.moveDirInput.x > 0f)
         {
-            Flip(Direction.Right);
+            SetPlayerDirection(Direction.Right);
         }
     }
 

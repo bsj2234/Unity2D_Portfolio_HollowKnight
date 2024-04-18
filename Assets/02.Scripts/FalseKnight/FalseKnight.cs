@@ -210,7 +210,7 @@ public class FalseKnight : Character, IFightable
     private void DamagedEffect(Vector2 attackerPos, Vector2 damagedPos)
     {
         _light.enabled = true;
-        ObjectSpawnManager.Instance.SpawnBetween(damagedEffects ,attackerPos, damagedPos, 4f);
+        ObjectSpawnManager.Instance.SpawnBetween(damagedEffects ,attackerPos, damagedPos, 1.5f , 4f);
         StartCoroutine(BlinkOff());
 
     }
@@ -272,7 +272,7 @@ public class FalseKnight : Character, IFightable
             return;
         }
         if (_invincibleTime > 0f) { return; }
-        combatComponent.TakeDamage(damage);
+        combatComponent.TakeDamage(attackerPos, damage);
         if (combatComponent.IsDead())
         {
             OnCurrentDead();

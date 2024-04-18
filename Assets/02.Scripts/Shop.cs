@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Shop : MonoBehaviour, IInteractable
 {
+    public GameObject InteractUi;
     [System.Serializable]
     public class ShopCharm
     {
@@ -35,5 +36,21 @@ public class Shop : MonoBehaviour, IInteractable
         player.AddItem(currentItem);
         player.AddCoin(-ShopInventory[index].ItemCost);
         return currentItem;
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            InteractUi.SetActive(true);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            InteractUi.SetActive(false);
+        }
     }
 }
