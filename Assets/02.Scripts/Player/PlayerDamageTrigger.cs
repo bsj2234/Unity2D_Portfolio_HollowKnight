@@ -33,7 +33,7 @@ public class PlayerDamageTrigger : MonoBehaviour
     {
         _collider.OverlapCollider(new ContactFilter2D().NoFilter(), _overlapResult);
         //충돌이 있다면
-        if(_overlapResult.Count > 3)
+        if(_collider.enabled && _overlapResult.Count > 3)
         {
             //넉백 먼저
             _player.AttackKnockback(_collider, _overlapResult);

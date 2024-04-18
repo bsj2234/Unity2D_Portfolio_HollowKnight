@@ -20,8 +20,6 @@ public class CombatComponent
     public Func<bool> AdditionalDamageCondition { get; internal set; }
 
     public GameObject[] additionalEffectOnHit;
-
-
     public void Init(Transform owner, bool defaultEffectOnDamaged = true )
     {
         _owner = owner;
@@ -35,7 +33,7 @@ public class CombatComponent
         bool isAttackSucceeded = target.TakeDamage(_owner.transform.position ,damage);
         if(!isAttackSucceeded)
         {
-            OnDamagedWAttacker.Invoke(target);
+            OnDamagedWAttacker?.Invoke(target);
             return false;
         }
         return true;
@@ -63,7 +61,7 @@ public class CombatComponent
         return true;
     }
 
-    public void ResetHp()
+    public void ResetDead()
     {
         _hp = _maxHp;
         _dead = false;
@@ -81,7 +79,7 @@ public class CombatComponent
     public void SetMaxHp(float maxHp)
     {
         _maxHp = maxHp;
-        ResetHp();
+        ResetDead();
     }
 
     public bool TakeDamage(Vector3 position, float damage)

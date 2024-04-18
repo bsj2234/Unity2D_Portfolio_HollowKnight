@@ -262,6 +262,7 @@ MonoBehaviour:
     _dead: 0
     _invincibleTime: 0.1
     _prevHitTime: 0
+    _owner: {fileID: 636405985461026081}
     additionalEffectOnHit:
     - {fileID: 8888330689962828209, guid: 5c1a5cee6913c7346a4bcf7bdf9158e0, type: 3}
   isGrounded: 0
@@ -586,18 +587,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b39899311a25b8948834057f3d99b834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 636405985461026080}
   combatComponent:
-    _maxHp: 100
-    _hp: 100
+    _maxHp: 50
+    _hp: 50
     _dead: 0
     _invincibleTime: 0.1
     _prevHitTime: 0
+    _owner: {fileID: 636405986019728006}
     additionalEffectOnHit: []
   damagedEffects:
   - {fileID: 8386825428003906271, guid: 1e9536b7743b1914a92691ca6a380e5c, type: 3}
   - {fileID: 8386825428003906271, guid: 7de886cf43d2e304589fceb5aaf71145, type: 3}
   - {fileID: 8386825428003906271, guid: 8bd450e2663220d47b761c31bfb3e611, type: 3}
-  _invincibleTime: 0
 --- !u!58 &636405986019728007
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -710,7 +712,6 @@ MonoBehaviour:
   _damagableTag:
   - Player
   _owner: {fileID: 636405985461026080}
-  _damageType: 0
   _damage: 20
 --- !u!1 &636405986568850960
 GameObject:

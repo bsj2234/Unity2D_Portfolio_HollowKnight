@@ -31,7 +31,6 @@ public class FalseKnight : Character
 
     //죽었을때 나오는 소울
     [SerializeField] private FalseKnightMainBody _mainBody;
-    private FalseKnightMainBody _mainBodyCombat;
     private int _mainBodyDeathCount = 0;
     public GameObject[] damagedEffects;
 
@@ -47,12 +46,13 @@ public class FalseKnight : Character
         Assert.IsNotNull(_animator);
         _rigidbody = GetComponent<Rigidbody2D>();
         _target = GameManager.Instance.GetPlayer().transform;
-        _mainBodyCombat = _mainBody.GetComponent<FalseKnightMainBody>();
-        _mainBodyCombat.OnFalseKnightDead += OnMainbodyCurrentDead;
+        _mainBody = _mainBody.GetComponent<FalseKnightMainBody>();
+        _mainBody.OnFalseKnightDead += OnMainbodyCurrentDead;
         OnRealDead += RealDead;
         combatComponent.OnDead += OnCurrentDead;
         combatComponent.OnDamaged += OnDamaged;
         combatComponent.AdditionalDamageCondition += IsDamagable;
+        combatComponent.Init(transform);
     }
 
     private bool IsDamagable()
@@ -167,8 +167,8 @@ public class FalseKnight : Character
             case 3:
                 _animator.SetTrigger("Groggy");
                 state = FalseKnightState.MainBody;
-                _mainBodyCombat.OnFalseKnightDead -= OnMainbodyCurrentDead;
-                _mainBodyCombat.OnFalseKnightDead += OnRealDead;
+                _mainBody.OnFalseKnightDead -= OnMainbodyCurrentDead;
+                _mainBody.OnFalseKnightDead += OnRealDead;
                 break;
         }
     }
@@ -182,7 +182,7 @@ public class FalseKnight : Character
         _mainBodyDeathCount++;
         Phase++;
         _invincibleTime = 0f;
-        combatComponent.ResetHp();
+        combatComponent.ResetDead();
         _animator.SetTrigger("GroggyDead");
         state = FalseKnightState.Idle;
     }

@@ -113,6 +113,7 @@ public class Player : Character, IFightable
         _combatComponent.OnDamagedWAttacker += OnAttackSuccess;
         _combatComponent.OnDead += OnDead;
         _combatComponent.AdditionalDamageCondition += addtionalCondition;
+        _combatComponent.Init(transform);
 
         //debugCharms
         for (int i  = 0; i < debugCharms.Length; i++)
@@ -528,7 +529,7 @@ public class Player : Character, IFightable
 
     public void OnAttackSuccess(CombatComponent target)
     {
-        if(target._owner.CompareTag("enemy"))
+        if(target._owner.CompareTag("Enemy"))
             mp += 15f;
     }
 
