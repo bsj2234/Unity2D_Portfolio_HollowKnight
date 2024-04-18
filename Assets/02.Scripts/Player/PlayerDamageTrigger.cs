@@ -16,11 +16,6 @@ public class PlayerDamageTrigger : MonoBehaviour
     [SerializeField] private float _damage;
     [SerializeField] private List<Collider2D> _overlapResult;
 
-    internal void SetOwner(FalseKnight owner)
-    {
-        _owner = owner;
-    }
-
     private void Awake()
     {
         _player = transform.GetComponentInParent<Player>();
@@ -58,25 +53,8 @@ public class PlayerDamageTrigger : MonoBehaviour
                         //Assert.IsNotNull(target, $"it has damagable tag but not havin damageble component {col.gameObject.name}");groundprojectile
                         continue;
                     }
-                    //데미지 주고 힐 적이면 힐
-                    //하지만 적당히 태그만 있는지 검사헀기때문에 죽었는지 살았는지는 모른다
-                    //맞은놈이 힐시켜주면 쉬운데
-                    if(!target.IsDead())
-                    {
-                        _player.OnDamageSuccess();
-                    }
-                    switch (_damageType)
-                    {
-                        case DamageType.FixedDamage:
-                            _owner.DealFixedDamage(target, _damage);
-                            break;
-                        //스탯 계산 후 공격
-                        case DamageType.StatPostDamage:
-                            _owner.DealDamage(target, _damage);
-                            break;
-                        default:
-                            break;
-                    }
+                    CombatComponent targetCombat = target.GetCombatComponent();
+                    _owner.GetCombatComponent().DealDamage(targetCombat, _damage);
                 }
             }
         }

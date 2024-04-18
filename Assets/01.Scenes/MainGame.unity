@@ -2300,7 +2300,6 @@ GameObject:
   - component: {fileID: 164682478}
   - component: {fileID: 164682480}
   - component: {fileID: 164682487}
-  - component: {fileID: 164682486}
   - component: {fileID: 164682484}
   - component: {fileID: 164682481}
   - component: {fileID: 164682483}
@@ -2321,7 +2320,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164682477}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.559998, y: 19.790003, z: 0}
+  m_LocalPosition: {x: 119.14001, y: -17.509998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2441,7 +2440,9 @@ MonoBehaviour:
   maxHp: 5
   mp: 0
   maxMp: 100
-  debugCharm: {fileID: 11400000, guid: 221836dd62c736c42b296747f0530160, type: 2}
+  debugCharms:
+  - {fileID: 11400000, guid: baefd1fc5e217cb44a5dd90a8da9416c, type: 2}
+  - {fileID: 11400000, guid: db1dbf35ac9dd774eba6970e27e98d11, type: 2}
   damagePerSlot: 30
   coinCount: 15
   shopUi: {fileID: 1089257051}
@@ -2451,6 +2452,14 @@ MonoBehaviour:
   _spikeRespawn: {fileID: 0}
   defaultAttackSpeed: 0.4
   _playerDamageTrigger: {fileID: 0}
+  _combatComponent:
+    _maxHp: 100
+    _hp: 100
+    _dead: 0
+    _invincibleTime: 0.1
+    _prevHitTime: 0
+    _owner: {fileID: 164682478}
+    additionalEffectOnHit: []
 --- !u!96 &164682485
 TrailRenderer:
   serializedVersion: 2
@@ -2550,28 +2559,6 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!68 &164682486
-EdgeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 164682477}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.3, y: -1.32}
-  m_EdgeRadius: 0
-  m_Points:
-  - {x: 0, y: 0}
-  - {x: 0.61, y: 0}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
 --- !u!61 &164682487
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9059,7 +9046,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -25.9, y: 20.7, z: -10}
+  m_LocalPosition: {x: 117.8, y: -16.6, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -29912,10 +29899,6 @@ PrefabInstance:
     - target: {fileID: 5114688500873830828, guid: abbe181559f016a4db4154f5b546467c, type: 3}
       propertyPath: m_Name
       value: DestroyableWall
-      objectReference: {fileID: 0}
-    - target: {fileID: 7938080247830904442, guid: abbe181559f016a4db4154f5b546467c, type: 3}
-      propertyPath: destructHit
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abbe181559f016a4db4154f5b546467c, type: 3}

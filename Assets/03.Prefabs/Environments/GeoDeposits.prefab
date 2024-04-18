@@ -121,18 +121,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d45399e86de1d248a832d5a833b5235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destructHit: 3
   _animator: {fileID: 4479080452880622678}
   isDestructed: 0
   _damagableTag:
   - PlayerAttackCollider
-  coinSpawn: 0
+  coinSpawn: 30
   combat:
-    _maxHp: 6
+    _maxHp: 5
     _hp: 0
     _dead: 0
     _invincibleTime: 0.1
     _prevHitTime: 0
+    additionalEffectOnHit:
+    - {fileID: 8888330689962828209, guid: 5c1a5cee6913c7346a4bcf7bdf9158e0, type: 3}
 --- !u!61 &3911736667654992832
 BoxCollider2D:
   m_ObjectHideFlags: 0

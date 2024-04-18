@@ -8,7 +8,7 @@ public class FlipEvent : MonoBehaviour
     [SerializeField] private FalseKnight _owner;
     private void Awake()
     {
-        _owner = transform.GetComponentInParent<FalseKnight>();
+        _owner = _owner ?? transform.GetComponentInParent<FalseKnight>();
         Assert.IsNotNull( _owner );
     }
 

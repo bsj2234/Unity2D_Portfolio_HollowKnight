@@ -5,28 +5,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class FalseKnightMainBody : MonoBehaviour, IFightable
+public class FalseKnightMainBody : Character
 {
     public CombatComponent combatComponent;
-    public Action OnDead;
+    public Action OnFalseKnightDead;
 
     private Animator _animator;
     public GameObject[] damagedEffects;
-
-    public float _invincibleTime = 0f;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         Assert.IsNotNull(_animator);
         Assert.IsNotNull(combatComponent);
-        combatComponent.SetMaxHp(70);
-    }
-
-    private void Update()
-    {
-        if(_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
-        else { _invincibleTime = 0f;}
+        combatComponent.Init(transform);
+        combatComponent.OnDamaged += Ondamaged;
     }
 
     public void ResetMainBody()
@@ -46,21 +39,14 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
 
     public void TakeDamage(float damage, Vector2 attackerPos)
     {
-        if(_invincibleTime > 0f)
-            return;
         combatComponent.TakeDamage(attackerPos, damage);
-        _animator.SetTrigger("Hit");
-        _invincibleTime = .1f;
-        ObjectSpawnManager.Instance.SpawnBetween(damagedEffects, attackerPos, transform.position,1f , 4f);
-        if (combatComponent.IsDead())
-        {
-            if (OnDead != null)
-            {
-                OnDead.Invoke();
-            }
-            gameObject.SetActive(false);
-        }
     }
+    private void Ondamaged()
+    {
+        _animator.SetTrigger("Hit");
+        gameObject.SetActive(false);
+    }
+
 
     public void DealFixedDamage(IFightable target, float damage)
     {
@@ -73,5 +59,10 @@ public class FalseKnightMainBody : MonoBehaviour, IFightable
     public bool IsDead()
     {
         return combatComponent.IsDead();
+    }
+
+    public override CombatComponent GetCombatComponent()
+    {
+        return combatComponent;
     }
 }

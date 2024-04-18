@@ -13,14 +13,7 @@ public enum DamageType
 
 public interface IFightable
 {
-    float GetHp();
-
-    //public void TakeDamage(float damage);
-    void TakeDamage(float damage, Vector2 Attackerpos);
-    void DealFixedDamage(IFightable target, float damage);
-    void DealDamage(IFightable target, float damage);
-
-    bool IsDead();
+    CombatComponent GetCombatComponent();
 
 }
 //Todo SetValues By Owner
@@ -28,7 +21,6 @@ public class DamageTrigger : MonoBehaviour
 {
     [SerializeField] private List<string> _damagableTag = new List<string>();
     [SerializeField] private Character _owner;
-    [SerializeField] private DamageType _damageType;
     [SerializeField] private float _damage;
 
     internal void SetOwner(FalseKnight owner)
@@ -57,18 +49,7 @@ public class DamageTrigger : MonoBehaviour
                 //데미지 인터페이스 
                 //근데 그냥 어택함수안에서 캐스팅하고 부르자 응집 시켜놓자
                 IFightable target = collision.gameObject.GetComponent<IFightable>();
-                switch (_damageType)
-                {
-                    case DamageType.FixedDamage:
-                        _owner.DealFixedDamage(target, _damage);
-                        break;
-                    //스탯 계산 후 공격
-                    case DamageType.StatPostDamage:
-                        _owner.DealDamage(target, _damage);
-                        break;
-                    default:
-                        break;
-                }
+                _owner.GetCombatComponent().DealDamage(target.GetCombatComponent(), _damage);
             }
         }
     }

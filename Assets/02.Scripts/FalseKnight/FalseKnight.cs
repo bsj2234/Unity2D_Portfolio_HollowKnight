@@ -9,7 +9,7 @@ public enum FalseKnightState
 {
     Idle, JumpAttack, Jump, GroundAttack, Rampage, MainBody, Dead
 }
-public class FalseKnight : Character, IFightable
+public class FalseKnight : Character
 {
     public FalseKnightState state;
 
@@ -48,8 +48,20 @@ public class FalseKnight : Character, IFightable
         _rigidbody = GetComponent<Rigidbody2D>();
         _target = GameManager.Instance.GetPlayer().transform;
         _mainBodyCombat = _mainBody.GetComponent<FalseKnightMainBody>();
-        _mainBodyCombat.OnDead += OnMainbodyCurrentDead;
+        _mainBodyCombat.OnFalseKnightDead += OnMainbodyCurrentDead;
         OnRealDead += RealDead;
+        combatComponent.OnDead += OnCurrentDead;
+        combatComponent.OnDamaged += OnDamaged;
+        combatComponent.AdditionalDamageCondition += IsDamagable;
+    }
+
+    private bool IsDamagable()
+    {
+        if (state == FalseKnightState.MainBody)
+        {
+            return false;
+        }
+        return true;
     }
 
     public void ChangeState(FalseKnightState newState)
@@ -155,8 +167,8 @@ public class FalseKnight : Character, IFightable
             case 3:
                 _animator.SetTrigger("Groggy");
                 state = FalseKnightState.MainBody;
-                _mainBodyCombat.OnDead -= OnMainbodyCurrentDead;
-                _mainBodyCombat.OnDead += OnRealDead;
+                _mainBodyCombat.OnFalseKnightDead -= OnMainbodyCurrentDead;
+                _mainBodyCombat.OnFalseKnightDead += OnRealDead;
                 break;
         }
     }
@@ -250,46 +262,18 @@ public class FalseKnight : Character, IFightable
         SpawnMainBody();
     }
 
-    public override float GetHp()
+    public override CombatComponent GetCombatComponent()
     {
-        return combatComponent.GetHp();
+        return combatComponent;
     }
-
-    public override void DealFixedDamage(IFightable target, float damage)
+    private void OnDamaged()
     {
-        target.TakeDamage(damage, transform.position);
-    }
-
-    public override void DealDamage(IFightable target, float damage)
-    {
-        target.TakeDamage(damage, transform.position);
-    }
-
-    public override void TakeDamage(float damage, Vector2 attackerPos)
-    {
-        if (state == FalseKnightState.MainBody)
-        {
-            return;
-        }
-        if (_invincibleTime > 0f) { return; }
-        combatComponent.TakeDamage(attackerPos, damage);
-        if (combatComponent.IsDead())
-        {
-            OnCurrentDead();
-        }
-        else
-        {
-            _invincibleTime = .3f;
-            DamagedEffect(attackerPos, transform.position);
-        }
         //UI
         if (OnStatusChange != null)
         {
             OnStatusChange.Invoke(this);
         }
-        //invincible(damaged or dashing)
     }
-
     public void RealDead()
     {
         _animator.SetTrigger("Dead");
@@ -314,9 +298,5 @@ public class FalseKnight : Character, IFightable
             _animator.SetBool("Fighting", true);
             _rigidbody.gravityScale = 1f;
         }
-    }
-    public bool IsDead()
-    {
-        return combatComponent.IsDead();
     }
 }

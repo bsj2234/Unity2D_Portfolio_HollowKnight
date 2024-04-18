@@ -8,7 +8,7 @@ public class Spike : MonoBehaviour
     {
         if(collision.CompareTag("Player"))
         {
-            GameManager.Instance.Player.TakeDamage(10f, transform.position);
+            GameManager.Instance.Player.GetCombatComponent().TakeDamage(transform.position, 10f);
             GameManager.Instance.Player.RespawnWhenSpike();
         }
     }

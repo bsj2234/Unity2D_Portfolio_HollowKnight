@@ -11,12 +11,15 @@ public class CombatComponent
 
     [SerializeField] private float _invincibleTime = .1f;
     [SerializeField] private float _prevHitTime = 0f;
-    private Vector3 _prevAttackerPos;
-    private Transform _owner;
+    public Transform _owner;
     private bool _defalutEffectOnDamaged;
 
     public Action OnDamaged { get; internal set; }
+    public Action<CombatComponent> OnDamagedWAttacker { get; internal set; }
     public Action OnDead { get; internal set; }
+    public Func<bool> AdditionalDamageCondition { get; internal set; }
+
+    public GameObject[] additionalEffectOnHit;
 
 
     public void Init(Transform owner, bool defaultEffectOnDamaged = true )
@@ -27,9 +30,15 @@ public class CombatComponent
     }
 
     public float GetHp() { return _hp; }
-    public void DealDamage(CombatComponent target, float damage)
+    public bool DealDamage(CombatComponent target, float damage)
     {
-        target.TakeDamage(damage);
+        bool isAttackSucceeded = target.TakeDamage(_owner.transform.position ,damage);
+        if(!isAttackSucceeded)
+        {
+            OnDamagedWAttacker.Invoke(target);
+            return false;
+        }
+        return true;
     }
     private bool IsDamageable()
     {
@@ -38,6 +47,15 @@ public class CombatComponent
             return false;
         }
         if (_dead)
+        {
+            return false;
+        }
+        bool result = true;
+        if (AdditionalDamageCondition != null)
+        {
+            result = result && AdditionalDamageCondition.Invoke();
+        }
+        if ( !result )
         {
             return false;
         }
@@ -66,13 +84,18 @@ public class CombatComponent
         ResetHp();
     }
 
-    public void TakeDamage(Vector3 position, float damage)
+    public bool TakeDamage(Vector3 position, float damage)
     {
         if (!IsDamageable())
-            return;
+            return false;
         TakeDamage(damage);
         if(_defalutEffectOnDamaged)
             ObjectSpawnManager.Instance.SpawnDefalutHitEffect(position, _owner.position);
+        if(additionalEffectOnHit != null)
+        {
+            ObjectSpawnManager.Instance.SpawnBetween(additionalEffectOnHit, position, _owner.position, 1f, 3f);
+        }
+        return true;
     }
     private void TakeDamage(float damage)
     {

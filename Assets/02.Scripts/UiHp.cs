@@ -16,7 +16,7 @@ public class UiHp : MonoBehaviour
 
     public void UpdateUi()
     {
-        int hp = (int)(_character).GetHp();
+        int hp = (int)_character.GetCombatComponent().GetHp();
         int maxHp = (int)(_character).maxHp;
         for (int i = 0; i < _images.Length; i++)
         {

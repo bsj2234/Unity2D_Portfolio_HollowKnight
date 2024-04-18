@@ -118,7 +118,7 @@ public class CrawlidMoveComponent : Character, IFightable
         }
         if (collision.CompareTag("Player"))
         {
-            GameManager.Instance.Player.TakeDamage(10f, transform.position);
+            GameManager.Instance.Player.GetCombatComponent().TakeDamage(transform.position, 10f);
         }
     }
 
@@ -132,29 +132,8 @@ public class CrawlidMoveComponent : Character, IFightable
         _collision = null;
     }
 
-    //interface
-    public override float GetHp()
+    public override CombatComponent GetCombatComponent()
     {
-        return combat.GetHp();
-    }
-
-    public override void TakeDamage(float damage, Vector2 Attackerpos)
-    {
-        combat.TakeDamage(Attackerpos, damage);
-    }
-
-    public override void DealFixedDamage(IFightable target, float damage)
-    {
-        target.TakeDamage(damage, transform.position);
-    }
-
-    public override void DealDamage(IFightable target, float damage)
-    {
-        target.TakeDamage(damage, transform.position);
-    }
-
-    public override bool IsDead()
-    {
-        return combat.IsDead();
+        return combat;
     }
 }

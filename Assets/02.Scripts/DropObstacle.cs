@@ -20,7 +20,7 @@ public class DropObstacle : MonoBehaviour
     {
         if(collision.CompareTag("Player"))
         {
-            GameManager.Instance.Player.TakeDamage(25f, transform.position);
+            GameManager.Instance.Player.GetCombatComponent().TakeDamage(transform.position, 10f);
             gameObject.SetActive(false);
         }
     }

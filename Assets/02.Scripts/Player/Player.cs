@@ -47,7 +47,7 @@ public class Player : Character, IFightable
 
     //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
     private CharmInstance[] _equippedCharms = new CharmInstance[5];
-    public CharmData debugCharm;
+    public CharmData[] debugCharms;
     // Wow
     //public으로 지정하면 null로 초기화되지않고 기본 생성자가 호출되는듯??
     //근데 기본생성자가 없을텐데
@@ -76,6 +76,7 @@ public class Player : Character, IFightable
     public float defaultAttackSpeed = .4f;
 
     public PlayerDamageTrigger _playerDamageTrigger;
+    [SerializeField]private CombatComponent _combatComponent;
 
     // Start is called before the first frame update
     void Awake()
@@ -108,7 +109,17 @@ public class Player : Character, IFightable
         Assert.IsNotNull(_pawnSprite);
         Assert.IsNotNull(_pawnAnimator);
 
-        _equippedCharms[0] = new CharmInstance(debugCharm);
+        _combatComponent.OnDamaged += OnDamage;
+        _combatComponent.OnDamagedWAttacker += OnAttackSuccess;
+        _combatComponent.OnDead += OnDead;
+        _combatComponent.AdditionalDamageCondition += addtionalCondition;
+
+        //debugCharms
+        for (int i  = 0; i < debugCharms.Length; i++)
+        {
+            _equippedCharms[i] = new CharmInstance(debugCharms[i]);
+        }
+        RecalcCharmEffect();
     }
 
     private void Start()
@@ -413,7 +424,7 @@ public class Player : Character, IFightable
                 IFightable fightable;
                 item.TryGetComponent(out fightable);
 
-                if (fightable?.IsDead() ?? true)
+                if (fightable?.GetCombatComponent().IsDead() ?? true)
                     continue;
                 maxKnockBack = .8f;
             }
@@ -440,63 +451,7 @@ public class Player : Character, IFightable
         return _stunTime > 0f;
     }
 
-    public override float GetHp()
-    {
-        return hp;
-    }
 
-    public override void TakeDamage(float damage, Vector2 Attackerpos)
-    {
-        if(isDead) return;
-        //invincible(damaged or dashing)
-        if (_invincibleTime > 0f) { return; }
-        hp-=Mathf.Ceil((damage / damagePerSlot));
-        hud.RefreshAll();
-        if(hp <= 0f)
-        {
-            isDead = true;
-        }
-        if (isDead)
-        {
-            _pawnAnimator.SetTrigger("Anim_Dead");
-            _pawnAnimator.SetBool("Anim_IsDead", true);
-            moveComponent.Dead();
-
-            DeadEffect.SetActive(false);
-            HitEffect.SetActive(false);
-            DeadEffect.SetActive(true);
-            HitEffect.SetActive(true);
-        }
-        else
-        {
-            _pawnAnimator.SetTrigger("Anim_Damaged");
-
-            _stunTime = .15f;
-            _invincibleTime = .9f + item_hitInvincible;
-
-            HitEffect.SetActive(false);
-            HitEffect.SetActive(true);
-        }
-
-    }
-
-    //IFightable
-    public override void DealFixedDamage(IFightable target, float damage)
-    {
-        //Todo AttackCollider 끼리 닿으면 null
-        if(target == null)
-        {
-            Debug.Log("Null");
-            return;
-        }
-        target.TakeDamage((int)(damage + item_Damage) , transform.position);
-        
-    }
-
-    public override void DealDamage(IFightable target, float damage)
-    {
-        target.TakeDamage(damage , transform.position);
-    }
 
     public void AddCoin(int count)
     {
@@ -571,13 +526,50 @@ public class Player : Character, IFightable
         transform.position = _spikeRespawn.position;
     }
 
-    public override bool IsDead()
+    public void OnAttackSuccess(CombatComponent target)
     {
-        return isDead;
+        if(target._owner.CompareTag("enemy"))
+            mp += 15f;
     }
 
-    public void OnDamageSuccess()
+    public override CombatComponent GetCombatComponent()
     {
-        mp += 15f;
+        return _combatComponent;
+    }
+
+    public void OnDamage()
+    {
+
+        //invincible(damaged or dashing)
+        hud.RefreshAll();
+        _pawnAnimator.SetTrigger("Anim_Damaged");
+
+        _stunTime = .15f;
+        _invincibleTime = .9f + item_hitInvincible;
+
+        HitEffect.SetActive(false);
+        HitEffect.SetActive(true);
+    }
+
+    public void OnDead()
+    {
+
+        _pawnAnimator.SetTrigger("Anim_Dead");
+        _pawnAnimator.SetBool("Anim_IsDead", true);
+        moveComponent.Dead();
+
+        DeadEffect.SetActive(false);
+        HitEffect.SetActive(false);
+        DeadEffect.SetActive(true);
+        HitEffect.SetActive(true);
+    }
+
+    public bool addtionalCondition()
+    {
+        if(_invincibleTime > 0f)
+        {
+            return false;
+        }
+        return true;
     }
 }
