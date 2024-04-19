@@ -30,14 +30,17 @@ public class DebugManager : Singleton<DebugManager>
         {
             Teleport(functionKeyIndex);
         }
-        //f1 will heal
-        //f4 will dead
-        if (functionKeyIndex == 0)
-            GameManager.Instance.Player.GetCombatComponent().Heal(1);
-        if (functionKeyIndex == 1)
-            GameManager.Instance.Player.GetCombatComponent().TakeDamage(1);
-        if (functionKeyIndex == 3)
-            GameManager.Instance.Player.GetCombatComponent().Die();
+        else
+        {
+            //f1 will heal
+            //f4 will dead
+            if (functionKeyIndex == 0)
+                GameManager.Instance.Player.GetCombatComponent().Heal(1);
+            if (functionKeyIndex == 1)
+                GameManager.Instance.Player.GetCombatComponent().TakeDamage(1);
+            if (functionKeyIndex == 3)
+                GameManager.Instance.Player.GetCombatComponent().Die();
+        }
         timer += .1f;
     }
     #region INPUT
@@ -57,7 +60,7 @@ public class DebugManager : Singleton<DebugManager>
     #region FUNC
     private void Teleport(int i)
     {
-        if (_teleportPosition.Length < i)
+        if ( i < _teleportPosition.Length)
         {
             GameManager.Instance.Player.Teleport(_teleportPosition[i].transform.position + Vector3.up * 1.5f);
         }

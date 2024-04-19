@@ -243,7 +243,11 @@ public class PlayerMoveComponent : MonoBehaviour
         // 거리가 2점프되면 좋겠어 속도는 아아 되겠지
         // 
 
-        float knockbackRatio = 50f;
+        if (normalizedKnockbackPower <= 0f)
+        {
+            return;
+        }
+            float knockbackRatio = 50f;
         if (knockBackDir == Vector2.up)
         {
             knockbackRatio = 1f;
