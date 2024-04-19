@@ -23,7 +23,7 @@ public class Player : Character, IFightable
     public bool isPendingAttack = false;
     public bool isAttacking = false;
     private Vector2 _attackDir;
-    private float _attackingTime = 0f;
+    [SerializeField]private float _attackingTime = 0f;
     private int continuableAttackCount = 0;
 
     //회피,무적
@@ -31,10 +31,6 @@ public class Player : Character, IFightable
     private float _stunTime = 0f;
     public float DodgeInvincibleTime = 0.5f;
 
-    //체력
-    public float hp = 4f;
-    public int initialMaxHp = 4;
-    public float maxHp = 4f;
     public float mp = 0f;
     public float maxMp = 100f;
     //뒤집기용
@@ -45,7 +41,7 @@ public class Player : Character, IFightable
     private float itemAttackSpeedBounus = 0f;
     private float item_hitInvincible = 0f;
 
-    //인벤토리 //Todo: 인벤 디버그용 public, 참 정리하기
+    //인벤토리 
     private CharmInstance[] _equippedCharms = new CharmInstance[5];
     public CharmData[] debugCharms;
     // Wow
@@ -77,6 +73,7 @@ public class Player : Character, IFightable
 
     public PlayerDamageTrigger _playerDamageTrigger;
     [SerializeField]private CombatComponent _combatComponent;
+    [SerializeField]private Animator[] _attackEffectAnimator;
 
     // Start is called before the first frame update
     void Awake()
@@ -128,19 +125,6 @@ public class Player : Character, IFightable
         hud.RefreshAll();
     }
 
-    //너무 움직임이 무거워서 탈락  impulse 썻으면 됐을수도? 그래도 velocity가 최대값 관리하기 좋은듯
-    //private void FixedUpdate()
-    //{
-    //    if (grounded && playerRigidbody.velocity.magnitude < PlayerMaxSpeed)
-    //    {
-    //        //Todo 플레이어의 입력에 의해 addForce할 값이 크면 적게 줄여준다
-    //        playerRigidbody.AddForce(moveDirInput.normalized * 
-    //            Mathf.Min(PlayerAccelerate, Mathf.Max(PlayerMaxSpeed - playerRigidbody.velocity.magnitude, 0f)));
-    //    }
-    //    if(moveDirInput.magnitude < 0.1f)
-    //    {
-    //    }
-    //}
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
@@ -158,13 +142,28 @@ public class Player : Character, IFightable
         {
             _pawnAnimator.SetBool("Anim_IsStun", false);
         }
-        if (_attackingTime > 0f) { _attackingTime -= Time.deltaTime; }
-        else { continuableAttackCount = 0; }
+        if (_attackingTime > 0f) 
+        { 
+            _attackingTime -= Time.deltaTime;
+            _pawnAnimator.speed = defaultAttackSpeed / (defaultAttackSpeed - itemAttackSpeedBounus);
+            foreach (var item in _attackEffectAnimator)
+            {
+                item.speed = defaultAttackSpeed / (defaultAttackSpeed - itemAttackSpeedBounus);
+            }
+        }
+        else { 
+            continuableAttackCount = 0;
+            _pawnAnimator.speed = 1f;
+            foreach (var item in _attackEffectAnimator)
+            {
+                item.speed = 1f;
+            }
+        }
         if (_knockBackTime > 0f) { _knockBackTime -= Time.deltaTime; }
 
 
 
-        if (_attackingTime + _knockBackTime + _stunTime <= 0)
+        if (_attackingTime <= 0f && _knockBackTime <= 0f && _stunTime <= 0)
         {
             moveComponent.isMovable = true;
             if (_controller.hasMoveInput)
@@ -388,9 +387,9 @@ public class Player : Character, IFightable
             _currentCharmEffects.Add(equippedCharm.CharmType.ItemName);
         }
 
-        maxHp = initialMaxHp + (_currentCharmEffects.Contains("허술한 심장") ? 2 : 0);
+        _combatComponent.AddedMaxHp(_currentCharmEffects.Contains("허술한 심장") ? 2 : 0);
         item_Damage = _currentCharmEffects.Contains("허술한 힘") ? 3f : 0f;
-        itemAttackSpeedBounus = _currentCharmEffects.Contains("빠른 참격") ? .5f : 0f;
+        itemAttackSpeedBounus = _currentCharmEffects.Contains("빠른 참격") ? .15f : 0f;
         item_hitInvincible = _currentCharmEffects.Contains("튼튼한 껍데기") ? .3f : 0f;
     }
 
@@ -498,7 +497,7 @@ public class Player : Character, IFightable
         _rigidbody.velocity = Vector3.zero;
         //reset
         coinCount = 0;
-        hp = maxHp;
+        _combatComponent.ResetDead();
         mp = 0f;
         isDead = false;
         _pawnAnimator.SetTrigger("Anim_Reset");
@@ -529,6 +528,7 @@ public class Player : Character, IFightable
 
     public void OnAttackSuccess(CombatComponent target)
     {
+        //Todo 맞을떄차고있음 고치셈
         if(target._owner.CompareTag("Enemy"))
             mp += 15f;
     }

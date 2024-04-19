@@ -118,7 +118,7 @@ public class CrawlidMoveComponent : Character, IFightable
         }
         if (collision.CompareTag("Player"))
         {
-            GameManager.Instance.Player.GetCombatComponent().TakeDamage(transform.position, 10f);
+            GameManager.Instance.Player.GetCombatComponent().TakeDamage(transform.position, 1f);
         }
     }
 

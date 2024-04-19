@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
     //OnInput
     private void OnMove(InputValue inputValue)
     {
-        if(GameManager.Instance.Player.isDead) { return; }
+        if(GameManager.Instance.Player.GetCombatComponent().IsDead()) { return; }
         if (_playerControlable == false)
         { return; }
         moveDirInput = inputValue.Get<Vector2>();
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnJump(InputValue inputValue)
     {
-         if (GameManager.Instance.Player.isDead) { return; }
+         if (GameManager.Instance.Player.GetCombatComponent().IsDead()) { return; }
         if (_playerControlable == false)
         { return; }
         if (inputValue.isPressed == true)
@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnAttack(InputValue inputValue)
     {
-        if (GameManager.Instance.Player.isDead) { return; }
+        if (GameManager.Instance.Player.GetCombatComponent().IsDead()) { return; }
         if (_playerControlable == false)
         { return; }
         if (inputValue.isPressed == false)
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnDodge(InputValue inputValue)
     {
-        if (GameManager.Instance.Player.isDead) { return; }
+        if (GameManager.Instance.Player.GetCombatComponent().IsDead()) { return; }
         if (_playerControlable == false)
         { return; }
         if (inputValue.isPressed == true)
@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnInteract(InputValue inputValue)
     {
-        if (GameManager.Instance.Player.isDead) { return; }
+        if (GameManager.Instance.Player.GetCombatComponent().IsDead()) { return; }
         if (_playerControlable == false)
         { return; }
         if(inputValue.isPressed != false)
@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnInventory(InputValue inputValue)
     {
-        if (GameManager.Instance.Player.isDead) { return; }
+        if (GameManager.Instance.Player.GetCombatComponent().IsDead()) { return; }
         if (inputValue.isPressed != false)
         {
             if(_playerControlable)

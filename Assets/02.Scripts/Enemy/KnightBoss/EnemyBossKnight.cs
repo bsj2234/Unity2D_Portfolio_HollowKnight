@@ -38,7 +38,6 @@ public class EnemyBossKnight : MonoBehaviour
     void Awake()
     {
 
-        //Todo 자식에 히트박스를 따로 만들고 싶다 
         //뭔가 전체에서 찾기 싫어서 차일드에서 컴포넌트를 바로 가져와봄
 
         //나 자신의 콜리전은 물리 검사용임
@@ -64,20 +63,6 @@ public class EnemyBossKnight : MonoBehaviour
 
     }
 
-
-    //너무 움직임이 무거워서 탈락  impulse 썻으면 됐을수도? 그래도 velocity가 최대값 관리하기 좋은듯
-    //private void FixedUpdate()
-    //{
-    //    if (grounded && playerRigidbody.velocity.magnitude < PlayerMaxSpeed)
-    //    {
-    //        //Todo 플레이어의 입력에 의해 addForce할 값이 크면 적게 줄여준다
-    //        playerRigidbody.AddForce(moveDirInput.normalized * 
-    //            Mathf.Min(PlayerAccelerate, Mathf.Max(PlayerMaxSpeed - playerRigidbody.velocity.magnitude, 0f)));
-    //    }
-    //    if(moveDirInput.magnitude < 0.1f)
-    //    {
-    //    }
-    //}
     private void Update()
     {
         ////입력 방향에따라 스프라이트 방향 설정

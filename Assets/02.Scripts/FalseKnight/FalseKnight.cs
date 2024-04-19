@@ -131,7 +131,6 @@ public class FalseKnight : Character
     public void FocusToPlayer()
     {
 
-        //Todo 이거 사실 아님 플립을 써야함 그래야 프립에서 이벤트 처리가 제대로 됨
         if (_target.position.x - transform.position.x < 0f)
         {
             transform.rotation = Quaternion.Euler(0f, 180f, 0f);

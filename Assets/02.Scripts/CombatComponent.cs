@@ -20,11 +20,14 @@ public class CombatComponent
     public Func<bool> AdditionalDamageCondition { get; internal set; }
 
     public GameObject[] additionalEffectOnHit;
+    public float initalMaxHp;
+
     public void Init(Transform owner, bool defaultEffectOnDamaged = true )
     {
         _owner = owner;
         _hp = _maxHp;
-        _defalutEffectOnDamaged=defaultEffectOnDamaged;
+        initalMaxHp = _maxHp;
+        _defalutEffectOnDamaged =defaultEffectOnDamaged;
     }
 
     public float GetHp() { return _hp; }
@@ -57,7 +60,6 @@ public class CombatComponent
         {
             return false;
         }
-        _prevHitTime = Time.time;
         return true;
     }
 
@@ -97,6 +99,7 @@ public class CombatComponent
     }
     private void TakeDamage(float damage)
     {
+        _prevHitTime = Time.time;
         _hp -= damage;
         OnDamaged?.Invoke();
         if (_hp <= 0f)
@@ -104,5 +107,15 @@ public class CombatComponent
             _dead = true;
             OnDead?.Invoke();
         }
+    }
+
+    public void AddedMaxHp(float add)
+    {
+        _maxHp = initalMaxHp + add;
+    }
+
+    public float GetMaxHp()
+    {
+        return _maxHp;
     }
 }

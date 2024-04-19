@@ -16,7 +16,6 @@ public interface IFightable
     CombatComponent GetCombatComponent();
 
 }
-//Todo SetValues By Owner
 public class DamageTrigger : MonoBehaviour
 {
     [SerializeField] private List<string> _damagableTag = new List<string>();

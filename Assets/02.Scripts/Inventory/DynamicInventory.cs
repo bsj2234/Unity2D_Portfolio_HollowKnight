@@ -11,7 +11,6 @@ public class DynamicInventory : ScriptableObject
     public bool AddItem(CharmInstance itemToAdd)
     {
         //같은 아이템이 있으면 그 수만 추가
-        //Todo 나중에 칸별로 최대 아이템 제한
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i] == itemToAdd)

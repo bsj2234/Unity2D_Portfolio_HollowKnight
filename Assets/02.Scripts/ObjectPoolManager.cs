@@ -44,7 +44,7 @@ public class ObjectPoolManager:MonoBehaviour
         temp.transform.rotation = Quaternion.Euler(rotation);
         if (scale > 0f)
         {
-            temp.transform.localScale = new Vector3(scale, scale);
+            temp.transform.localScale = new Vector3(scale, scale, scale);
         }
         return temp;
     }

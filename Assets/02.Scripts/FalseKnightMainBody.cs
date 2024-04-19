@@ -38,7 +38,6 @@ public class FalseKnightMainBody : Character
     {
         _animator.SetTrigger("Hit");
     }
-    //TodoTodo 페이즈 작동 안됨 살리기
     private void OnDead()
     {
         OnFalseKnightDead.Invoke();

@@ -712,7 +712,7 @@ MonoBehaviour:
   _damagableTag:
   - Player
   _owner: {fileID: 636405985461026080}
-  _damage: 20
+  _damage: 1
 --- !u!1 &636405986568850960
 GameObject:
   m_ObjectHideFlags: 0

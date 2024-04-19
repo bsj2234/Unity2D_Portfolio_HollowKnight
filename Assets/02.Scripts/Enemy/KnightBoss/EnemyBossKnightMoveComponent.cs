@@ -21,7 +21,7 @@ public class EnemyBossKnightMoveComponent : MonoBehaviour
     public float JumpPower = 20f;
 
     //충돌
-    //디버깅용//Todo 인스펙터에만 보이도록
+    //디버깅용
     //충돌검사
     [SerializeField]
     private int _collisionCounter = 0;

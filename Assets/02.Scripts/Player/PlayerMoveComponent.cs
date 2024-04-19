@@ -84,7 +84,7 @@ public class PlayerMoveComponent : MonoBehaviour
     //최대속이 더 빠르면 마이너스로돌려주긴 해야하는데
     public void MovementUpdate(Vector2 moveInput)
     {
-        if(GameManager.Instance.Player.isDead) return;
+        if(GameManager.Instance.Player.GetCombatComponent().IsDead()) return;
         Vector2 curVelocity = _rigidbody.velocity;
 
         //대쉬시 무중력
