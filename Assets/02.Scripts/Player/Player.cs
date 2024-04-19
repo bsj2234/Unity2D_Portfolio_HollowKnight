@@ -110,6 +110,7 @@ public class Player : Character, IFightable
         _combatComponent.OnDamaged += OnDamage;
         _combatComponent.OnDamagedWAttacker += OnAttackSuccess;
         _combatComponent.OnDead += OnDead;
+        _combatComponent.OnHeal += OnHeal;
         _combatComponent.AdditionalDamageCondition += addtionalCondition;
         _combatComponent.Init(transform);
 
@@ -563,7 +564,10 @@ public class Player : Character, IFightable
         HitEffect.SetActive(false);
         HitEffect.SetActive(true);
     }
-
+    private void OnHeal()
+    {
+        hud.RefreshAll();
+    }
     public void OnDead()
     {
 

@@ -11,13 +11,22 @@ public class DebugManager : Singleton<DebugManager>
 
     //간편한 시스템이라 키보드만 사용
 
-
+    float timer = 0f;
     private void Update()
     {
+        if (timer > 0f)
+        {
+            timer -= Time.unscaledDeltaTime;
+            return;
+        }
         //F1~12 Check and with shift key
         //then teleport
         int functionKeyIndex = GetFunctionKey();
-        if (functionKeyIndex != -1 && Keyboard.current.shiftKey.isPressed == true)
+        if (functionKeyIndex == -1)
+        {
+            return;
+        }
+        if (Keyboard.current.shiftKey.isPressed == true)
         {
             Teleport(functionKeyIndex);
         }
@@ -25,8 +34,11 @@ public class DebugManager : Singleton<DebugManager>
         //f4 will dead
         if (functionKeyIndex == 0)
             GameManager.Instance.Player.GetCombatComponent().Heal(1);
+        if (functionKeyIndex == 1)
+            GameManager.Instance.Player.GetCombatComponent().TakeDamage(1);
         if (functionKeyIndex == 3)
             GameManager.Instance.Player.GetCombatComponent().Die();
+        timer += .1f;
     }
     #region INPUT
     private int GetFunctionKey()

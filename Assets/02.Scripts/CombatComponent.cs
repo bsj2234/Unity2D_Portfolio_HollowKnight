@@ -22,6 +22,7 @@ public class CombatComponent
     public GameObject[] additionalEffectOnHit;
     public float initalMaxHp;
     public bool noManaRegenOnHit = false;
+    public Action OnHeal;
 
     public Vector3 prevAttackersPos { get; internal set; }
 
@@ -91,17 +92,22 @@ public class CombatComponent
     {
         if (!IsDamageable())
             return false;
-        TakeDamage(damage);
+        CalcTakeDamage(damage);
         prevAttackersPos = position;
         if (_defalutEffectOnDamaged)
             ObjectSpawnManager.Instance.SpawnDefalutHitEffect(position, _owner.position);
-        if(additionalEffectOnHit != null)
+        if (additionalEffectOnHit != null)
         {
             ObjectSpawnManager.Instance.SpawnBetween(additionalEffectOnHit, position, _owner.position, 1f, 3f);
         }
         return true;
     }
-    private void TakeDamage(float damage)
+
+    public bool TakeDamage(float damage)
+    {
+        return TakeDamage(_owner.position, damage);
+    }
+    private void CalcTakeDamage(float damage)
     {
         _prevHitTime = Time.time;
         _hp -= damage;
@@ -125,13 +131,17 @@ public class CombatComponent
 
     internal void Heal(int v)
     {
-        _hp += v;
+        if(_hp < _maxHp)
+        {
+            _hp += v;
+        }
+        if( OnHeal != null )
+        {
+            OnHeal.Invoke();
+        }
     }
     internal void Die()
     {
-        for (int i = 0; i < GetHp(); i++)
-        {
-            TakeDamage(_owner.position , 1f);
-        }
+            TakeDamage(_owner.position , _hp);
     }
 }
