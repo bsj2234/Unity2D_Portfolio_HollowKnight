@@ -585,4 +585,10 @@ public class Player : Character, IFightable
         }
         return true;
     }
+
+    public void Teleport(Vector3 position)
+    {
+        transform.position = position;
+        GameManager.Instance.CameraToPlayer();
+    }
 }

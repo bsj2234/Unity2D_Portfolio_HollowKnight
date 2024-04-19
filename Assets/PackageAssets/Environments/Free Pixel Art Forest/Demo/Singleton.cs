@@ -14,7 +14,10 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType(typeof(T)) as T;
-                Assert.IsNotNull(instance, "Wrong singleton type");
+                if(instance == null)
+                {
+                     instance = Instantiate(Resources.Load<T>("Prefabs/" + typeof(T).Name)) as T;
+                }
 
             }
             return instance;

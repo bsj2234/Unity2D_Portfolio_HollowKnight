@@ -11,7 +11,7 @@ public class StatusUi : MonoBehaviour
     private void Awake()
     {
 
-        if (GameManager.Instance.StatueDebug == false)
+        if (GameManager.Instance.DebugMode == false)
         {
             gameObject.SetActive(false);
             return;

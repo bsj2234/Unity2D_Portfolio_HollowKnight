@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3161350205909634339}
   - component: {fileID: 2264259764750052627}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemySpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 213bf3f976e3fe64a89c19635aad9a20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemy: {fileID: 4398801945822735015, guid: de565c229d213af4881377ed0b20ec08, type: 3}
+  _enemyPrefab: {fileID: 4398801945822735015, guid: de565c229d213af4881377ed0b20ec08, type: 3}
+  _intancedEnemy: {fileID: 0}
