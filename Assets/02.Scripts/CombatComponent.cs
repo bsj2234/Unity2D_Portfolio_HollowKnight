@@ -122,4 +122,16 @@ public class CombatComponent
     {
         return _maxHp;
     }
+
+    internal void Heal(int v)
+    {
+        _hp += v;
+    }
+    internal void Die()
+    {
+        for (int i = 0; i < GetHp(); i++)
+        {
+            TakeDamage(_owner.position , 1f);
+        }
+    }
 }

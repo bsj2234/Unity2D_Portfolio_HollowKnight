@@ -591,4 +591,5 @@ public class Player : Character, IFightable
         transform.position = position;
         GameManager.Instance.CameraToPlayer();
     }
+
 }

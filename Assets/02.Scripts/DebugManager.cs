@@ -5,36 +5,50 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
-public class DebugManager : MonoBehaviour
+public class DebugManager : Singleton<DebugManager>
 {
     [SerializeField] private GameObject[] _teleportPosition;
 
     //간편한 시스템이라 키보드만 사용
-#if UNITY_EDITOR
+
+
     private void Update()
     {
-        TeleportInputProcess();
+        //F1~12 Check and with shift key
+        //then teleport
+        int functionKeyIndex = GetFunctionKey();
+        if (functionKeyIndex != -1 && Keyboard.current.shiftKey.isPressed == true)
+        {
+            Teleport(functionKeyIndex);
+        }
+        //f1 will heal
+        //f4 will dead
+        if (functionKeyIndex == 0)
+            GameManager.Instance.Player.GetCombatComponent().Heal(1);
+        if (functionKeyIndex == 3)
+            GameManager.Instance.Player.GetCombatComponent().Die();
     }
     #region INPUT
-    private void TeleportInputProcess()
+    private int GetFunctionKey()
     {
-        if (!Keyboard.current.shiftKey.isPressed)
-            return;
-        for(int i = 0; i < 12; i++)
+        for (int i = 0; i < 12; i++)
         {
-            if(Keyboard.current[Key.F1+i].isPressed == true)
+            if (Keyboard.current[Key.F1 + i].isPressed == true)
             {
-                Teleport(i);
-                break;
+                return i;
             }
         }
-    }
-
-    private void Teleport(int i)
-    {
-        GameManager.Instance.Player.Teleport(_teleportPosition[i].transform.position);
+        return -1;
     }
     #endregion
 
-#endif
+    #region FUNC
+    private void Teleport(int i)
+    {
+        if (_teleportPosition.Length < i)
+        {
+            GameManager.Instance.Player.Teleport(_teleportPosition[i].transform.position + Vector3.up * 1.5f);
+        }
+    }
+    #endregion
 }
