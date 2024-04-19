@@ -265,6 +265,8 @@ MonoBehaviour:
     _owner: {fileID: 636405985461026081}
     additionalEffectOnHit:
     - {fileID: 8888330689962828209, guid: 5c1a5cee6913c7346a4bcf7bdf9158e0, type: 3}
+    initalMaxHp: 0
+    noManaRegenOnHit: 1
   isGrounded: 0
   _light: {fileID: 636405985372419472}
   _mainBody: {fileID: 636405986019728027}
@@ -386,7 +388,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &636405985836401853
 RectTransform:
   m_ObjectHideFlags: 0
@@ -596,6 +598,8 @@ MonoBehaviour:
     _prevHitTime: 0
     _owner: {fileID: 636405986019728006}
     additionalEffectOnHit: []
+    initalMaxHp: 0
+    noManaRegenOnHit: 0
   damagedEffects:
   - {fileID: 8386825428003906271, guid: 1e9536b7743b1914a92691ca6a380e5c, type: 3}
   - {fileID: 8386825428003906271, guid: 7de886cf43d2e304589fceb5aaf71145, type: 3}
@@ -630,7 +634,7 @@ GameObject:
   - component: {fileID: 636405986307861480}
   m_Layer: 6
   m_Name: AttackTrigger
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

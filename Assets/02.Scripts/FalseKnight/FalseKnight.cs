@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -31,7 +32,6 @@ public class FalseKnight : Character
 
     //죽었을때 나오는 소울
     [SerializeField] private FalseKnightMainBody _mainBody;
-    private int _mainBodyDeathCount = 0;
     public GameObject[] damagedEffects;
 
     public System.Action<FalseKnight> OnStatusChange;
@@ -39,6 +39,7 @@ public class FalseKnight : Character
     public System.Action OnRealDead;
 
     public bool Fighting = false;
+    private Transform[] _jumpTargets;
 
     private void Awake()
     {
@@ -95,6 +96,12 @@ public class FalseKnight : Character
         }
     }
 
+    private void OnEnable()
+    {
+        isGrounded = false;
+        _animator.SetTrigger("Spawn");
+    }
+
     //무적 시간과 grounded 애니메이터 플래그 셋
     private void Update()
     {
@@ -122,6 +129,7 @@ public class FalseKnight : Character
     //Ai funcs
     public void JumpToTarget(float time)
     {
+        _rigidbody.velocity = Vector3.zero;
         isGrounded = false;
         groundIgnoreTime = .2f;
         float distance = _target.position.x - transform.position.x;
@@ -144,11 +152,31 @@ public class FalseKnight : Character
             OnFlip.Invoke();
         }
     }
-    public void JumpToRandom(float time)
+    public void JumpToFarPoint()
     {
-        float distance = Random.Range(-20f, 20f);
-        _rigidbody.AddForce(new Vector2(distance / time, 9.81f * time * .5f), ForceMode2D.Impulse);
+        _animator.SetBool("AlmostOnGround", false);
+        groundIgnoreTime += .1f;
+        Vector3 targetPos = GetFarJumpTarget();
+        float targetVector = -transform.position.x + targetPos.x;
+        float time = Mathf.Abs(targetVector * .1f);
+        _rigidbody.AddForce(new Vector2(targetVector / time, 9.81f * time * .5f), ForceMode2D.Impulse);
         FocusToPlayer();
+    }
+
+    private Vector3 GetFarJumpTarget()
+    {
+        Transform target = null;
+        float maxDist = 0f;
+        foreach (Transform t in _jumpTargets)
+        {
+            float dist = Mathf.Abs(t.position.x - transform.position.x);
+            if (dist > maxDist)
+            {
+                maxDist = dist;
+                target = t;
+            }            
+        }
+        return target.position;
     }
 
     private void OnCurrentDead()
@@ -178,7 +206,6 @@ public class FalseKnight : Character
     }
     private void OnMainbodyCurrentDead()
     {
-        _mainBodyDeathCount++;
         Phase++;
         _invincibleTime = 0f;
         combatComponent.ResetDead();
@@ -204,7 +231,7 @@ public class FalseKnight : Character
         if (groundIgnoreTime > 0)
             isGrounded = false;
         if (isGrounded)
-            Debug.Log(collision.gameObject.name);
+            _rigidbody.velocity = Vector3.zero;
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -297,5 +324,10 @@ public class FalseKnight : Character
             _animator.SetBool("Fighting", true);
             _rigidbody.gravityScale = 1f;
         }
+    }
+
+    public void SetJumpTarget(Transform[] jumpTargets)
+    {
+        _jumpTargets = jumpTargets;
     }
 }

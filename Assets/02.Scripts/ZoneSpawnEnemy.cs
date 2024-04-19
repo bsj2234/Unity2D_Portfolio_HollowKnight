@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 public class ZoneSpawnEnemy : MonoBehaviour
 {
     //player has two collider so i gotta count player collider
-    public List<FixedEnemySpawn> spawnList = new List<FixedEnemySpawn>();
+    public List<Spawner> spawnList = new List<Spawner>();
 
     public int collisionCount = 0;
 
@@ -16,7 +17,7 @@ public class ZoneSpawnEnemy : MonoBehaviour
             collisionCount++;
             if (collisionCount > 1)
                 return;
-            foreach (FixedEnemySpawn spawn in spawnList)
+            foreach (Spawner spawn in spawnList)
             {
                 spawn.Spawn();
             }
@@ -29,7 +30,7 @@ public class ZoneSpawnEnemy : MonoBehaviour
             collisionCount--;
             if(collisionCount == 0)
             {
-                foreach (FixedEnemySpawn spawn in spawnList)
+                foreach (Spawner spawn in spawnList)
                 {
                     spawn.DeSpawn();
                 }

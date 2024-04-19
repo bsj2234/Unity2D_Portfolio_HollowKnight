@@ -5,7 +5,7 @@ public class BattleZone : MonoBehaviour
 {
     public LockableDoor[] Doors;
 
-    public FixedEnemySpawn TargetSpawner;
+    public Spawner TargetSpawner;
 
     public ZoneSpawnEnemy battleSpawnZone;
 

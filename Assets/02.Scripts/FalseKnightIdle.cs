@@ -4,6 +4,7 @@ public class FalseKnightIdle : StateMachineBehaviour
 {
     public float CoolDown = .5f;
     float Timer;
+    public FalseKnightState debugAction = FalseKnightState.Idle;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -16,6 +17,8 @@ public class FalseKnightIdle : StateMachineBehaviour
         {
             Timer = CoolDown;
             FalseKnightState start = (FalseKnightState)Random.Range(0, 6);
+            if (debugAction != FalseKnightState.Idle)
+                start = debugAction;
             switch (start)
             {
                 case FalseKnightState.Idle:

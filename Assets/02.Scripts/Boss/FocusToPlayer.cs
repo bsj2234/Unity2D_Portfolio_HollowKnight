@@ -6,14 +6,15 @@ using UnityEngine.Assertions;
 
 public class FocusToPlayer : StateMachineBehaviour
 {
-    private EnemyBossKnight _enemy;
+
+    FalseKnight _fn;
+
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(_enemy == null)
+        if(_fn == null)
         {
-            _enemy = animator.transform.GetComponentInParent<EnemyBossKnight>();
-            Assert.IsNotNull(_enemy);
+            _fn = animator.GetComponentInParent<FalseKnight>();
         }
-        _enemy.FocusToPlayer();
+        _fn.FocusToPlayer();
     }
 }

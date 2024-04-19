@@ -529,8 +529,11 @@ public class Player : Character, IFightable
     {
         //Todo 맞을떄차고있음 고치셈
         if (target._owner.CompareTag("Enemy"))
-
         {
+            if (target.noManaRegenOnHit) 
+            {
+                return;
+            }
             mp += 15f;
             hud.RefreshAll();
         }
@@ -553,7 +556,7 @@ public class Player : Character, IFightable
         _invincibleTime = .9f + item_hitInvincible;
 
         //knockback
-        Vector3 knockbackDir = (-_combatComponent.prevAttackersPos + transform.position).normalized;
+        Vector3 knockbackDir = new Vector3((-_combatComponent.prevAttackersPos.x + transform.position.x), 0f, 0f).normalized;
 
         moveComponent.KnockBack(knockbackDir, damagedKnockbackForce);
 

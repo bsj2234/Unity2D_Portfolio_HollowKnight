@@ -21,6 +21,8 @@ public class CombatComponent
 
     public GameObject[] additionalEffectOnHit;
     public float initalMaxHp;
+    public bool noManaRegenOnHit = false;
+
     public Vector3 prevAttackersPos { get; internal set; }
 
     public void Init(Transform owner, bool defaultEffectOnDamaged = true )
@@ -35,7 +37,7 @@ public class CombatComponent
     public bool DealDamage(CombatComponent target, float damage)
     {
         bool isAttackSucceeded = target.TakeDamage(_owner.transform.position ,damage);
-        if(!isAttackSucceeded)
+        if(isAttackSucceeded)
         {
             OnDamagedWAttacker?.Invoke(target);
             return false;
