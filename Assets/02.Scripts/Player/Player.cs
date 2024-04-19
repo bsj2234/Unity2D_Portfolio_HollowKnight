@@ -17,7 +17,6 @@ public class Player : Character, IFightable
 
     //폰상태
     public bool isJumping = false;
-    public bool isDead = false;
     //공격 관련
     /// <summary>이건 공격 애니메이션 이벤트에서 처리됨 </summary>
     public bool isPendingAttack = false;
@@ -75,6 +74,8 @@ public class Player : Character, IFightable
     [SerializeField]private CombatComponent _combatComponent;
     [SerializeField]private Animator[] _attackEffectAnimator;
 
+    [SerializeField] private float damagedKnockbackForce = 100f;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -128,7 +129,7 @@ public class Player : Character, IFightable
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
-        if(isDead) return;
+        if(_combatComponent.IsDead()) return;
 
 
         //상태 지속 시간을 코드에서 관리
@@ -194,7 +195,7 @@ public class Player : Character, IFightable
     }
     public void Attack(Vector2 attackDir)
     {
-        if (isDead) return;
+        if (_combatComponent.IsDead()) return;
         if (IsStuned() | IsAttacking())
         {
             return;
@@ -231,7 +232,7 @@ public class Player : Character, IFightable
 
     public void StartJump()
     {
-        if (isDead) return;
+        if (_combatComponent.IsDead()) return;
         moveComponent.StartJump();
         isJumping = true;
         _pawnAnimator.SetBool("Anim_IsGrounded", false);
@@ -257,7 +258,6 @@ public class Player : Character, IFightable
         if (IsStuned())
         {
             moveComponent.MovementUpdate(Vector2.zero);
-            moveComponent.OnDamaged();
         }
         else
         {
@@ -279,7 +279,7 @@ public class Player : Character, IFightable
 
     public void TryInteract()
     {
-        if (isDead) return;
+        if (_combatComponent.IsDead()) return;
         //콜리전 체크에서 검사하고 싶어서...
         //_tryInteract = true;
         Collider2D[] allOverlap = Physics2D.OverlapCircleAll(transform.position, 1f);
@@ -426,15 +426,15 @@ public class Player : Character, IFightable
 
                 if (fightable?.GetCombatComponent().IsDead() ?? true)
                     continue;
-                maxKnockBack = .8f;
+                maxKnockBack = Mathf.Max(maxKnockBack, .8f);
             }
             else if (item.CompareTag("Obstacle"))
             {
-                maxKnockBack = .5f;
+                maxKnockBack = Mathf.Max(maxKnockBack, .7f);
             }
             else if (item.CompareTag("Ground"))
             {
-                maxKnockBack = .3f;
+                maxKnockBack = Mathf.Max(maxKnockBack, .6f);
             }
         }
         _attackDir = _controller.GetAttackDir();
@@ -499,7 +499,6 @@ public class Player : Character, IFightable
         coinCount = 0;
         _combatComponent.ResetDead();
         mp = 0f;
-        isDead = false;
         _pawnAnimator.SetTrigger("Anim_Reset");
         if(_respawnPoint != null)
         {
@@ -520,7 +519,7 @@ public class Player : Character, IFightable
     }
     public void RespawnWhenSpike()
     {
-        if(isDead) { return; }
+        if(_combatComponent.IsDead()) { return; }
         _rigidbody.velocity = Vector3.zero;
         _pawnAnimator.SetTrigger("Anim_Reset");
         transform.position = _spikeRespawn.position;
@@ -529,8 +528,13 @@ public class Player : Character, IFightable
     public void OnAttackSuccess(CombatComponent target)
     {
         //Todo 맞을떄차고있음 고치셈
-        if(target._owner.CompareTag("Enemy"))
+        if (target._owner.CompareTag("Enemy"))
+
+        {
             mp += 15f;
+            hud.RefreshAll();
+        }
+
     }
 
     public override CombatComponent GetCombatComponent()
@@ -547,6 +551,11 @@ public class Player : Character, IFightable
 
         _stunTime = .15f;
         _invincibleTime = .9f + item_hitInvincible;
+
+        //knockback
+        Vector3 knockbackDir = (-_combatComponent.prevAttackersPos + transform.position).normalized;
+
+        moveComponent.KnockBack(knockbackDir, damagedKnockbackForce);
 
         HitEffect.SetActive(false);
         HitEffect.SetActive(true);

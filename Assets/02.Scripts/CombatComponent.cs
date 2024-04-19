@@ -21,6 +21,7 @@ public class CombatComponent
 
     public GameObject[] additionalEffectOnHit;
     public float initalMaxHp;
+    public Vector3 prevAttackersPos { get; internal set; }
 
     public void Init(Transform owner, bool defaultEffectOnDamaged = true )
     {
@@ -89,7 +90,8 @@ public class CombatComponent
         if (!IsDamageable())
             return false;
         TakeDamage(damage);
-        if(_defalutEffectOnDamaged)
+        prevAttackersPos = position;
+        if (_defalutEffectOnDamaged)
             ObjectSpawnManager.Instance.SpawnDefalutHitEffect(position, _owner.position);
         if(additionalEffectOnHit != null)
         {

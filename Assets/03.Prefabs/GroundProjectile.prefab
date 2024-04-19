@@ -261,5 +261,4 @@ MonoBehaviour:
   _damagableTag:
   - Player
   _owner: {fileID: 0}
-  _damageType: 0
-  _damage: 20
+  _damage: 1

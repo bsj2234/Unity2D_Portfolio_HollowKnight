@@ -29,13 +29,15 @@ public class PlayerDamageTrigger : MonoBehaviour
 
     }
 
-    private void Update()
+    private void OnEnable()
     {
         _collider.OverlapCollider(new ContactFilter2D().NoFilter(), _overlapResult);
         //충돌이 있다면
-        if(_collider.enabled && _overlapResult.Count > 3)
+        if (_collider.enabled && _overlapResult.Count > 0)
         {
+
             //넉백 먼저
+            //현재 두번 불림 
             _player.AttackKnockback(_collider, _overlapResult);
             // 일단 넉백 태그 순서로 넉백을 넣고
             // 데미지 필요하면 나중에 넣자
