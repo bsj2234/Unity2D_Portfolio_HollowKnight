@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 5195884328040327766}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5000002, y: 2.5000002, z: 2.5000002}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6077971434477046141}
   m_RootOrder: 0
@@ -47,7 +47,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.15
 --- !u!1 &6191963582028198048
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 5926550539166928715}
   - component: {fileID: 4421851573598916443}
   - component: {fileID: 3237965806224991284}
+  - component: {fileID: 7618079863656558395}
   m_Layer: 6
   m_Name: CoinSpriteANdPhysics
   m_TagString: Untagged
@@ -77,7 +78,7 @@ Transform:
   m_GameObject: {fileID: 6191963582028198048}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.39999998, y: 0.39999998, z: 0.39999998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8121496609984776874}
@@ -125,7 +126,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 613a2575bf8b04d41b464bfe11166859, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -145,13 +146,13 @@ CircleCollider2D:
   m_GameObject: {fileID: 6191963582028198048}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 187fe976d34da5b4893458a0e9a7e269, type: 2}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.15
 --- !u!50 &4421851573598916443
 Rigidbody2D:
   serializedVersion: 4
@@ -172,7 +173,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &3237965806224991284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,7 +186,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e464a27ca077cf546953ca32a0f0b5c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 4421851573598916443}
+  _rb: {fileID: 4421851573598916443}
+  _anim: {fileID: 7618079863656558395}
+--- !u!95 &7618079863656558395
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6191963582028198048}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ad2b3ea948d190641b3e104974e6f164, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &9161230142845418680
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,8 +234,8 @@ Transform:
   m_GameObject: {fileID: 9161230142845418680}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.39, y: 1.39, z: 1.39}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6077971434477046141}
   m_Father: {fileID: 0}
