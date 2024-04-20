@@ -1,80 +1,68 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Player : Character, IFightable
 {
-    private PlayerController _controller;
-    private Rigidbody2D _rigidbody;
-    private Transform _pawnSprite;
-    private Animator _pawnAnimator;
+    [field: SerializeField] public PlayerController _controller { get; private set; }
+    [field: SerializeField] public Rigidbody2D _rigidbody { get; private set; }
+    [field: SerializeField] public Transform _pawnSprite { get; private set; }
+    [field: SerializeField] public Animator _pawnAnimator { get; private set; }
+    [field: SerializeField] public HudUi hud { get; private set; }
+    [field: SerializeField] public PlayerMoveComponent moveComponent { get; private set; }
 
-    public HudUi hud;
-
-    public PlayerMoveComponent moveComponent;
-
-    //폰상태
-    public bool isJumping = false;
-    //공격 관련
-    /// <summary>이건 공격 애니메이션 이벤트에서 처리됨 </summary>
-    public bool isPendingAttack = false;
-    public bool isAttacking = false;
-    private Vector2 _attackDir;
-    [SerializeField]private float _attackingTime = 0f;
-    private int continuableAttackCount = 0;
+    [field: SerializeField] public bool isJumping { get; set; } = false;
+    [field: SerializeField] public bool isAttacking { get; set; } = false;
+    [field: SerializeField] private Vector2 _attackDir { get; set; }
+    [field: SerializeField] private float _attackingTime { get; set; } = 0f;
+    [field: SerializeField] private int continuableAttackCount { get; set; } = 0;
 
     //회피,무적
-    private float _invincibleTime = 0f;
-    private float _stunTime = 0f;
-    public float DodgeInvincibleTime = 0.5f;
+    [field: SerializeField] private float _invincibleTime { get; set; } = 0f;
+    [field: SerializeField] private float _stunTime { get; set; } = 0f;
+    [field: SerializeField] public float DodgeInvincibleTime { get; set; } = 0.5f;
 
-    public float mp = 0f;
-    public float maxMp = 100f;
+    [field: SerializeField] public float mp { get; set; } = 0f;
+    [field: SerializeField] public float maxMp { get; set; } = 100f;
     //뒤집기용
-    Vector2 curLocScale;
+    [field: SerializeField] Vector2 curLocScale { get; set; }
 
     //아이템
-    private float item_Damage = 0f;
-    private float itemAttackSpeedBounus = 0f;
-    private float item_hitInvincible = 0f;
+    [field: SerializeField] private float item_Damage { get; set; } = 0f;
+    [field: SerializeField] private float itemAttackSpeedBounus { get; set; } = 0f;
+    [field: SerializeField] private float item_hitInvincible { get; set; } = 0f;
 
     //인벤토리 
-    private CharmInstance[] _equippedCharms = new CharmInstance[5];
-    public CharmData[] debugCharms;
+    [field: SerializeField] private CharmInstance[] _equippedCharms { get; set; } = new CharmInstance[5];
+    [field: SerializeField] public CharmData[] debugCharms;
     // Wow
     //public으로 지정하면 null로 초기화되지않고 기본 생성자가 호출되는듯??
     //근데 기본생성자가 없을텐데
     //기본생성자 테스트
     //ItemInstance test = new ItemInstance();//기본생성자 생성 안되는데 인수를 null로 주나?
     //ItemInstance test2 = new ItemInstance(null);// 아마 이렇게 가지 않았을까
-    private CharmInstance[] _charmInventory = new CharmInstance[24];
+    [field: SerializeField] private CharmInstance[] _charmInventory { get; set; } = new CharmInstance[24];
 
-    private HashSet<string> _currentCharmEffects = new HashSet<string>();
-    public float damagePerSlot = 30f;
-    public int coinCount = 0;
+    [field: SerializeField] private HashSet<string> _currentCharmEffects { get; set; } = new HashSet<string>();
+    [field: SerializeField] public float damagePerSlot { get; set; } = 30f;
+    [field: SerializeField] public int coinCount { get; set; } = 0;
 
-    public ShopUi shopUi;
-    private float _knockBackTime = 0f;
+    [field: SerializeField] public ShopUi shopUi;
+    [field: SerializeField] private float _knockBackTime { get; set; } = 0f;
 
     //Respawn
-    public RespawnPoint _respawnPoint;
+    [field: SerializeField] public RespawnPoint _respawnPoint { get; set; }
+    [field: SerializeField] public GameObject HitEffect { get; set; }
+    [field: SerializeField] public GameObject DeadEffect { get; set; }
+    [field: SerializeField] public SpikeRespawn _spikeRespawn { get; set; }
+    [field: SerializeField] public System.Action OnPlayerReset { get; set; }
+    [field: SerializeField] public float defaultAttackSpeed { get; set; } = .4f;
 
-    public GameObject HitEffect;
-    public GameObject DeadEffect;
-
-    public SpikeRespawn _spikeRespawn;
-
-    public System.Action OnPlayerReset;
-
-    public float defaultAttackSpeed = .4f;
-
-    public PlayerDamageTrigger _playerDamageTrigger;
-    [SerializeField]private CombatComponent _combatComponent;
-    [SerializeField]private Animator[] _attackEffectAnimator;
-
-    [SerializeField] private float damagedKnockbackForce = 100f;
+    [field: SerializeField] public PlayerDamageTrigger _playerDamageTrigger { get; set; }
+    [field: SerializeField] private CombatComponent _combatComponent { get; set; }
+    [field: SerializeField] private Animator[] _attackEffectAnimator { get; set; }
+    [field: SerializeField] private float damagedKnockbackForce { get; set; } = 100f;
 
     // Start is called before the first frame update
     void Awake()
@@ -107,6 +95,7 @@ public class Player : Character, IFightable
         Assert.IsNotNull(_pawnSprite);
         Assert.IsNotNull(_pawnAnimator);
 
+        //event subscribe
         _combatComponent.OnDamaged += OnDamage;
         _combatComponent.OnDamagedWAttacker += OnAttackSuccess;
         _combatComponent.OnDead += OnDead;
@@ -115,7 +104,7 @@ public class Player : Character, IFightable
         _combatComponent.Init(transform);
 
         //debugCharms
-        for (int i  = 0; i < debugCharms.Length; i++)
+        for (int i = 0; i < debugCharms.Length; i++)
         {
             _equippedCharms[i] = new CharmInstance(debugCharms[i]);
         }
@@ -130,7 +119,7 @@ public class Player : Character, IFightable
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
-        if(_combatComponent.IsDead()) return;
+        if (_combatComponent.IsDead()) return;
 
 
         //상태 지속 시간을 코드에서 관리
@@ -144,8 +133,8 @@ public class Player : Character, IFightable
         {
             _pawnAnimator.SetBool("Anim_IsStun", false);
         }
-        if (_attackingTime > 0f) 
-        { 
+        if (_attackingTime > 0f)
+        {
             _attackingTime -= Time.deltaTime;
             _pawnAnimator.speed = defaultAttackSpeed / (defaultAttackSpeed - itemAttackSpeedBounus);
             foreach (var item in _attackEffectAnimator)
@@ -153,7 +142,8 @@ public class Player : Character, IFightable
                 item.speed = defaultAttackSpeed / (defaultAttackSpeed - itemAttackSpeedBounus);
             }
         }
-        else { 
+        else
+        {
             continuableAttackCount = 0;
             _pawnAnimator.speed = 1f;
             foreach (var item in _attackEffectAnimator)
@@ -268,9 +258,9 @@ public class Player : Character, IFightable
 
     public void AddItem(CharmInstance item)
     {
-        for(int i = 0; i < _charmInventory.Length; i++)
+        for (int i = 0; i < _charmInventory.Length; i++)
         {
-            if(_charmInventory[i] == null)
+            if (_charmInventory[i] == null)
             {
                 _charmInventory[i] = item;
                 break;
@@ -381,7 +371,7 @@ public class Player : Character, IFightable
 
         foreach (CharmInstance equippedCharm in _equippedCharms)
         {
-            if (  equippedCharm == null|| equippedCharm.Braked == true)
+            if (equippedCharm == null || equippedCharm.Braked == true)
             {
                 continue;
             }
@@ -396,11 +386,11 @@ public class Player : Character, IFightable
 
     public void AttackKnockback(Collider2D attackCol, List<Collider2D> otherCol)
     {
-        if(_knockBackTime > 0f)
+        if (_knockBackTime > 0f)
             return;
         //전부 가져오기
         string[] tags = new string[otherCol.Count];
-        for (int i =0; i < otherCol.Count; i++)
+        for (int i = 0; i < otherCol.Count; i++)
         {
             tags[i] = otherCol[i].tag;
         }
@@ -501,14 +491,14 @@ public class Player : Character, IFightable
         _combatComponent.ResetDead();
         mp = 0f;
         _pawnAnimator.SetTrigger("Anim_Reset");
-        if(_respawnPoint != null)
+        if (_respawnPoint != null)
         {
             transform.position = _respawnPoint.position;
         }
         hud.RefreshAll();
         _controller.ResetControl();
         moveComponent.ResetMove();
-        if(OnPlayerReset != null)
+        if (OnPlayerReset != null)
         {
             OnPlayerReset.Invoke();
         }
@@ -520,7 +510,7 @@ public class Player : Character, IFightable
     }
     public void RespawnWhenSpike()
     {
-        if(_combatComponent.IsDead()) { return; }
+        if (_combatComponent.IsDead()) { return; }
         _rigidbody.velocity = Vector3.zero;
         _pawnAnimator.SetTrigger("Anim_Reset");
         transform.position = _spikeRespawn.position;
@@ -531,11 +521,15 @@ public class Player : Character, IFightable
         //Todo 맞을떄차고있음 고치셈
         if (target._owner.CompareTag("Enemy"))
         {
-            if (target.noManaRegenOnHit) 
+            if (target.noManaRegenOnHit)
             {
                 return;
             }
             mp += 15f;
+            if (maxMp < mp)
+            {
+                mp = maxMp;
+            }
             hud.RefreshAll();
         }
 
@@ -583,7 +577,7 @@ public class Player : Character, IFightable
 
     public bool addtionalCondition()
     {
-        if(_invincibleTime > 0f)
+        if (_invincibleTime > 0f)
         {
             return false;
         }
