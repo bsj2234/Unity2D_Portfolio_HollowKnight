@@ -35,7 +35,6 @@ public class UiCharmEquipped : MonoBehaviour
     public void DoEquipUnequip()
     {
         unequippedItem = GameManager.Instance.GetPlayer().EquipUnequipCharm(EquipIndex);
-        _button.image.sprite = (unequippedItem != null) ? unequippedItem.CharmType.Icon : DefaultSprite;
         UiManager.Instance.inventoryUi.RefreshAll();
     }
 
@@ -43,7 +42,16 @@ public class UiCharmEquipped : MonoBehaviour
     {
         Init();
         unequippedItem = GameManager.Instance.GetPlayer().EquppedCharmAt(EquipIndex);
-        _button.image.sprite = (unequippedItem != null) ? unequippedItem.CharmType.Icon : DefaultSprite;
+        if (unequippedItem != null)
+        {
+            _button.image.sprite = unequippedItem.CharmType.Icon;
+            ((RectTransform)(_button.transform)).sizeDelta = new Vector2(80f, 80f);
+        }
+        else
+        {
+            _button.image.sprite = DefaultSprite;
+            ((RectTransform)(_button.transform)).sizeDelta = new Vector2(40f, 40f);
+        }
 
     }
 

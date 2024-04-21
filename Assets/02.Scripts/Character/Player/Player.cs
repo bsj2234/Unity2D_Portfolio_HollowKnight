@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-
 public class Player : Character, IFightable
 {
     [field: SerializeField] public PlayerController _controller { get; private set; }
@@ -11,46 +10,30 @@ public class Player : Character, IFightable
     [field: SerializeField] public Animator _pawnAnimator { get; private set; }
     [field: SerializeField] public HudUi hud { get; private set; }
     [field: SerializeField] public PlayerMoveComponent moveComponent { get; private set; }
-
     [field: SerializeField] public bool isJumping { get; set; } = false;
     [field: SerializeField] public bool isAttacking { get; set; } = false;
     [field: SerializeField] private Vector2 _attackDir { get; set; }
     [field: SerializeField] private float _attackingTime { get; set; } = 0f;
     [field: SerializeField] private int continuableAttackCount { get; set; } = 0;
-
     //회피,무적
     [field: SerializeField] private float _invincibleTime { get; set; } = 0f;
     [field: SerializeField] private float _stunTime { get; set; } = 0f;
     [field: SerializeField] public float DodgeInvincibleTime { get; set; } = 0.5f;
-
     [field: SerializeField] public float mp { get; set; } = 0f;
     [field: SerializeField] public float maxMp { get; set; } = 100f;
-    //뒤집기용
-    [field: SerializeField] Vector2 curLocScale { get; set; }
-
     //아이템
     [field: SerializeField] private float item_Damage { get; set; } = 0f;
     [field: SerializeField] private float itemAttackSpeedBounus { get; set; } = 0f;
     [field: SerializeField] private float item_hitInvincible { get; set; } = 0f;
-
     //인벤토리 
-    [field: SerializeField] private CharmInstance[] _equippedCharms { get; set; } = new CharmInstance[5];
-    [field: SerializeField] public CharmData[] debugCharms;
-    // Wow
-    //public으로 지정하면 null로 초기화되지않고 기본 생성자가 호출되는듯??
-    //근데 기본생성자가 없을텐데
-    //기본생성자 테스트
-    //ItemInstance test = new ItemInstance();//기본생성자 생성 안되는데 인수를 null로 주나?
-    //ItemInstance test2 = new ItemInstance(null);// 아마 이렇게 가지 않았을까
-    [field: SerializeField] private CharmInstance[] _charmInventory { get; set; } = new CharmInstance[24];
-
+    [field: SerializeReference] private CharmInstance[] _equippedCharms { get; set; } = new CharmInstance[5];
+    [field: SerializeReference] public CharmData[] initalChrams;
+    [field: SerializeReference] private CharmInstance[] _charmInventory { get; set; } = new CharmInstance[24];
     [field: SerializeField] private HashSet<string> _currentCharmEffects { get; set; } = new HashSet<string>();
     [field: SerializeField] public float damagePerSlot { get; set; } = 30f;
     [field: SerializeField] public int coinCount { get; set; } = 0;
-
-    [field: SerializeField] public ShopUi shopUi;
+    [field: SerializeField] public ShopUi shopUi { get; set; }
     [field: SerializeField] private float _knockBackTime { get; set; } = 0f;
-
     //Respawn
     [field: SerializeField] public RespawnPoint _respawnPoint { get; set; }
     [field: SerializeField] public GameObject HitEffect { get; set; }
@@ -58,43 +41,22 @@ public class Player : Character, IFightable
     [field: SerializeField] public SpikeRespawn _spikeRespawn { get; set; }
     [field: SerializeField] public System.Action OnPlayerReset { get; set; }
     [field: SerializeField] public float defaultAttackSpeed { get; set; } = .4f;
-
     [field: SerializeField] public PlayerDamageTrigger _playerDamageTrigger { get; set; }
     [field: SerializeField] private CombatComponent _combatComponent { get; set; }
-    [field: SerializeField] private Animator[] _attackEffectAnimator { get; set; }
+    [field: SerializeReference] private Animator[] _attackEffectAnimator { get; set; }
     [field: SerializeField] private float damagedKnockbackForce { get; set; } = 100f;
-
-    // Start is called before the first frame update
     void Awake()
     {
-        //Todo 자식에 히트박스를 따로 만들고 싶다 
-        //뭔가 전체에서 찾기 싫어서 차일드에서 컴포넌트를 바로 가져와봄
-
-        //나 자신의 콜리전은 물리 검사용임
-        //자식의 콜리전은 이름이있으니 패스
-        //Neverminer  transform.Find하면 이름으로 찾을 수 있당
-        /*
-         * 사용예
-         * 찾기 쉽게 하기 위한 방법을 찾아볼까
-         * Enum쓸래?
-         * List[Enum] = true,false;
-         * if(LIst[CharmName])
-         * {
-         *      DoSomething
-         * }
-         */
         _controller = GetComponent<PlayerController>();
         moveComponent = GetComponent<PlayerMoveComponent>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _pawnSprite = transform.GetComponentInChildren<Transform>();
         _pawnAnimator = transform.GetComponentInChildren<Animator>();
-        curLocScale = _pawnSprite.transform.localScale;
         Assert.IsNotNull(_controller);
         Assert.IsNotNull(moveComponent);
         Assert.IsNotNull(_rigidbody);
         Assert.IsNotNull(_pawnSprite);
         Assert.IsNotNull(_pawnAnimator);
-
         //event subscribe
         _combatComponent.OnDamaged += OnDamage;
         _combatComponent.OnDamagedWAttacker += OnAttackSuccess;
@@ -102,26 +64,21 @@ public class Player : Character, IFightable
         _combatComponent.OnHeal += OnHeal;
         _combatComponent.AdditionalDamageCondition += addtionalCondition;
         _combatComponent.Init(transform);
-
-        //debugCharms
-        for (int i = 0; i < debugCharms.Length; i++)
+        //initial Charm
+        for (int i = 0; i < initalChrams.Length; i++)
         {
-            _equippedCharms[i] = new CharmInstance(debugCharms[i]);
+            _equippedCharms[i] = new CharmInstance(initalChrams[i]);
         }
         RecalcCharmEffect();
     }
-
     private void Start()
     {
         hud.RefreshAll();
     }
-
     private void Update()
     {
         //입력 방향에따라 스프라이트 방향 설정
         if (_combatComponent.IsDead()) return;
-
-
         //상태 지속 시간을 코드에서 관리
         if (_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
         if (_stunTime > 0f)
@@ -153,8 +110,6 @@ public class Player : Character, IFightable
         }
         if (_knockBackTime > 0f) { _knockBackTime -= Time.deltaTime; }
 
-
-
         if (_attackingTime <= 0f && _knockBackTime <= 0f && _stunTime <= 0)
         {
             moveComponent.isMovable = true;
@@ -181,22 +136,22 @@ public class Player : Character, IFightable
         {
             moveComponent.isMovable = false;
         }
-
-
     }
     public void Attack(Vector2 attackDir)
     {
+        //isAttackable
         if (_combatComponent.IsDead()) return;
-        if (IsStuned() | IsAttacking())
+        if (IsStuned() || IsAttacking())
         {
             return;
         }
+        //set attacking
         _attackingTime = defaultAttackSpeed - itemAttackSpeedBounus;
+        //play animation by input direction
         if (attackDir.y > .7f)
         {
             continuableAttackCount = 0;
             _pawnAnimator.SetTrigger("Anim_Attack_Slash_Up");
-            continuableAttackCount++;
         }
         else if (attackDir.y < -.7f)
         {
@@ -205,22 +160,25 @@ public class Player : Character, IFightable
         }
         else
         {
+            //call diffren animation time to time
+            //reset after reset time
             if (continuableAttackCount % 2 == 0)
             {
                 _pawnAnimator.SetTrigger("Anim_Attack_Slash");
+            }
+            else
+            {
+                _pawnAnimator.SetTrigger("Anim_Attack_Slash_Alt");
             }
             continuableAttackCount++;
         }
         //다음공격 대기를 애니메이션 이벤트로 공격이끝날떄 체크하고 attaking 값 설정해줌
         //나머지 애니메이션 끝날떄 초기화는 AllSlash 애니메이션 EventOnAttackInterrupted 스크립트에 OnStateExit 참고
-
     }
-
     private bool IsAttacking()
     {
         return (_attackingTime > 0f);
     }
-
     public void StartJump()
     {
         if (_combatComponent.IsDead()) return;
@@ -233,7 +191,6 @@ public class Player : Character, IFightable
     {
         moveComponent.EndJump();
     }
-
     public void Dodge()
     {
         if (_currentCharmEffects.Contains("대시마스터"))
@@ -243,7 +200,6 @@ public class Player : Character, IFightable
             moveComponent.Dash();
         }
     }
-
     public void Move(Vector2 input)
     {
         if (IsStuned())
@@ -255,7 +211,6 @@ public class Player : Character, IFightable
             moveComponent.MovementUpdate(input);
         }
     }
-
     public void AddItem(CharmInstance item)
     {
         for (int i = 0; i < _charmInventory.Length; i++)
@@ -267,7 +222,6 @@ public class Player : Character, IFightable
             }
         }
     }
-
     public void TryInteract()
     {
         if (_combatComponent.IsDead()) return;
@@ -289,7 +243,6 @@ public class Player : Character, IFightable
         }
 
     }
-
     //장착버튼누를떄발생
     /// <summary>
     /// 장착한 아이템이 있으면 해제후 아이템 반환
@@ -316,7 +269,6 @@ public class Player : Character, IFightable
             return null;
         }
     }
-
     public CharmInstance TryEquipCharm(int charmIndex)
     {
         //장착시도 후 가능이면 까매지고 장착됨
@@ -337,30 +289,24 @@ public class Player : Character, IFightable
         }
         return null;
     }
-
     public void UpdateRespawnPoint(RespawnPoint respawn)
     {
         _respawnPoint = respawn;
     }
-
     public CharmInstance CharmAt(int charmIndex)
     {
         return _charmInventory[charmIndex];
     }
-
     public CharmInstance EquppedCharmAt(int equipIndex)
     {
         return _equippedCharms[equipIndex];
     }
-
     public bool IsItemEquipped(CharmInstance currentCharm)
     {
         CharmInstance foundItem = Array.Find(_equippedCharms, x => x == currentCharm);
         return (foundItem != null) ? true : false;
 
     }
-
-
     //가진 아이템들의 능력을 확성화
     //이름을 가지고 있으면 효과 ON
     //깨진 아이템은 추가 안함

@@ -48,7 +48,16 @@ public class UiCharmSelectable : MonoBehaviour
         Init();
         currentCharm = GameManager.Instance.GetPlayer().CharmAt(CharmIndex);
         bool isEquipped = GameManager.Instance.GetPlayer().IsItemEquipped(currentCharm);
-        _button.image.sprite = (currentCharm != null && !isEquipped) ? currentCharm.CharmType.Icon : DefaultSprite;
+        if (currentCharm != null && !isEquipped)
+        {
+            _button.image.sprite = currentCharm.CharmType.Icon;
+            ((RectTransform)(_button.transform)).sizeDelta = new Vector2(60f, 60f);
+        }
+        else
+        {
+            _button.image.sprite = DefaultSprite;
+            ((RectTransform)(_button.transform)).sizeDelta = new Vector2(40f, 40f);
+        }
     }
 
     public void OnMouseEnter()
