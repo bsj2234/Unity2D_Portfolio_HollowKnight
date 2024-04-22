@@ -17,7 +17,7 @@ public class BattleZone : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.Player.OnPlayerReset += ResetZone;
+        GameManager.Instance.Player.OnPlayerRespawn += ResetZone;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

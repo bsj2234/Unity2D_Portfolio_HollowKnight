@@ -1,47 +1,55 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 public class Player : Character, IFightable
 {
+    [field: Header("OnlyForDebugDon'tTouch")]
+    [field: Header("ComponentsWithAutoInit")]
     [field: SerializeField] public PlayerController _controller { get; private set; }
     [field: SerializeField] public Rigidbody2D _rigidbody { get; private set; }
     [field: SerializeField] public Transform _pawnSprite { get; private set; }
     [field: SerializeField] public Animator _pawnAnimator { get; private set; }
     [field: SerializeField] public HudUi hud { get; private set; }
     [field: SerializeField] public PlayerMoveComponent moveComponent { get; private set; }
+    [field: Space(30)]
+    [field: Header("PlayersStates")]
     [field: SerializeField] public bool isJumping { get; set; } = false;
+    //이 아래 전부 전투에 관련된 것들이다.
+    //전투 클래스로 따로 뺀다면 장점이 있을까
+    //현재 이벤트로 전투컴포넌트에 등록하여 사용하고 있다.
     [field: SerializeField] public bool isAttacking { get; set; } = false;
     [field: SerializeField] private Vector2 _attackDir { get; set; }
     [field: SerializeField] private float _attackingTime { get; set; } = 0f;
     [field: SerializeField] private int continuableAttackCount { get; set; } = 0;
-    //회피,무적
     [field: SerializeField] private float _invincibleTime { get; set; } = 0f;
     [field: SerializeField] private float _stunTime { get; set; } = 0f;
     [field: SerializeField] public float DodgeInvincibleTime { get; set; } = 0.5f;
     [field: SerializeField] public float mp { get; set; } = 0f;
     [field: SerializeField] public float maxMp { get; set; } = 100f;
+    [field: Header("ItemBonuses")]
     //아이템
     [field: SerializeField] private float item_Damage { get; set; } = 0f;
     [field: SerializeField] private float itemAttackSpeedBounus { get; set; } = 0f;
     [field: SerializeField] private float item_hitInvincible { get; set; } = 0f;
+    [field: Header("CharmInventorys")]
     //인벤토리 
     [field: SerializeReference] private CharmInstance[] _equippedCharms { get; set; } = new CharmInstance[5];
     [field: SerializeReference] public CharmData[] initalChrams;
     [field: SerializeReference] private CharmInstance[] _charmInventory { get; set; } = new CharmInstance[24];
-    [field: SerializeField] private HashSet<string> _currentCharmEffects { get; set; } = new HashSet<string>();
-    [field: SerializeField] public float damagePerSlot { get; set; } = 30f;
+    [field: SerializeField] private HashSet<string> _currentCharmBonuses { get; set; } = new HashSet<string>();
     [field: SerializeField] public int coinCount { get; set; } = 0;
     [field: SerializeField] public ShopUi shopUi { get; set; }
     [field: SerializeField] private float _knockBackTime { get; set; } = 0f;
+    [field: Header("Respawns")]
     //Respawn
     [field: SerializeField] public RespawnPoint _respawnPoint { get; set; }
     [field: SerializeField] public GameObject HitEffect { get; set; }
     [field: SerializeField] public GameObject DeadEffect { get; set; }
     [field: SerializeField] public SpikeRespawn _spikeRespawn { get; set; }
-    [field: SerializeField] public System.Action OnPlayerReset { get; set; }
+    public System.Action OnPlayerRespawn { get; set; }
     [field: SerializeField] public float defaultAttackSpeed { get; set; } = .4f;
-    [field: SerializeField] public PlayerDamageTrigger _playerDamageTrigger { get; set; }
     [field: SerializeField] private CombatComponent _combatComponent { get; set; }
     [field: SerializeReference] private Animator[] _attackEffectAnimator { get; set; }
     [field: SerializeField] private float damagedKnockbackForce { get; set; } = 100f;
@@ -73,11 +81,12 @@ public class Player : Character, IFightable
     }
     private void Start()
     {
+        hud = UiManager.Instance.hudUi;
+        Assert.IsNotNull(hud);
         hud.RefreshAll();
     }
     private void Update()
     {
-        //입력 방향에따라 스프라이트 방향 설정
         if (_combatComponent.IsDead()) return;
         //상태 지속 시간을 코드에서 관리
         if (_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
@@ -109,7 +118,6 @@ public class Player : Character, IFightable
             }
         }
         if (_knockBackTime > 0f) { _knockBackTime -= Time.deltaTime; }
-
         if (_attackingTime <= 0f && _knockBackTime <= 0f && _stunTime <= 0)
         {
             moveComponent.isMovable = true;
@@ -185,15 +193,17 @@ public class Player : Character, IFightable
         moveComponent.StartJump();
         isJumping = true;
         _pawnAnimator.SetBool("Anim_IsGrounded", false);
+        _pawnAnimator.SetBool("Anim_IsJumping", true);
         _pawnAnimator.SetTrigger("Anim_Jump");
     }
     public void EndJump()
     {
         moveComponent.EndJump();
+        _pawnAnimator.SetBool("Anim_IsJumping", false);
     }
     public void Dodge()
     {
-        if (_currentCharmEffects.Contains("대시마스터"))
+        if (_currentCharmBonuses.Contains("대시마스터"))
         {
             _pawnAnimator.SetTrigger("Anim_Dodge");
             _invincibleTime = .25f;
@@ -313,7 +323,7 @@ public class Player : Character, IFightable
 
     public void RecalcCharmEffect()
     {
-        _currentCharmEffects.Clear();
+        _currentCharmBonuses.Clear();
 
         foreach (CharmInstance equippedCharm in _equippedCharms)
         {
@@ -321,13 +331,13 @@ public class Player : Character, IFightable
             {
                 continue;
             }
-            _currentCharmEffects.Add(equippedCharm.CharmType.ItemName);
+            _currentCharmBonuses.Add(equippedCharm.CharmType.ItemName);
         }
 
-        _combatComponent.AddedMaxHp(_currentCharmEffects.Contains("허술한 심장") ? 2 : 0);
-        item_Damage = _currentCharmEffects.Contains("허술한 힘") ? 3f : 0f;
-        itemAttackSpeedBounus = _currentCharmEffects.Contains("빠른 참격") ? .15f : 0f;
-        item_hitInvincible = _currentCharmEffects.Contains("튼튼한 껍데기") ? .3f : 0f;
+        _combatComponent.AddedMaxHp(_currentCharmBonuses.Contains("허술한 심장") ? 2 : 0);
+        item_Damage = _currentCharmBonuses.Contains("허술한 힘") ? 3f : 0f;
+        itemAttackSpeedBounus = _currentCharmBonuses.Contains("빠른 참격") ? .15f : 0f;
+        item_hitInvincible = _currentCharmBonuses.Contains("튼튼한 껍데기") ? .3f : 0f;
     }
 
     public void AttackKnockback(Collider2D attackCol, List<Collider2D> otherCol)
@@ -444,9 +454,9 @@ public class Player : Character, IFightable
         hud.RefreshAll();
         _controller.ResetControl();
         moveComponent.ResetMove();
-        if (OnPlayerReset != null)
+        if (OnPlayerRespawn != null)
         {
-            OnPlayerReset.Invoke();
+            OnPlayerRespawn.Invoke();
         }
     }
 

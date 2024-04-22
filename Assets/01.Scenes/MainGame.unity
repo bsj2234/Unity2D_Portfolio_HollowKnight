@@ -2376,9 +2376,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 164682478}
+  - component: {fileID: 164682484}
   - component: {fileID: 164682480}
   - component: {fileID: 164682488}
-  - component: {fileID: 164682484}
   - component: {fileID: 164682481}
   - component: {fileID: 164682483}
   - component: {fileID: 164682482}
@@ -2510,7 +2510,7 @@ MonoBehaviour:
   <_rigidbody>k__BackingField: {fileID: 0}
   <_pawnSprite>k__BackingField: {fileID: 0}
   <_pawnAnimator>k__BackingField: {fileID: 0}
-  <hud>k__BackingField: {fileID: 437617937}
+  <hud>k__BackingField: {fileID: 0}
   <moveComponent>k__BackingField: {fileID: 0}
   <isJumping>k__BackingField: 0
   <isAttacking>k__BackingField: 0
@@ -2522,7 +2522,6 @@ MonoBehaviour:
   <DodgeInvincibleTime>k__BackingField: 0.5
   <mp>k__BackingField: 0
   <maxMp>k__BackingField: 100
-  <curLocScale>k__BackingField: {x: 0, y: 0}
   <item_Damage>k__BackingField: 0
   <itemAttackSpeedBounus>k__BackingField: 0
   <item_hitInvincible>k__BackingField: 0
@@ -2532,9 +2531,7 @@ MonoBehaviour:
   - rid: -2
   - rid: -2
   - rid: -2
-  debugCharms:
-  - {fileID: 11400000, guid: baefd1fc5e217cb44a5dd90a8da9416c, type: 2}
-  - {fileID: 11400000, guid: db1dbf35ac9dd774eba6970e27e98d11, type: 2}
+  initalChrams: []
   <_charmInventory>k__BackingField:
   - rid: -2
   - rid: -2
@@ -2560,16 +2557,14 @@ MonoBehaviour:
   - rid: -2
   - rid: -2
   - rid: -2
-  <damagePerSlot>k__BackingField: 30
   <coinCount>k__BackingField: 0
-  shopUi: {fileID: 1089257051}
+  <shopUi>k__BackingField: {fileID: 1089257051}
   <_knockBackTime>k__BackingField: 0
   <_respawnPoint>k__BackingField: {fileID: 1930874647}
   <HitEffect>k__BackingField: {fileID: 1947671211}
   <DeadEffect>k__BackingField: {fileID: 2017225509}
   <_spikeRespawn>k__BackingField: {fileID: 0}
   <defaultAttackSpeed>k__BackingField: 0.4
-  <_playerDamageTrigger>k__BackingField: {fileID: 674520467}
   <_combatComponent>k__BackingField:
     _maxHp: 5
     _hp: 5
@@ -2581,7 +2576,7 @@ MonoBehaviour:
     initalMaxHp: 0
     noManaRegenOnHit: 0
   <_attackEffectAnimator>k__BackingField: []
-  <damagedKnockbackForce>k__BackingField: 100
+  <damagedKnockbackForce>k__BackingField: 30
   references:
     version: 2
     RefIds:
@@ -8860,7 +8855,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &667169327
 RectTransform:
   m_ObjectHideFlags: 0
