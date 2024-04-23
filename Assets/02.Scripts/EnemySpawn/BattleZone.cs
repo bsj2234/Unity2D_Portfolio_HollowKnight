@@ -15,12 +15,16 @@ public class BattleZone : MonoBehaviour
 
     public bool Locked = false;
 
+    public bool Cleared { get; private set; } = false;
+
     private void Start()
     {
         GameManager.Instance.Player.OnPlayerRespawn += ResetZone;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (Cleared)
+            return;
         if(collision.CompareTag("Player") && !Locked)
         { 
             FalseKnight falseKnight = TargetSpawner._intancedEnemy.GetComponent<FalseKnight>();
@@ -45,7 +49,9 @@ public class BattleZone : MonoBehaviour
         DeathCount++;
         if(DeathCount >= enemyCount)
         {
+            Cleared = true;
             OpenDoors();
+            battleSpawnZone.gameObject.SetActive(false);
         }
     }
     private void ResetZone()

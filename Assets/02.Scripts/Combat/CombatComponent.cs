@@ -5,6 +5,18 @@ using UnityEngine;
 [System.Serializable]
 public class CombatComponent
 {
+
+    [field: SerializeField] public float mp { get; set; } = 0f;
+    [field: SerializeField] public float maxMp { get; set; } = 100f;
+
+    [field: SerializeField] public float DodgeInvincibleTime { get; set; } = 0.5f;
+    [field: SerializeField] public bool isAttacking { get; set; } = false;
+    [field: SerializeField] public Vector2 _attackDir { get; set; }
+    [field: SerializeField] private float _attackingTime { get; set; } = 0f;
+    [field: SerializeField] private float _stunTime { get; set; } = 0f;
+    [field: SerializeField] private int continuableAttackCount { get; set; } = 0;
+
+
     [SerializeField] private float _maxHp = 100f;
     [SerializeField] private float _hp = 100f;
     [SerializeField] private bool _dead = false;

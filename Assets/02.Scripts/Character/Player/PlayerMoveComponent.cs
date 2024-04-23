@@ -19,16 +19,12 @@ public static class DirctionEval
 public class PlayerMoveComponent : MonoBehaviour
 {
     public Direction dir = Direction.Right;
-
     private PlayerController _controller;
     private Rigidbody2D _rigidbody;
     public float nonInputDrag = 10f;
     public float inAirDrag = 1f;
-
     public float JumpPower = 20f;
-
     public bool isGrounded = true;
-
     public bool isMovable = true;
     //지금은 공중이나 바닥이나 속도 같게
     //LaterDo:나중에 가능하면 부드럽게 속도를 제한하는법도 생각해보자 공중에서는 컨트롤이 먹먹히지게
@@ -120,8 +116,6 @@ public class PlayerMoveComponent : MonoBehaviour
                 if(velocityMag > MaxSpeed + .1f)
                 {
                     _rigidbody.AddForce(new Vector2(-velocityDir * (velocityMag - MaxSpeed), 0f), ForceMode2D.Impulse);
-
-
                 }
                 else
                 {
@@ -163,12 +157,10 @@ public class PlayerMoveComponent : MonoBehaviour
             }
         }
     }
-
     private bool IsMovable()
     {
         return _movableCoolDown <= 0f;
     }
-
     private void EvaluateCollision(Collision2D collision)
     {
         for(int i = 0; i < collision.contactCount; i++)
@@ -177,7 +169,6 @@ public class PlayerMoveComponent : MonoBehaviour
             isGrounded |= normal.y >= .9f;
         }
     }
-
     //Collisions
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -191,7 +182,6 @@ public class PlayerMoveComponent : MonoBehaviour
     {
         isGrounded = false;
     }
-
     public void StartJump()
     {
         if (dead) return;
@@ -208,7 +198,6 @@ public class PlayerMoveComponent : MonoBehaviour
             _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.y*.5f);    
         }
     }
-
     public void Dash()
     {
         if(dead) return;
@@ -217,7 +206,6 @@ public class PlayerMoveComponent : MonoBehaviour
         //_rigidbody.velocity = (dir == Direction.Left) ? Vector2.left * _dashSpeed : Vector2.right * _dashSpeed;
         
     }
-
     public void KnockBack(Vector2 knockBackDir, float knockbackSpeed)
     {
 
@@ -262,12 +250,10 @@ public class PlayerMoveComponent : MonoBehaviour
         }
 
     }
-
     private void BlockMoveForSeconds(float time)
     {
         _movableCoolDown = time;
     }
-
     public virtual void Flip()
     {
         Quaternion right = Quaternion.Euler(0f, 0f, 0f);
@@ -327,13 +313,11 @@ public class PlayerMoveComponent : MonoBehaviour
             SetPlayerDirection(Direction.Right);
         }
     }
-
     public void Dead()
     {
         _rigidbody.velocity = Vector2.zero;
         dead = true;
     }
-
     public void ResetMove()
     {
         dead = false;

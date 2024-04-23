@@ -471,7 +471,6 @@ public class Player : Character, IFightable
         _pawnAnimator.SetTrigger("Anim_Reset");
         transform.position = _spikeRespawn.position;
     }
-
     public void OnAttackSuccess(CombatComponent target)
     {
         //Todo 맞을떄차고있음 고치셈
@@ -490,12 +489,10 @@ public class Player : Character, IFightable
         }
 
     }
-
     public override CombatComponent GetCombatComponent()
     {
         return _combatComponent;
     }
-
     public void OnDamage()
     {
 
@@ -530,7 +527,6 @@ public class Player : Character, IFightable
         DeadEffect.SetActive(true);
         HitEffect.SetActive(true);
     }
-
     public bool addtionalCondition()
     {
         if (_invincibleTime > 0f)
@@ -539,11 +535,9 @@ public class Player : Character, IFightable
         }
         return true;
     }
-
     public void Teleport(Vector3 position)
     {
         transform.position = position;
         GameManager.Instance.CameraToPlayer();
     }
-
 }
