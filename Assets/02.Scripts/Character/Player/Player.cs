@@ -16,18 +16,6 @@ public class Player : Character, IFightable
     [field: Space(30)]
     [field: Header("PlayersStates")]
     [field: SerializeField] public bool isJumping { get; set; } = false;
-    //이 아래 전부 전투에 관련된 것들이다.
-    //전투 클래스로 따로 뺀다면 장점이 있을까
-    //현재 이벤트로 전투컴포넌트에 등록하여 사용하고 있다.
-    [field: SerializeField] public bool isAttacking { get; set; } = false;
-    [field: SerializeField] private Vector2 _attackDir { get; set; }
-    [field: SerializeField] private float _attackingTime { get; set; } = 0f;
-    [field: SerializeField] private int continuableAttackCount { get; set; } = 0;
-    [field: SerializeField] private float _invincibleTime { get; set; } = 0f;
-    [field: SerializeField] private float _stunTime { get; set; } = 0f;
-    [field: SerializeField] public float DodgeInvincibleTime { get; set; } = 0.5f;
-    [field: SerializeField] public float mp { get; set; } = 0f;
-    [field: SerializeField] public float maxMp { get; set; } = 100f;
     [field: Header("ItemBonuses")]
     //아이템
     [field: SerializeField] private float item_Damage { get; set; } = 0f;
@@ -89,19 +77,18 @@ public class Player : Character, IFightable
     {
         if (_combatComponent.IsDead()) return;
         //상태 지속 시간을 코드에서 관리
-        if (_invincibleTime > 0f) { _invincibleTime -= Time.deltaTime; }
-        if (_stunTime > 0f)
+        //isStuned 는 이벤트로 추가해줄까 아니면 애니메이션 컨트롤러를 받아서 처리하도록 할까
+        //
+        if (_combatComponent.IsStunned)
         {
-            _stunTime -= Time.deltaTime;
             _pawnAnimator.SetBool("Anim_IsStun", true);
         }
         else
         {
             _pawnAnimator.SetBool("Anim_IsStun", false);
         }
-        if (_attackingTime > 0f)
+        if (_IsAttacking)
         {
-            _attackingTime -= Time.deltaTime;
             _pawnAnimator.speed = defaultAttackSpeed / (defaultAttackSpeed - itemAttackSpeedBounus);
             foreach (var item in _attackEffectAnimator)
             {
@@ -117,7 +104,6 @@ public class Player : Character, IFightable
                 item.speed = 1f;
             }
         }
-        if (_knockBackTime > 0f) { _knockBackTime -= Time.deltaTime; }
         if (_attackingTime <= 0f && _knockBackTime <= 0f && _stunTime <= 0)
         {
             moveComponent.isMovable = true;
