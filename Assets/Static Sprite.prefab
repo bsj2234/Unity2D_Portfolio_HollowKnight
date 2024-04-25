@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5094593824514947465}
   m_Layer: 0
   m_Name: Static Sprite
-  m_TagString: Test1
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
