@@ -14,7 +14,6 @@ public enum DamageType
 public interface IFightable
 {
     CombatComponent GetCombatComponent();
-
 }
 public class DamageTrigger : MonoBehaviour
 {
