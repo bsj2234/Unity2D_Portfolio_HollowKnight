@@ -4,7 +4,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
-using static UnityEngine.UI.CanvasScaler;
 
 //버튼에 클릭시 플레이어 인벤검사 후 
 //장착/해제 실행

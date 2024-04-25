@@ -867,11 +867,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 1061aff4-58ea-42cc-a9ef-ee30ff51b43e
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: Uinity2D_Portfolio_HollowKnight
+  organizationId: bsj2234
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 

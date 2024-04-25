@@ -55,11 +55,14 @@ public class CrawlidMoveComponent : Character, IFightable
         rb.velocity = 3f * -transform.up;
         //check
         //내 위치 왼쪽 오프셋부터, 아래쪽 방향, 거리
-        RaycastHit2D ground_hit = Physics2D.Raycast(transform.position, -transform.up, rayDistance, ground);
-        RaycastHit2D behind_ground_hit = Physics2D.Raycast(transform.position + (-transform.right) * -rayOffset, -transform.up, rayDistance, ground);
+        Vector2 groundRayStart = transform.position;
+        Vector2 behindGroundRayStart = transform.position + (-transform.right) * -rayOffset;
+        RaycastHit2D ground_hit = Physics2D.Raycast(groundRayStart, -transform.up, rayDistance, ground);
+        RaycastHit2D behind_ground_hit = Physics2D.Raycast(behindGroundRayStart, -transform.up, rayDistance, ground);
         //내 위치 , 왼쪽 방향, 거리
         RaycastHit2D front_hit = Physics2D.Raycast(transform.position, -transform.right, rayDistance + circleCollider.radius, ground);
-        Debug.DrawRay(transform.position + (-transform.right) * rayOffset, -transform.up * rayDistance, Color.red, 0.01f);
+        Debug.DrawRay(groundRayStart, -transform.up * rayDistance, Color.red, 0.01f);
+        Debug.DrawRay(behindGroundRayStart, -transform.up * rayDistance, Color.red, 0.01f);
 
         //rotaton edge
         if (ground_hit.collider == null && behind_ground_hit.collider != null && Time.time - _rotatedTime > .1f)

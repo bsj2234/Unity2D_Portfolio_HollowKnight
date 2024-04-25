@@ -33,6 +33,7 @@ public class PlayerMoveComponent : MonoBehaviour
     private float _movableCoolDown = 0f;
     private float _DashTime = 0f;
     private bool dead = false;
+    public bool IsMoveByAddForce;
 
     private void Awake()
     {
@@ -80,8 +81,9 @@ public class PlayerMoveComponent : MonoBehaviour
     //최대속이 더 빠르면 마이너스로돌려주긴 해야하는데
     public void MovementUpdate(Vector2 moveInput)
     {
-        if(GameManager.Instance.Player.GetCombatComponent().IsDead()) return;
+        if (GameManager.Instance.Player.GetCombatComponent().IsDead()) return;
         Vector2 curVelocity = _rigidbody.velocity;
+        moveInput.y = 0f; //인풋 y 무시
 
         //대쉬시 무중력
         if (_DashTime > 0f)
@@ -89,36 +91,47 @@ public class PlayerMoveComponent : MonoBehaviour
             float dashDir = (dir == Direction.Left ? -1f : 1f);
             _rigidbody.velocity = new Vector2(MaxSpeed * 2f * dashDir, 0f);
         }
-        if(!IsMovable())
+
+        if (!IsMovable()) // 대쉬는 처리하고 Movable 체크
         {
             return;
         }
-        moveInput.y = 0f;
-        //입력이있으면
+        if (IsMoveByAddForce)
+            MoveByAddForce(moveInput, curVelocity);
+        else
+            MoveByVelocity(moveInput, curVelocity); 
 
+    }
+
+
+    private void MoveByAddForce(Vector2 moveInput, Vector2 curVelocity)
+    {
+        //입력이있으면 움직임 계산
+        float inputDir = Mathf.Abs(moveInput.x) < .1f ? 0f : Mathf.Sign(moveInput.x);
+        float velocityDir = Mathf.Sign(curVelocity.x);
+        float velocityMag = Mathf.Abs(curVelocity.x);
+        float desierdMag = MaxSpeed;
+        float resultMag = desierdMag - velocityMag;
         if (_controller.hasMoveInput)
         {
-            float inputDir = Mathf.Abs(moveInput.x) < .1f ? 0f : Mathf.Sign(moveInput.x);
-            float velocityDir = Mathf.Sign(curVelocity.x);
-            float velocityMag = Mathf.Abs(curVelocity.x);
-            float desierdMag = MaxSpeed;
-            float resultMag = desierdMag - velocityMag;
+
+            //impulse 처럼 가속도가 빠르면 문제가 있다
+            // 범위를 빠르게 제어하려면 정확한 값을 더하거나 빼 주어야 오차가 적다
+            // 혹은 velocity로 값을 정확히 지정해줘야 한다.
+
             //입력과 진행 방향이 같으면
             //최대속도를 넘었을 경우에는 아무것도안함
             //방향이 다르면 그냥 뒤돔
-
-            //impulse 처럼 가속도가 빠르면 문제가 있다
-            // 범위를 빠르게 제어하려면 정확한 값을 계산할 수 있게 더하거나 뺴 주고
-            //velocity로 값을 정확히 지정해줘야 한다.
-            //velocity를 직접 지정하면 전에 있던 
             if (inputDir == velocityDir)
             {
-                if(velocityMag > MaxSpeed + .1f)
+                if (velocityMag > MaxSpeed + .1f)
                 {
+                    //현재속도 - 최대속도의 힘 만큼 으로 속도 제한
                     _rigidbody.AddForce(new Vector2(-velocityDir * (velocityMag - MaxSpeed), 0f), ForceMode2D.Impulse);
                 }
                 else
                 {
+                    //최대속도 - 현재속도 만큼의 힘으로 이동
                     _rigidbody.AddForce(new Vector2(velocityDir * (MaxSpeed - velocityMag), 0f), ForceMode2D.Impulse);
                 }
             }
@@ -134,29 +147,31 @@ public class PlayerMoveComponent : MonoBehaviour
         //충분히 적으면 정지
         else
         {
-            float velocityX = _rigidbody.velocity.x;
-            float velocityMag = Mathf.Abs(_rigidbody.velocity.x);
-            float DirX = Mathf.Sign(velocityX);
             //최대속보다 크면 감속시키고
             if (velocityMag > MaxSpeed + .1f)
             {
-                _rigidbody.AddForce(new Vector2(MaxSpeed * -DirX, 0f), ForceMode2D.Impulse);
+                _rigidbody.AddForce(new Vector2(MaxSpeed * -velocityDir, 0f), ForceMode2D.Impulse);
             }
             //작으면 
             else
             {
                 //멈춰
-                if(velocityX >= .1f)
+                if (velocityMag >= .1f)
                 {
-                    _rigidbody.AddForce(new Vector2(-velocityX, 0f), ForceMode2D.Impulse);
+                    _rigidbody.AddForce(new Vector2(-curVelocity.x, 0f), ForceMode2D.Impulse);
                 }
                 else
                 {
-                    _rigidbody.velocity = new Vector2(0f , curVelocity.y);
+                    _rigidbody.velocity = new Vector2(0f, curVelocity.y);
                 }
             }
         }
     }
+    private void MoveByVelocity(Vector2 moveInput, Vector2 curVelocity)
+    {
+        _rigidbody.velocity = new Vector2(moveInput.x * MaxSpeed, curVelocity.y);
+    }
+
     private bool IsMovable()
     {
         return _movableCoolDown <= 0f;

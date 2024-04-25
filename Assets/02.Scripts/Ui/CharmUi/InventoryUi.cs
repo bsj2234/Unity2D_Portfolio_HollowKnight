@@ -79,7 +79,7 @@ public class InventoryUi : MonoBehaviour
 
     public void SetDescription(CharmInstance charm)
     {
-        CharmDescName.text = charm.CharmType.name;
+        CharmDescName.text = charm.CharmType.ItemName;
         CharmSlot.text = $"½½·Ô: {charm.CharmType.Slot}";
         CharmBroken.text = charm.CharmType.Broken? "ÆÄ±«µÊ":"";
         CharmDesc.text = charm.CharmType.Description;

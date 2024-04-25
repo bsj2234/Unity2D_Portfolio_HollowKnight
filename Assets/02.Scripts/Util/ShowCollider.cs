@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class ShowCollider : MonoBehaviour
 {
+    public Color color = Color.yellow;
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
+        Gizmos.color = color;
         Gizmos.DrawWireCube(transform.position, transform.lossyScale);
     }
 }
