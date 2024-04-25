@@ -2583,22 +2583,14 @@ MonoBehaviour:
   <_spikeRespawn>k__BackingField: {fileID: 0}
   <defaultAttackSpeed>k__BackingField: 0.4
   <_combatComponent>k__BackingField:
-    <mp>k__BackingField: 0
-    <maxMp>k__BackingField: 100
-    <DodgeInvincibleTime>k__BackingField: 0.5
-    <isAttacking>k__BackingField: 0
-    <_attackDir>k__BackingField: {x: 0, y: 0}
-    <_attackingTime>k__BackingField: 0
-    <_stunTime>k__BackingField: 0
-    <continuableAttackCount>k__BackingField: 0
+    _owner: {fileID: 164682478}
+    initalMaxHp: 0
     _maxHp: 5
     _hp: 5
     _dead: 0
     _invincibleTime: 0.1
     _prevHitTime: 0
-    _owner: {fileID: 164682478}
     additionalEffectOnHit: []
-    initalMaxHp: 0
     noManaRegenOnHit: 0
   <_attackEffectAnimator>k__BackingField: []
   <damagedKnockbackForce>k__BackingField: 30
@@ -39459,11 +39451,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3161350205909634339, guid: 44c3f76b718b95140b7755df6070c771, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.75
+      value: -9.29
       objectReference: {fileID: 0}
     - target: {fileID: 3161350205909634339, guid: 44c3f76b718b95140b7755df6070c771, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 15.24
+      value: 15.09
       objectReference: {fileID: 0}
     - target: {fileID: 3161350205909634339, guid: 44c3f76b718b95140b7755df6070c771, type: 3}
       propertyPath: m_LocalPosition.z

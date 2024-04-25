@@ -43,7 +43,6 @@ public class CrawlidMoveComponent : Character, IFightable
     {
         MoveForward();
     }
-    //다른방법 찾자
     public void MoveForward()
     {
         if(combat.IsDead())
@@ -54,7 +53,7 @@ public class CrawlidMoveComponent : Character, IFightable
         }
         //gravity
         rb.velocity = 3f * -transform.up;
-        //check edge
+        //check
         //내 위치 왼쪽 오프셋부터, 아래쪽 방향, 거리
         RaycastHit2D ground_hit = Physics2D.Raycast(transform.position, -transform.up, rayDistance, ground);
         RaycastHit2D behind_ground_hit = Physics2D.Raycast(transform.position + (-transform.right) * -rayOffset, -transform.up, rayDistance, ground);
@@ -76,9 +75,9 @@ public class CrawlidMoveComponent : Character, IFightable
             transform.Rotate(0f, 0f, -90f);
             _sprite.Rotate(0f, 0f, 90f);
         }
-        if(behind_ground_hit.collider != null || ground_hit.collider!= null)
+        //move
+        if (behind_ground_hit.collider != null || ground_hit.collider!= null)
         {
-            //move
             rb.AddForce(3f * -transform.right, ForceMode2D.Impulse);
         }
         //slow rotate
