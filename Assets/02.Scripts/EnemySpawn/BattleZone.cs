@@ -52,12 +52,12 @@ public class BattleZone : MonoBehaviour
             Cleared = true;
             OpenDoors();
             battleSpawnZone.IsSpawnable = false;
-            battleSpawnZone.ResetTrigger();
         }
     }
     private void ResetZone()
     {
         OpenDoors();
+        battleSpawnZone.ResetTrigger();
         TargetSpawner.DeSpawn();
         DeathCount = 0;
     }
