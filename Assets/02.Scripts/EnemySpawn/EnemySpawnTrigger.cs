@@ -10,7 +10,7 @@ public class EnemySpawnTrigger : MonoBehaviour
 
     public int collisionCount = 0;
 
-    public bool IsSpawnable { get; set; }
+    [field: SerializeField] public bool IsSpawnable { get; set; } = true;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
