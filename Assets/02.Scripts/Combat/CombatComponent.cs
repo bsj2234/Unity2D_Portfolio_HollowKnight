@@ -1,43 +1,26 @@
-﻿
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public class CombatComponent
 {
-
-    [field: SerializeField] public float mp { get; set; } = 0f;
-    [field: SerializeField] public float maxMp { get; set; } = 100f;
-
-    [field: SerializeField] public float DodgeInvincibleTime { get; set; } = 0.5f;
-    [field: SerializeField] public bool isAttacking { get; set; } = false;
-    [field: SerializeField] public Vector2 _attackDir { get; set; }
-    [field: SerializeField] private float _attackingTime { get; set; } = 0f;
-    [field: SerializeField] private float _stunTime { get; set; } = 0f;
-    [field: SerializeField] private int continuableAttackCount { get; set; } = 0;
-
-
+    public Transform _owner;
+    public float initalMaxHp;
     [SerializeField] private float _maxHp = 100f;
     [SerializeField] private float _hp = 100f;
     [SerializeField] private bool _dead = false;
-
     [SerializeField] private float _invincibleTime = .1f;
     [SerializeField] private float _prevHitTime = 0f;
-    public Transform _owner;
     private bool _defalutEffectOnDamaged;
 
-    public Action OnDamaged { get; internal set; }
-    public Action<CombatComponent> OnDamagedWAttacker { get; internal set; }
-    public Action OnDead { get; internal set; }
-    public Func<bool> AdditionalDamageCondition { get; internal set; }
+    public System.Action OnDamaged { get; set; }
+    public System.Action<CombatComponent> OnDamagedWAttacker { get; set; }
+    public System.Action OnDead { get; set; }
+    public System.Func<bool> AdditionalDamageableCondition { get; set; }
+    public System.Action OnHeal { get; set; }
 
     public GameObject[] additionalEffectOnHit;
-    public float initalMaxHp;
     public bool noManaRegenOnHit = false;
-    public Action OnHeal;
-
     public Vector3 prevAttackersPos { get; internal set; }
-
     public void Init(Transform owner, bool defaultEffectOnDamaged = true )
     {
         _owner = owner;
@@ -45,8 +28,25 @@ public class CombatComponent
         initalMaxHp = _maxHp;
         _defalutEffectOnDamaged =defaultEffectOnDamaged;
     }
-
     public float GetHp() { return _hp; }
+    public void SetMaxHp(float maxHp)
+    {
+        _maxHp = maxHp;
+        ResetDead();
+    }
+    public float GetMaxHp()
+    {
+        return _maxHp;
+    }
+    public void AddMaxHp(float add)
+    {
+        _maxHp = initalMaxHp + add;
+    }
+    public void ResetHpWithRatio(float ratio)
+    {
+        _hp = _maxHp * ratio;
+        _dead = false;
+    }
     public bool DealDamage(CombatComponent target, float damage)
     {
         bool isAttackSucceeded = target.TakeDamage(_owner.transform.position ,damage);
@@ -68,38 +68,31 @@ public class CombatComponent
             return false;
         }
         bool result = true;
-        if (AdditionalDamageCondition != null)
+        if (AdditionalDamageableCondition != null)
         {
-            result = result && AdditionalDamageCondition.Invoke();
+            result = result && AdditionalDamageableCondition.Invoke();
         }
-        if ( !result )
+        if (!result)
         {
             return false;
         }
         return true;
     }
-
-    public void ResetDead()
+    private void CalcTakeDamage(float damage)
     {
-        _hp = _maxHp;
-        _dead = false;
+        _prevHitTime = Time.time;
+        _hp -= damage;
+        OnDamaged?.Invoke();
+        if (_hp <= 0f)
+        {
+            _dead = true;
+            OnDead?.Invoke();
+        }
     }
-    public void ResetHpWithRatio(float ratio)
+    public bool TakeDamage(float damage)
     {
-        _hp = _maxHp * ratio;
-        _dead = false;
+        return TakeDamage(_owner.position, damage);
     }
-
-    public bool IsDead()
-    {
-        return _dead;
-    }
-    public void SetMaxHp(float maxHp)
-    {
-        _maxHp = maxHp;
-        ResetDead();
-    }
-
     public bool TakeDamage(Vector3 position, float damage)
     {
         if (!IsDamageable())
@@ -114,34 +107,7 @@ public class CombatComponent
         }
         return true;
     }
-
-    public bool TakeDamage(float damage)
-    {
-        return TakeDamage(_owner.position, damage);
-    }
-    private void CalcTakeDamage(float damage)
-    {
-        _prevHitTime = Time.time;
-        _hp -= damage;
-        OnDamaged?.Invoke();
-        if (_hp <= 0f)
-        {
-            _dead = true;
-            OnDead?.Invoke();
-        }
-    }
-
-    public void AddedMaxHp(float add)
-    {
-        _maxHp = initalMaxHp + add;
-    }
-
-    public float GetMaxHp()
-    {
-        return _maxHp;
-    }
-
-    internal void Heal(int v)
+    public void Heal(int v)
     {
         if(_hp < _maxHp)
         {
@@ -152,8 +118,17 @@ public class CombatComponent
             OnHeal.Invoke();
         }
     }
-    internal void Die()
+    public void Die()
     {
-            TakeDamage(_owner.position , _hp);
+        TakeDamage(_owner.position, _hp);
+    }
+    public bool IsDead()
+    {
+        return _dead;
+    }
+    public void ResetDead()
+    {
+        _hp = _maxHp;
+        _dead = false;
     }
 }

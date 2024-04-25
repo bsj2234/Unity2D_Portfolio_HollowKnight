@@ -52,7 +52,7 @@ public class FalseKnight : Character
         OnRealDead += RealDead;
         combatComponent.OnDead += OnCurrentDead;
         combatComponent.OnDamaged += OnDamaged;
-        combatComponent.AdditionalDamageCondition += IsDamagable;
+        combatComponent.AdditionalDamageableCondition += IsDamagable;
         combatComponent.Init(transform);
     }
 

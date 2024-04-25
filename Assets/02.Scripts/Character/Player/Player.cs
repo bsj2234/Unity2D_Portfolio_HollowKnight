@@ -70,7 +70,7 @@ public class Player : Character, IFightable
         _combatComponent.OnDamagedWAttacker += OnAttackSuccess;
         _combatComponent.OnDead += OnDead;
         _combatComponent.OnHeal += OnHeal;
-        _combatComponent.AdditionalDamageCondition += addtionalCondition;
+        _combatComponent.AdditionalDamageableCondition += addtionalCondition;
         _combatComponent.Init(transform);
         //initial Charm
         for (int i = 0; i < initalChrams.Length; i++)
@@ -334,7 +334,7 @@ public class Player : Character, IFightable
             _currentCharmBonuses.Add(equippedCharm.CharmType.ItemName);
         }
 
-        _combatComponent.AddedMaxHp(_currentCharmBonuses.Contains("허술한 심장") ? 2 : 0);
+        _combatComponent.AddMaxHp(_currentCharmBonuses.Contains("허술한 심장") ? 2 : 0);
         item_Damage = _currentCharmBonuses.Contains("허술한 힘") ? 3f : 0f;
         itemAttackSpeedBounus = _currentCharmBonuses.Contains("빠른 참격") ? .15f : 0f;
         item_hitInvincible = _currentCharmBonuses.Contains("튼튼한 껍데기") ? .3f : 0f;
