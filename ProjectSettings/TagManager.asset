@@ -9,6 +9,7 @@ TagManager:
   - Spike
   - Ground
   - Obstacle
+  - Test1
   layers:
   - Default
   - TransparentFX

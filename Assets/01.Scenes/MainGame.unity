@@ -458,6 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &41855515
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,6 +755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &69335853
 Rigidbody2D:
   serializedVersion: 4
@@ -10029,6 +10031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &741749687
 Rigidbody2D:
   serializedVersion: 4
@@ -10556,6 +10559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &781014429
 Rigidbody2D:
   serializedVersion: 4
@@ -10676,6 +10680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &795829070
 Rigidbody2D:
   serializedVersion: 4
@@ -27192,6 +27197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &1097222096
 Rigidbody2D:
   serializedVersion: 4
@@ -31888,6 +31894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &1536605760
 Rigidbody2D:
   serializedVersion: 4
@@ -35892,6 +35899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &1878347504
 Rigidbody2D:
   serializedVersion: 4
@@ -36709,6 +36717,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8aab520ef95494ba00c800073dc741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &1924347202
 Rigidbody2D:
   serializedVersion: 4
