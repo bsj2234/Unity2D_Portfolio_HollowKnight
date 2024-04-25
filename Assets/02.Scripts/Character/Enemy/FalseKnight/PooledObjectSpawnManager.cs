@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ObjectSpawnManager:Singleton<ObjectSpawnManager>
+public class PooledObjectSpawnManager:Singleton<PooledObjectSpawnManager>
 {
     private Dictionary<GameObject,ObjectPoolManager> _poolManagers = new Dictionary<GameObject, ObjectPoolManager>();
 
@@ -55,7 +55,6 @@ public class ObjectSpawnManager:Singleton<ObjectSpawnManager>
     {
         StartCoroutine(SpawnMoneyCoroutine(pos, count));
     }
-
     private IEnumerator SpawnMoneyCoroutine(Vector3 pos, int count)
     {
         if (!_poolManagers.ContainsKey(Money))
@@ -77,13 +76,10 @@ public class ObjectSpawnManager:Singleton<ObjectSpawnManager>
     {
         _poolManagers[Money].ReturnPoolingObject(obj, time);
     }
-
-
     public void ReturnObject(GameObject prefab, GameObject obj)
     {
         _poolManagers[prefab].ReturnPoolingObject(obj);
     }
-
     internal void SpawnDefalutHitEffect(Vector3 attackerPos, Vector3 damagedPos, float scale = -1f, float time = 2f)
     {
         SpawnBetween(defaultHitEffect, attackerPos, damagedPos, scale, time);

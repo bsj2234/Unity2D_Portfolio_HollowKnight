@@ -7,7 +7,7 @@ public class BattleZone : MonoBehaviour
 
     public Spawner TargetSpawner;
 
-    public ZoneSpawnEnemy battleSpawnZone;
+    public EnemySpawnTrigger battleSpawnZone;
 
     public int enemyCount = 1;
 
@@ -51,7 +51,8 @@ public class BattleZone : MonoBehaviour
         {
             Cleared = true;
             OpenDoors();
-            battleSpawnZone.gameObject.SetActive(false);
+            battleSpawnZone.IsSpawnable = false;
+            battleSpawnZone.ResetTrigger();
         }
     }
     private void ResetZone()

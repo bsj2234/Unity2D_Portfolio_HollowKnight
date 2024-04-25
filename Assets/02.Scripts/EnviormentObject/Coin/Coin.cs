@@ -26,7 +26,7 @@ public class Coin : MonoBehaviour
         {
             _anim.SetTrigger("Acquired");
             //use object pool manager to cancle coroutine and return coin and aad coin to player
-            ObjectSpawnManager.Instance.ReturnMoney(transform.parent.gameObject, 1f);
+            PooledObjectSpawnManager.Instance.ReturnMoney(transform.parent.gameObject, 1f);
             if (player == null)
             {
                 player = collision.transform.GetComponent<Player>();

@@ -248,7 +248,7 @@ public class FalseKnight : Character
     private void DamagedEffect(Vector2 attackerPos, Vector2 damagedPos)
     {
         _light.enabled = true;
-        ObjectSpawnManager.Instance.SpawnBetween(damagedEffects ,attackerPos, damagedPos, 1.5f , 4f);
+        PooledObjectSpawnManager.Instance.SpawnBetween(damagedEffects ,attackerPos, damagedPos, 1.5f , 4f);
         StartCoroutine(BlinkOff());
 
     }
@@ -304,8 +304,8 @@ public class FalseKnight : Character
     {
         _animator.SetTrigger("Dead");
         state = FalseKnightState.Dead;
-        ObjectSpawnManager.Instance.SpawnMoney(transform.position, 100);
-        Destroy(gameObject, 5f);
+        PooledObjectSpawnManager.Instance.SpawnMoney(transform.position, 100);
+        Destroy(gameObject, 30f);
     }
 
     public void StartFight()

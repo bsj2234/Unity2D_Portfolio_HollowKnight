@@ -13,7 +13,6 @@ public class GameManager : Singleton<GameManager>
     public bool DebugMode { get => _debugMode; }
     private void Awake()
     {
-        //this.Player = Player.FindAnyObjectByType(typeof(Player)) as Player;
         Assert.IsNotNull(this._player);
     }
 

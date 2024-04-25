@@ -107,10 +107,10 @@ public class CombatComponent
         CalcTakeDamage(damage);
         prevAttackersPos = position;
         if (_defalutEffectOnDamaged)
-            ObjectSpawnManager.Instance.SpawnDefalutHitEffect(position, _owner.position);
+            PooledObjectSpawnManager.Instance.SpawnDefalutHitEffect(position, _owner.position);
         if (additionalEffectOnHit != null)
         {
-            ObjectSpawnManager.Instance.SpawnBetween(additionalEffectOnHit, position, _owner.position, 1f, 3f);
+            PooledObjectSpawnManager.Instance.SpawnBetween(additionalEffectOnHit, position, _owner.position, 1f, 3f);
         }
         return true;
     }

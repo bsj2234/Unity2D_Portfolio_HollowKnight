@@ -257,15 +257,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   combatComponent:
+    <mp>k__BackingField: 0
+    <maxMp>k__BackingField: 100
+    <DodgeInvincibleTime>k__BackingField: 0.5
+    <isAttacking>k__BackingField: 0
+    <_attackDir>k__BackingField: {x: 0, y: 0}
+    <_attackingTime>k__BackingField: 0
+    <_stunTime>k__BackingField: 0
+    <continuableAttackCount>k__BackingField: 0
     _maxHp: 150
-    _hp: 0
+    _hp: 150
     _dead: 0
     _invincibleTime: 0.1
     _prevHitTime: 0
     _owner: {fileID: 636405985461026081}
     additionalEffectOnHit:
     - {fileID: 8888330689962828209, guid: 5c1a5cee6913c7346a4bcf7bdf9158e0, type: 3}
-    initalMaxHp: 0
+    initalMaxHp: 150
     noManaRegenOnHit: 1
   isGrounded: 0
   _light: {fileID: 636405985372419472}
@@ -591,6 +599,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 636405985461026080}
   combatComponent:
+    <mp>k__BackingField: 0
+    <maxMp>k__BackingField: 100
+    <DodgeInvincibleTime>k__BackingField: 0.5
+    <isAttacking>k__BackingField: 0
+    <_attackDir>k__BackingField: {x: 0, y: 0}
+    <_attackingTime>k__BackingField: 0
+    <_stunTime>k__BackingField: 0
+    <continuableAttackCount>k__BackingField: 0
     _maxHp: 50
     _hp: 50
     _dead: 0
