@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public class PooledObjectSpawnManager:Singleton<PooledObjectSpawnManager>
 {
     private Dictionary<GameObject,ObjectPoolManager> _poolManagers = new Dictionary<GameObject, ObjectPoolManager>();
 
-    public GameObject PoolManager;
-
-    //등록할 오브젝트들 //같은 인덱스로 되어있음
-    //더 유연하게 바꾸자
-    [SerializeField] private GameObject Money;
+    [SerializeField]private GameObject PoolManagerPrefab;
+    [SerializeField] private GameObject MoneyPrefab;
     public GameObject[] defaultHitEffect;
 
     private void initPool(GameObject prefab)
     {
         if (!_poolManagers.ContainsKey(prefab))
         {
-            _poolManagers[prefab] = Instantiate(PoolManager).GetComponent<ObjectPoolManager>();
+            _poolManagers[prefab] = Instantiate(PoolManagerPrefab).GetComponent<ObjectPoolManager>();
             _poolManagers[prefab].PoolingObject = prefab;
         }
     }
-    public void SpawnBetween(GameObject prefab, Vector2 attackerPos, Vector2 damagedPos, float scale = -1f,float time = -1f, float addRandomRotation = 20f)
+    public void SpawnBetweenAttacker(GameObject[] prefabs, Vector2 attackerPos, Vector2 damagedPos, float scale,float time = -1f)
+    {
+        foreach (GameObject prefab in prefabs)
+        {
+            SpawnBetweenAttackerRandomRot(prefab, attackerPos, damagedPos, scale,time);
+        }
+    }
+    public void SpawnBetweenAttackerRandomRot(GameObject prefab, Vector2 attackerPos, Vector2 damagedPos, float scale = -1f, float time = -1f, float addRandomRotation = 20f)
     {
         if (!_poolManagers.ContainsKey(prefab))
         {
@@ -43,13 +46,6 @@ public class PooledObjectSpawnManager:Singleton<PooledObjectSpawnManager>
             _poolManagers[prefab].GetPoolingObjectWithTimer(midPos, LookRot, scale, time);
         }
     }
-    public void SpawnBetween(GameObject[] prefabs, Vector2 attackerPos, Vector2 damagedPos, float scale,float time = -1f)
-    {
-        foreach (GameObject prefab in prefabs)
-        {
-            SpawnBetween(prefab, attackerPos, damagedPos, scale,time);
-        }
-    }
     //돈은 변화가 없으니 여기에 생성
     public void SpawnMoney(Vector3 pos, int count)
     {
@@ -57,24 +53,24 @@ public class PooledObjectSpawnManager:Singleton<PooledObjectSpawnManager>
     }
     private IEnumerator SpawnMoneyCoroutine(Vector3 pos, int count)
     {
-        if (!_poolManagers.ContainsKey(Money))
+        if (!_poolManagers.ContainsKey(MoneyPrefab))
         {
-            initPool(Money);
+            initPool(MoneyPrefab);
         }
         for (int i = 0; i < count; i++)
         {
             yield return null;
-            _poolManagers[Money].GetPoolingObjectWithTimer(pos, 30f);
+            _poolManagers[MoneyPrefab].GetPoolingObjectWithTimer(pos, 30f);
         }
         yield break;
     }
     public void ReturnMoney(GameObject obj)
     {
-        _poolManagers[Money].ReturnPoolingObject(obj);
+        _poolManagers[MoneyPrefab].ReturnPoolingObject(obj);
     }
     internal void ReturnMoney(GameObject obj, float time)
     {
-        _poolManagers[Money].ReturnPoolingObject(obj, time);
+        _poolManagers[MoneyPrefab].ReturnPoolingObject(obj, time);
     }
     public void ReturnObject(GameObject prefab, GameObject obj)
     {
@@ -82,7 +78,7 @@ public class PooledObjectSpawnManager:Singleton<PooledObjectSpawnManager>
     }
     internal void SpawnDefalutHitEffect(Vector3 attackerPos, Vector3 damagedPos, float scale = -1f, float time = 2f)
     {
-        SpawnBetween(defaultHitEffect, attackerPos, damagedPos, scale, time);
+        SpawnBetweenAttacker(defaultHitEffect, attackerPos, damagedPos, scale, time);
     }
 
 }

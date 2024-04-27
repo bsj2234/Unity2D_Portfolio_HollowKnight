@@ -248,7 +248,7 @@ public class FalseKnight : Character
     private void DamagedEffect(Vector2 attackerPos, Vector2 damagedPos)
     {
         _light.enabled = true;
-        PooledObjectSpawnManager.Instance.SpawnBetween(damagedEffects ,attackerPos, damagedPos, 1.5f , 4f);
+        PooledObjectSpawnManager.Instance.SpawnBetweenAttacker(damagedEffects ,attackerPos, damagedPos, 1.5f , 4f);
         StartCoroutine(BlinkOff());
 
     }

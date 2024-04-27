@@ -36,7 +36,7 @@ public class Player : Character, IFightable
     [field: Header("CharmInventorys")]
     //인벤토리 
     [field: SerializeReference] private CharmInstance[] _equippedCharms { get; set; } = new CharmInstance[5];
-    [field: SerializeReference] public CharmData[] initalChrams;
+    [field: SerializeField] public CharmData[] initialChrams;
     [field: SerializeReference] private CharmInstance[] _charmInventory { get; set; } = new CharmInstance[24];
     [field: SerializeField] private HashSet<string> _currentCharmBonuses { get; set; } = new HashSet<string>();
     [field: SerializeField] public int coinCount { get; set; } = 0;
@@ -73,9 +73,9 @@ public class Player : Character, IFightable
         _combatComponent.AdditionalDamageableCondition += addtionalCondition;
         _combatComponent.Init(transform);
         //initial Charm
-        for (int i = 0; i < initalChrams.Length; i++)
+        for (int i = 0; i < initialChrams.Length; i++)
         {
-            _equippedCharms[i] = new CharmInstance(initalChrams[i]);
+            _equippedCharms[i] = new CharmInstance(initialChrams[i]);
         }
         RecalcCharmEffect();
     }
@@ -221,17 +221,6 @@ public class Player : Character, IFightable
             moveComponent.MovementUpdate(input);
         }
     }
-    public void AddItem(CharmInstance item)
-    {
-        for (int i = 0; i < _charmInventory.Length; i++)
-        {
-            if (_charmInventory[i] == null)
-            {
-                _charmInventory[i] = item;
-                break;
-            }
-        }
-    }
     public void TryInteract()
     {
         if (_combatComponent.IsDead()) return;
@@ -252,6 +241,17 @@ public class Player : Character, IFightable
             }
         }
 
+    }
+    public void AddItem(CharmInstance item)
+    {
+        for (int i = 0; i < _charmInventory.Length; i++)
+        {
+            if (_charmInventory[i] == null)
+            {
+                _charmInventory[i] = item;
+                break;
+            }
+        }
     }
     //장착버튼누를떄발생
     /// <summary>
@@ -299,10 +299,6 @@ public class Player : Character, IFightable
         }
         return null;
     }
-    public void UpdateRespawnPoint(RespawnPoint respawn)
-    {
-        _respawnPoint = respawn;
-    }
     public CharmInstance CharmAt(int charmIndex)
     {
         return _charmInventory[charmIndex];
@@ -338,6 +334,10 @@ public class Player : Character, IFightable
         item_Damage = _currentCharmBonuses.Contains("허술한 힘") ? 3f : 0f;
         itemAttackSpeedBounus = _currentCharmBonuses.Contains("빠른 참격") ? .15f : 0f;
         item_hitInvincible = _currentCharmBonuses.Contains("튼튼한 껍데기") ? .3f : 0f;
+    }
+    public void UpdateRespawnPoint(RespawnPoint respawn)
+    {
+        _respawnPoint = respawn;
     }
 
     public void AttackKnockback(Collider2D attackCol, List<Collider2D> otherCol)

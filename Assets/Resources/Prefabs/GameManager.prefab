@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2318625212014891710}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 229.54874, y: 366.3844, z: 1.4326879}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -60,8 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64331240b25760846b04822d1d1c2572, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PoolManager: {fileID: 6722855965890524618, guid: ab0ca669574900347bc79673b14f352d, type: 3}
-  Money: {fileID: 9161230142845418680, guid: 55c385764cb5b7b44afc9460c9023cf9, type: 3}
+  PoolManagerPrefab: {fileID: 6722855965890524618, guid: ab0ca669574900347bc79673b14f352d, type: 3}
+  MoneyPrefab: {fileID: 9161230142845418680, guid: 55c385764cb5b7b44afc9460c9023cf9, type: 3}
   defaultHitEffect:
   - {fileID: 8386825428003906271, guid: 8bd450e2663220d47b761c31bfb3e611, type: 3}
   - {fileID: 8386825428003906271, guid: 1e9536b7743b1914a92691ca6a380e5c, type: 3}

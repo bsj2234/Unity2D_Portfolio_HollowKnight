@@ -2551,7 +2551,7 @@ MonoBehaviour:
   - rid: -2
   - rid: -2
   - rid: -2
-  initalChrams: []
+  initialChrams: []
   <_charmInventory>k__BackingField:
   - rid: -2
   - rid: -2

@@ -103,7 +103,7 @@ public class CombatComponent
             PooledObjectSpawnManager.Instance.SpawnDefalutHitEffect(position, _owner.position);
         if (additionalEffectOnHit != null)
         {
-            PooledObjectSpawnManager.Instance.SpawnBetween(additionalEffectOnHit, position, _owner.position, 1f, 3f);
+            PooledObjectSpawnManager.Instance.SpawnBetweenAttacker(additionalEffectOnHit, position, _owner.position, 1f, 3f);
         }
         return true;
     }
