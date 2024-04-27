@@ -40,7 +40,6 @@ public class Player : Character, IFightable
     [field: SerializeReference] private CharmInstance[] _charmInventory { get; set; } = new CharmInstance[24];
     [field: SerializeField] private HashSet<string> _currentCharmBonuses { get; set; } = new HashSet<string>();
     [field: SerializeField] public int coinCount { get; set; } = 0;
-    [field: SerializeField] public ShopUi shopUi { get; set; }
     [field: SerializeField] private float _knockBackTime { get; set; } = 0f;
     [field: Header("Respawns")]
     //Respawn
@@ -423,9 +422,7 @@ public class Player : Character, IFightable
 
     public void OpenShopHud(Shop shop)
     {
-
-        shopUi.Init(shop);
-        shopUi.SetActive(true);
+        UiManager.Instance.ShopUiOn(shop);
         _controller._playerControlable = false;
     }
 

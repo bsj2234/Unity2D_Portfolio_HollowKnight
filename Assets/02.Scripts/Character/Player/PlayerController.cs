@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
             if(_playerControlable)
             {
                 _playerControlable = false;
-                UiManager.Instance.inventoryUi.InventoryOn();
+                UiManager.Instance.InventoryOn();
             }
         }
     }
@@ -116,8 +116,16 @@ public class PlayerController : MonoBehaviour
     {
         if(inputValue.isPressed != false)
         {
-            _playerControlable = true;
-            UiManager.Instance.AllOff();
+            if(UiManager.Instance.IsInUiMode)
+            {
+                UiManager.Instance.ExitUiMode();
+                _playerControlable = true;
+            }
+            else
+            {
+                UiManager.Instance.PauseOn();
+                _playerControlable = false;
+            }
         }
     }
 
