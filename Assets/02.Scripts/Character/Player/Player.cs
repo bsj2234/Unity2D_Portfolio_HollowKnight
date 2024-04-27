@@ -423,8 +423,10 @@ public class Player : Character, IFightable
 
     public void OpenShopHud(Shop shop)
     {
+
         shopUi.Init(shop);
         shopUi.SetActive(true);
+        _controller._playerControlable = false;
     }
 
     public void SetSpawnPoint(RespawnPoint respawnPoint)

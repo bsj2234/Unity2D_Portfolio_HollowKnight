@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,7 +8,9 @@ using UnityEngine.UI;
 public class SceneLoader : Singleton<SceneLoader>
 {
     [SerializeField] private CanvasGroup _sceneLoaderCanvasGroup;
-    [SerializeField] private Image progressBar;
+    [SerializeField] private Image _progressBar;
+    [SerializeField] private CanvasGroup _gameLoadCompletedUi;
+    private bool _complete = false;
     //게임켜면 미리 준비하고 있는 로딩 나중에 만들어 보자
     private AsyncOperation _ao;
 
@@ -36,46 +39,50 @@ public class SceneLoader : Singleton<SceneLoader>
 
     private IEnumerator Load(string sceneName)
     {
-        progressBar.fillAmount = 0f;
-        yield return StartCoroutine(Fade(true));
+        _progressBar.fillAmount = 0f;
+        //이 코루틴이 끝날때 까지 대기
+        yield return StartCoroutine(Fade(true,_sceneLoaderCanvasGroup));
 
-        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
-        op.allowSceneActivation = false;
+        _ao = SceneManager.LoadSceneAsync(sceneName);
+        _ao.allowSceneActivation = false;
 
         float timer = 0.0f;
-        while(!op.isDone)
+        while(!_ao.isDone)
         {
             yield return null;
             timer += Time.unscaledDeltaTime;
 
-            if(op.progress < 0.9f)
+            if(_ao.progress < 0.9f)
             {
-                progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, op.progress, timer);
-                if(progressBar.fillAmount >= op.progress)
+                _progressBar.fillAmount = Mathf.Lerp(_progressBar.fillAmount, _ao.progress, timer);
+                if(_progressBar.fillAmount >= _ao.progress)
                 {
                     timer = 0.0f;
                 }
             }
             else
             {
-                progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, 1f, timer);
-                if(progressBar.fillAmount == 1.0f)
+                _progressBar.fillAmount = Mathf.Lerp(_progressBar.fillAmount, 1f, timer);
+                if(_progressBar.fillAmount == 1.0f)
                 {
-                    op.allowSceneActivation = true;
+                    yield return StartCoroutine(Fade(true, _gameLoadCompletedUi));
+                    _complete = true;
                     yield break;
                 }
             }
         }
     }
+
     private void LoadSceneEnd(Scene scene, LoadSceneMode loadSceneMode)
     {
         if(scene.name == _loadSceneName)
         {
-            StartCoroutine(Fade(false));
+            StartCoroutine(Fade(false, _sceneLoaderCanvasGroup));
+            StartCoroutine(Fade(false, _gameLoadCompletedUi));
             SceneManager.sceneLoaded -= LoadSceneEnd;
         }
     }
-    private IEnumerator Fade(bool isFadeIn)
+    private IEnumerator Fade(bool isFadeIn, CanvasGroup target)
     {
         float timer = 0.0f;
 
@@ -83,7 +90,7 @@ public class SceneLoader : Singleton<SceneLoader>
         {
             yield return null;
             timer += Time.unscaledDeltaTime;
-            _sceneLoaderCanvasGroup.alpha = Mathf.Lerp(isFadeIn ? 0 : 1, isFadeIn ? 1 : 0, timer);
+            target.alpha = Mathf.Lerp(isFadeIn ? 0 : 1, isFadeIn ? 1 : 0, timer);
         }
 
         if(!isFadeIn)
@@ -92,6 +99,13 @@ public class SceneLoader : Singleton<SceneLoader>
         }
     }
 
+    public void OnButtonClick()
+    {
+        if(_complete)
+        {
+            _ao.allowSceneActivation = true;
+        }
+    }
 
     #region asyncSceneLoad
     //Custom by siko 

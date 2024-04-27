@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     //나중에 get이나 set에 조건이 필요할떄 프로퍼티랑 SerializeField를 사용해서 프로퍼티화 하는게 좋지 않나?
     public bool hasMoveInput = false;
 
-    private bool _playerControlable = true;
+    public bool _playerControlable = true;
 
 
 
