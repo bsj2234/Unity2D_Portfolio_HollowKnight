@@ -67,10 +67,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "\uACF5\uACA9: \uB9C8\uC6B0\uC2A4 \uD074\uB9AD\n\uC774\uB3D9: asd\n\uC0C1\uD638\uC791\uC6A9:
-    w\n\uC810\uD504: space\n\uB300\uC2DC(\uC544\uC774\uD15C \uD544\uC694) :  shift\n\n\uB514\uBC84\uADF8\n\uC21C\uAC04
-    \uC774\uB3D9\n\uC2DC\uC791\uC9C0\uC810 \uC0C1\uC790\uC606 : shift F1\n\uAC00\uC2DC:
-    shift F2\n\uC0C1\uC810: shift F3\n\uBCF4\uC2A4: shift F4\nF1: \uD53C\uD68C\uBCF5
-    F2: \uD53C \uAC10\uC18C F4: \uC8FD\uC74C\n\n"
+    w\n\uC810\uD504: space\n\uB300\uC2DC(\uC544\uC774\uD15C \uD544\uC694) :  shift\n\uC778\uBCA4\uD1A0\uB9AC:
+    I\n\uB514\uBC84\uADF8\n\uC21C\uAC04 \uC774\uB3D9\n\uC2DC\uC791\uC9C0\uC810 \uC0C1\uC790\uC606
+    : shift F1\n\uAC00\uC2DC: shift F2\n\uC0C1\uC810: shift F3\n\uBCF4\uC2A4: shift
+    F4\nF1: \uD53C\uD68C\uBCF5 F2: \uD53C \uAC10\uC18C F4: \uC8FD\uC74C\n\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f658256f351f79546a5a7fc039312694, type: 2}
   m_sharedMaterial: {fileID: -7728601405412575251, guid: f658256f351f79546a5a7fc039312694, type: 2}

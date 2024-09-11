@@ -1,21 +1,20 @@
 using UnityEngine;
 
-public class FalseKnightIdle : StateMachineBehaviour
+public class FalseKnightSelectPattern : StateMachineBehaviour
 {
     public float CoolDown = .5f;
-    float Timer;
+    Timer _timer = new Timer();
     public FalseKnightState debugAction = FalseKnightState.Idle;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Timer = CoolDown;
+        _timer.SetTimer(CoolDown);
     }
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Timer -= Time.deltaTime;
-        if(Timer <= 0)
+        if(_timer.IsTimeOver())
         {
-            Timer = CoolDown;
+            _timer.ResetTime();
             FalseKnightState start = (FalseKnightState)Random.Range(0, 6);
             if (debugAction != FalseKnightState.Idle)
                 start = debugAction;

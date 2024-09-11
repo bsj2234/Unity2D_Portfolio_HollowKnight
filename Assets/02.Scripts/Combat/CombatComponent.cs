@@ -15,6 +15,7 @@ public class CombatComponent
     public System.Action OnDamaged { get; set; }
     public System.Action<CombatComponent> OnDamagedWAttacker { get; set; }
     public System.Action OnDead { get; set; }
+    //falseknight가 mainbody일때 데미지를 안먹기 위해서
     public System.Func<bool> AdditionalDamageableCondition { get; set; }
     public System.Action OnHeal { get; set; }
 

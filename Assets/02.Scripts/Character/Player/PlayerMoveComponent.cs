@@ -28,7 +28,8 @@ public class PlayerMoveComponent : MonoBehaviour
     public bool isMovable = true;
     //지금은 공중이나 바닥이나 속도 같게
     //LaterDo:나중에 가능하면 부드럽게 속도를 제한하는법도 생각해보자 공중에서는 컨트롤이 먹먹히지게
-    public float MaxSpeed = 5f;
+    public float MaxSpeed = 10f;
+    public float Acceleration = 10f;
     public float _dashSpeed = 10f;
     private float _movableCoolDown = 0f;
     private float _DashTime = 0f;
@@ -89,7 +90,8 @@ public class PlayerMoveComponent : MonoBehaviour
         if (_DashTime > 0f)
         {
             float dashDir = (dir == Direction.Left ? -1f : 1f);
-            _rigidbody.velocity = new Vector2(MaxSpeed * 2f * dashDir, 0f);
+            _rigidbody.velocity = new Vector2(_dashSpeed * dashDir, 0f);
+            return;
         }
 
         if (!IsMovable()) // 대쉬는 처리하고 Movable 체크
@@ -112,32 +114,44 @@ public class PlayerMoveComponent : MonoBehaviour
         float velocityMag = Mathf.Abs(curVelocity.x);
         float desierdMag = MaxSpeed;
         float resultMag = desierdMag - velocityMag;
+        Debug.Log(velocityMag);
         if (_controller.hasMoveInput)
         {
 
             //impulse 처럼 가속도가 빠르면 문제가 있다
             // 범위를 빠르게 제어하려면 정확한 값을 더하거나 빼 주어야 오차가 적다
             // 혹은 velocity로 값을 정확히 지정해줘야 한다.
-
             //입력과 진행 방향이 같으면
             //최대속도를 넘었을 경우에는 아무것도안함
             //방향이 다르면 그냥 뒤돔
             if (inputDir == velocityDir)
             {
+                Debug.Log("Same");
                 if (velocityMag > MaxSpeed + .1f)
                 {
-                    //현재속도 - 최대속도의 힘 만큼 으로 속도 제한
-                    _rigidbody.AddForce(new Vector2(-velocityDir * (velocityMag - MaxSpeed), 0f), ForceMode2D.Impulse);
+                    Debug.Log("OverSpeed");
+                    //속도 초과시 현재속도 - 최대속도의 힘 만큼 으로 속도 제한
+                    float accel = Mathf.Min(velocityMag - MaxSpeed, Acceleration);
+                    _rigidbody.AddForce(new Vector2(-velocityDir * accel, 0f), ForceMode2D.Impulse);
                 }
                 else
                 {
+                    Debug.Log("UnderSpeed");
+                    float accel = Mathf.Min(MaxSpeed - velocityMag, Acceleration);
                     //최대속도 - 현재속도 만큼의 힘으로 이동
-                    _rigidbody.AddForce(new Vector2(velocityDir * (MaxSpeed - velocityMag), 0f), ForceMode2D.Impulse);
+                    _rigidbody.AddForce(new Vector2(velocityDir * accel, 0f), ForceMode2D.Impulse);
                 }
             }
             else
             {
-                _rigidbody.AddForce(new Vector2(-velocityDir * MaxSpeed, 0f), ForceMode2D.Impulse);
+                Debug.Log(message: "Diff");
+                // 최대속보다 작을때만 뒤돌시 현 벨로시티의 방향을 바꿈
+                float accel = Mathf.Max(velocityMag, Acceleration);
+                if (velocityMag < MaxSpeed)
+                    _rigidbody.AddForce(new Vector2(-velocityDir * accel, 0f), ForceMode2D.Impulse);
+                else
+                    _rigidbody.AddForce(new Vector2(Acceleration * -velocityDir, 0f), ForceMode2D.Impulse);
+
             }
         }
         //입력이 없으면
@@ -150,18 +164,22 @@ public class PlayerMoveComponent : MonoBehaviour
             //최대속보다 크면 감속시키고
             if (velocityMag > MaxSpeed + .1f)
             {
-                _rigidbody.AddForce(new Vector2(MaxSpeed * -velocityDir, 0f), ForceMode2D.Impulse);
+                Debug.Log("OverMaxSpeed");
+                _rigidbody.AddForce(new Vector2(nonInputDrag * -velocityDir, 0f), ForceMode2D.Impulse);
             }
             //작으면 
             else
             {
+                Debug.Log("UnderMaxSpeed");
                 //멈춰
                 if (velocityMag >= .1f)
                 {
+                    Debug.Log("OverDeadZone");
                     _rigidbody.AddForce(new Vector2(-curVelocity.x, 0f), ForceMode2D.Impulse);
                 }
                 else
                 {
+                    Debug.Log("UnderDeadZone");
                     _rigidbody.velocity = new Vector2(0f, curVelocity.y);
                 }
             }

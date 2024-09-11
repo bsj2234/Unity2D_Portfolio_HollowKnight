@@ -2512,7 +2512,8 @@ MonoBehaviour:
   JumpPower: 23
   isGrounded: 1
   isMovable: 1
-  MaxSpeed: 9
+  MaxSpeed: 10
+  Acceleration: 10
   _dashSpeed: 20
   IsMoveByAddForce: 1
 --- !u!114 &164682484
