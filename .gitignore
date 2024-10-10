@@ -70,3 +70,18 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+
+/Assets/04.Images
+/Assets/04.Images.meta
+/Assets/06.Sprites
+/Assets/06.Sprites.meta
+/Assets/10.Audio
+/Assets/10.Audio.meta
+/Assets/12.Fonts
+/Assets/12.Fonts.meta
+/Assets/AssetSelectionHistory
+/Assets/AssetSelectionHistory.meta
+/Assets/Tarodev 2D Controller
+/Assets/Tarodev 2D Controller.meta
